@@ -1,0 +1,25 @@
+name: Solidity CD
+
+on:
+  release:
+    types:
+      - created
+
+env:
+  ALCHEMY_API_URL: ${{ secrets.ALCHEMY_API_URL }}
+  ADDRESS_PRIVATE_KEY: ${{ secrets.ADDRESS_PRIVATE_KEY }}
+  STAGE: dev
+
+jobs:  
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy
+
+  verify:
+    runs-on: ubuntu-latest
+    needs: [ deploy ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Verify

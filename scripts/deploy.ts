@@ -1,41 +1,41 @@
-import { writeFileSync } from "fs";
-import { ethers } from "hardhat";
-import { join } from "path";
+import { writeFileSync } from 'fs'
+import { ethers } from 'hardhat'
+import { join } from 'path'
 
-async function main() {
-  const membershipFactory = await ethers.getContractFactory("MembershipCard");
+async function main (): Promise<void> {
+  const membershipFactory = await ethers.getContractFactory('MembershipCard')
   const membershipContract = await membershipFactory.deploy(
-    "SoularisMember",
-    "SMEM",
-    "https://js6azx7pn9.execute-api.ap-northeast-1.amazonaws.com/assets/membership/",
-    ["0xf786867559B705f0D3B3ec7Dc1459A6f6023D975"],
-  );
+    'SoularisMember',
+    'SMEM',
+    'https://js6azx7pn9.execute-api.ap-northeast-1.amazonaws.com/assets/membership/',
+    ['0xf786867559B705f0D3B3ec7Dc1459A6f6023D975']
+  )
 
-  await membershipContract.deployed();
+  await membershipContract.deployed()
 
-  console.log("MembershipCard contract deployed to:", membershipContract.address);
+  console.log('MembershipCard contract deployed to:', membershipContract.address)
 
-  const gatewayFactory = await ethers.getContractFactory("SimpleGateway");
-  const gatewayContract = await gatewayFactory.deploy();
+  const gatewayFactory = await ethers.getContractFactory('SimpleGateway')
+  const gatewayContract = await gatewayFactory.deploy()
 
-  await gatewayContract.deployed();
+  await gatewayContract.deployed()
 
-  console.log("SimpleGateway contract deployed to:", gatewayContract.address);
+  console.log('SimpleGateway contract deployed to:', gatewayContract.address)
 
-  const ticketFactory = await ethers.getContractFactory("Ticket");
+  const ticketFactory = await ethers.getContractFactory('Ticket')
   const ticketContract = await ticketFactory.deploy(
-    "SoularisTicket",
-    "STKT",
-    "https://js6azx7pn9.execute-api.ap-northeast-1.amazonaws.com/assets/ticket/",
-    "https://js6azx7pn9.execute-api.ap-northeast-1.amazonaws.com/badges/ticket/",
-    gatewayContract.address,
-  );
+    'SoularisTicket',
+    'STKT',
+    'https://js6azx7pn9.execute-api.ap-northeast-1.amazonaws.com/assets/ticket/',
+    'https://js6azx7pn9.execute-api.ap-northeast-1.amazonaws.com/badges/ticket/',
+    gatewayContract.address
+  )
 
-  await ticketContract.deployed();
+  await ticketContract.deployed()
 
-  console.log("Ticket contract deployed to:", ticketContract.address);
+  console.log('Ticket contract deployed to:', ticketContract.address)
 
-  writeFileSync(join(__dirname, "../constants/contract.ts"), `export const MEMBERSHIP_CARD_CONTRACT_ADDRESS = "${membershipContract.address}";
+  writeFileSync(join(__dirname, '../constants/contract.ts'), `export const MEMBERSHIP_CARD_CONTRACT_ADDRESS = "${membershipContract.address}";
 export const GATEWAY_CONTRACT_ADDRESS = "${gatewayContract.address}";
 export const TICKET_CONTRACT_ADDRESS = "${ticketContract.address}";
 `)
@@ -44,6 +44,6 @@ export const TICKET_CONTRACT_ADDRESS = "${ticketContract.address}";
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
 main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+  console.error(error)
+  process.exitCode = 1
+})
