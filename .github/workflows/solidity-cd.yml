@@ -10,16 +10,115 @@ env:
   ADDRESS_PRIVATE_KEY: ${{ secrets.ADDRESS_PRIVATE_KEY }}
   STAGE: dev
 
-jobs:  
-  deploy:
+jobs:
+  compile:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.0.1
+        name: Install pnpm
+        with:
+          version: 7
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install
+      - name: Compile
+        run: pnpm run compile
+      - uses: actions/upload-artifact@v3
+        with:
+          name: typechain
+          path: ./typechain
+
+  publish-typechain:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: typechain
+    steps:
+      - uses: pnpm/action-setup@v2.0.1
+        name: Install pnpm
+        with:
+          version: 7
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          registry-url: https://npm.pkg.github.com/
+          cache: "pnpm"
+      - uses: actions/download-artifact@v3
+        with:
+          name: typechain
+          path: '.'
+      - name: Publish
+        run: |
+          pnpm install
+          pnpm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+  publish-contracts:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: contracts
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.0.1
+        name: Install pnpm
+        with:
+          version: 7
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          registry-url: https://npm.pkg.github.com/
+          cache: "pnpm"
+      - name: Publish
+        run: pnpm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        network: [goerli]
+    steps:
       - uses: actions/checkout@v2
+      - uses: pnpm/action-setup@v2.0.1
+        name: Install pnpm
+        with:
+          version: 7
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          registry-url: https://npm.pkg.github.com/
+          cache: "pnpm"
       - name: Deploy
+        run: pnpm run deploy -- --network ${{ matrix.network }}
 
   verify:
     runs-on: ubuntu-latest
-    needs: [ deploy ]
+    strategy:
+      matrix:
+        network: [goerli]
+    needs: [deploy]
     steps:
       - uses: actions/checkout@v2
+      - uses: pnpm/action-setup@v2.0.1
+        name: Install pnpm
+        with:
+          version: 7
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          registry-url: https://npm.pkg.github.com/
+          cache: "pnpm"
       - name: Verify
+        run: pnpm run verify -- --network ${{ matrix.network }}

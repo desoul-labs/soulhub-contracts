@@ -13,7 +13,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-import "./ERC4671/IERC4671.sol";
+import "../ERC4671/IERC4671.sol";
 
 contract Ticket is
     Context,

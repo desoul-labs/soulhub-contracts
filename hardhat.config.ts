@@ -9,6 +9,10 @@ const config: HardhatUserConfig = {
       url: process.env.ALCHEMY_API_URL,
       accounts: [process.env.ADDRESS_PRIVATE_KEY!]
     }
+  },
+  typechain: {
+    outDir: './typechain',
+    target: 'ethers-v5'
   }
 }
 

@@ -2,9 +2,9 @@
 
 pragma solidity ^0.8.0;
 
-import "./ERC4671/ERC4671Consensus.sol";
-import "./ERC4671/ERC4671Delegate.sol";
-import "./ERC4671/ERC4671.sol";
+import "../ERC4671/ERC4671Consensus.sol";
+import "../ERC4671/ERC4671Delegate.sol";
+import "../ERC4671/ERC4671.sol";
 
 contract MembershipCard is ERC4671Delegate, ERC4671Consensus {
     string private _baseTokenURI;
