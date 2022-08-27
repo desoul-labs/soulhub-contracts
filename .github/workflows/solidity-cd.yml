@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2.0.1
+      - uses: pnpm/action-setup@v2.2.2
         name: Install pnpm
         with:
           version: 7
@@ -39,7 +39,7 @@ jobs:
       run:
         working-directory: typechain
     steps:
-      - uses: pnpm/action-setup@v2.0.1
+      - uses: pnpm/action-setup@v2.2.2
         name: Install pnpm
         with:
           version: 7
@@ -67,7 +67,7 @@ jobs:
         working-directory: contracts
     steps:
       - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2.0.1
+      - uses: pnpm/action-setup@v2.2.2
         name: Install pnpm
         with:
           version: 7
@@ -89,7 +89,7 @@ jobs:
         network: [goerli]
     steps:
       - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2.0.1
+      - uses: pnpm/action-setup@v2.2.2
         name: Install pnpm
         with:
           version: 7
@@ -110,7 +110,7 @@ jobs:
     needs: [deploy]
     steps:
       - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2.0.1
+      - uses: pnpm/action-setup@v2.2.2
         name: Install pnpm
         with:
           version: 7
