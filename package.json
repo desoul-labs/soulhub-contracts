@@ -12,6 +12,7 @@
   },
   "author": "Austin Zhu",
   "scripts": {
+    "node": "hardhat node",
     "lint": "solhint -f table contracts/**/*.sol && eslint .",
     "compile": "hardhat compile",
     "deploy": "hardhat run scripts/deploy.ts",

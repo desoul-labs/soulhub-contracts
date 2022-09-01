@@ -7,6 +7,8 @@ typechain/*
 !typechain/tsconfig.json
 !typechain/README.md
 typechain-types
+.deps
+.vscode
 
 #Hardhat files
 cache

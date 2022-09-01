@@ -97,10 +97,11 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-          registry-url: https://npm.pkg.github.com/
           cache: "pnpm"
       - name: Deploy
-        run: pnpm run deploy -- --network ${{ matrix.network }}
+        run: |
+          pnpm install
+          pnpm run deploy -- --network ${{ matrix.network }}
 
   verify:
     runs-on: ubuntu-latest
@@ -118,7 +119,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-          registry-url: https://npm.pkg.github.com/
           cache: "pnpm"
       - name: Verify
-        run: pnpm run verify -- --network ${{ matrix.network }}
+        run: |
+          pnpm install
+          pnpm run verify -- --network ${{ matrix.network }}

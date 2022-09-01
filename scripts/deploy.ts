@@ -1,6 +1,4 @@
-import { writeFileSync } from 'fs'
 import { ethers } from 'hardhat'
-import { join } from 'path'
 
 async function main (): Promise<void> {
   const membershipFactory = await ethers.getContractFactory('MembershipCard')
@@ -34,11 +32,6 @@ async function main (): Promise<void> {
   await ticketContract.deployed()
 
   console.log('Ticket contract deployed to:', ticketContract.address)
-
-  writeFileSync(join(__dirname, '../constants/contract.ts'), `export const MEMBERSHIP_CARD_CONTRACT_ADDRESS = "${membershipContract.address}";
-export const GATEWAY_CONTRACT_ADDRESS = "${gatewayContract.address}";
-export const TICKET_CONTRACT_ADDRESS = "${ticketContract.address}";
-`)
 }
 
 // We recommend this pattern to be able to use async/await everywhere
