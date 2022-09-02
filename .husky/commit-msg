@@ -1,4 +1,4 @@
 #!/bin/zsh
-. "$(dirname "$0")/_/husky.sh"
+. "$(dirname -- "$0")/_/husky.sh"
 
-pnpx --no-install commitlint --edit $1
+pnpx --no-install -- commitlint --edit $1
