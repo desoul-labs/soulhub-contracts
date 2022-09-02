@@ -1,4 +1,5 @@
-#!/bin/zsh
+#!/bin/sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-pnpx --no-install -- commitlint --edit $1
+PATH="/usr/local/bin:$PATH"
+pnpx commitlint --edit $1
