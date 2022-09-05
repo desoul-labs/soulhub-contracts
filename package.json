@@ -21,7 +21,7 @@
     "deploy:mainnet": "hardhat run scripts/deploy.ts --network mainnet",
     "lint-staged": "lint-staged --allow-empty",
     "prepare": "husky install",
-    "test": "hardhat test"
+    "test": "NODE_ENV=development hardhat test"
   },
   "lint-staged": {
     "*.{js,ts,jsx,tsx}": [
