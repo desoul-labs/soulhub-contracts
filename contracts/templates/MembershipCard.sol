@@ -22,7 +22,13 @@ contract MembershipCard is ERC4671Delegate, ERC4671Consensus {
         return _baseTokenURI;
     }
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC4671Delegate, ERC4671Consensus) returns (bool) {
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(ERC4671Delegate, ERC4671Consensus)
+        returns (bool)
+    {
         return super.supportsInterface(interfaceId);
     }
 }

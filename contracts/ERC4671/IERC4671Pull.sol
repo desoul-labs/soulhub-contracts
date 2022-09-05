@@ -9,5 +9,9 @@ interface IERC4671Pull is IERC4671 {
     /// @param tokenId Identifier of the token to transfer
     /// @param owner Address that owns tokenId
     /// @param signature Signed data (tokenId, owner, recipient) by the owner of the token
-    function pull(uint256 tokenId, address owner, bytes memory signature) external;
+    function pull(
+        uint256 tokenId,
+        address owner,
+        bytes memory signature
+    ) external;
 }

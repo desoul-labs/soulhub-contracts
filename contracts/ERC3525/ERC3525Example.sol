@@ -29,10 +29,23 @@ contract ERC3525Example is ERC3525 {
 
     uint256 constant _externalMintMaxId = 1000000000;
 
-    constructor( string memory name_, string memory symbol_, uint8 decimals_) ERC3525(name_, symbol_, decimals_) {}
+    constructor(
+        string memory name_,
+        string memory symbol_,
+        uint8 decimals_
+    ) ERC3525(name_, symbol_, decimals_) {}
 
-    function mint( string memory slotName_, string memory slotDescription_, string memory slotImage_,
-        uint256 tokenId_, address underlying_, uint8 vestingType_, uint32 maturity_, uint32 term_, uint256 value_) public {
+    function mint(
+        string memory slotName_,
+        string memory slotDescription_,
+        string memory slotImage_,
+        uint256 tokenId_,
+        address underlying_,
+        uint8 vestingType_,
+        uint32 maturity_,
+        uint32 term_,
+        uint256 value_
+    ) public {
         require(tokenId_ < _externalMintMaxId, "ERC3525: tokenId is too large");
         uint256 slot = _getSlot(underlying_, vestingType_, maturity_, term_);
         _slotDetails[slot] = SlotDetail({
@@ -48,11 +61,20 @@ contract ERC3525Example is ERC3525 {
         ERC3525._mintValue(_msgSender(), tokenId_, slot, value_);
     }
 
-    function getSlotDetail(uint256 slot_) public view returns (SlotDetail memory) {
+    function getSlotDetail(uint256 slot_)
+        public
+        view
+        returns (SlotDetail memory)
+    {
         return _slotDetails[slot_];
     }
 
-    function _getNewTokenId(uint256 fromTokenId_) internal virtual override returns (uint256) {
+    function _getNewTokenId(uint256 fromTokenId_)
+        internal
+        virtual
+        override
+        returns (uint256)
+    {
         return 1000000000 + fromTokenId_;
     }
 
@@ -60,7 +82,12 @@ contract ERC3525Example is ERC3525 {
      * @dev Generate the value of slot by utilizing keccak256 algorithm to calculate the hash
      * value of multi properties.
      */
-    function _getSlot( address underlying_, uint8 vestingType_, uint32 maturity_, uint32 term_) internal pure virtual returns (uint256 slot_) {
+    function _getSlot(
+        address underlying_,
+        uint8 vestingType_,
+        uint32 maturity_,
+        uint32 term_
+    ) internal pure virtual returns (uint256 slot_) {
         return
             uint256(
                 keccak256(
@@ -74,7 +101,13 @@ contract ERC3525Example is ERC3525 {
             );
     }
 
-    function slotURI(uint256 slot_) public view virtual override returns (string memory) {
+    function slotURI(uint256 slot_)
+        public
+        view
+        virtual
+        override
+        returns (string memory)
+    {
         return
             string(
                 abi.encodePacked(
@@ -101,7 +134,11 @@ contract ERC3525Example is ERC3525 {
     /**
      * @dev Generate the content of the `properties` field of `slotURI`.
      */
-    function _slotProperties(uint256 slot_) internal view returns (string memory) {
+    function _slotProperties(uint256 slot_)
+        internal
+        view
+        returns (string memory)
+    {
         SlotDetail storage slotDetail = _slotDetails[slot_];
         return
             string(

@@ -9,7 +9,7 @@ import "./IERC4671Delegate.sol";
 
 abstract contract ERC4671Delegate is ERC4671, IERC4671Delegate {
     // Mapping from operator to list of owners
-    mapping (address => mapping(address => bool)) _allowed;
+    mapping(address => mapping(address => bool)) _allowed;
 
     /// @notice Grant one-time minting right to `operator` for `owner`
     /// An allowed operator can call the function to transfer rights.
@@ -23,10 +23,17 @@ abstract contract ERC4671Delegate is ERC4671, IERC4671Delegate {
     /// An allowed operator can call the function to transfer rights.
     /// @param operators Addresses allowed to mint a token
     /// @param owners Addresses for whom `operators` are allowed to mint a token
-    function delegateBatch(address[] memory operators, address[] memory owners) public virtual override {
-        require(operators.length == owners.length, "operators and owners must have the same length");
+    function delegateBatch(address[] memory operators, address[] memory owners)
+        public
+        virtual
+        override
+    {
+        require(
+            operators.length == owners.length,
+            "operators and owners must have the same length"
+        );
         bool isCreator = _isCreator();
-        for (uint i=0; i<operators.length; i++) {
+        for (uint256 i = 0; i < operators.length; i++) {
             _delegateAsDelegateOrCreator(operators[i], owners[i], isCreator);
         }
     }
@@ -41,7 +48,7 @@ abstract contract ERC4671Delegate is ERC4671, IERC4671Delegate {
     /// @param owners Addresses for whom the tokens are minted
     function mintBatch(address[] memory owners) public virtual override {
         bool isCreator = _isCreator();
-        for (uint i=0 ; i<owners.length; i++) {
+        for (uint256 i = 0; i < owners.length; i++) {
             _mintAsDelegateOrCreator(owners[i], isCreator);
         }
     }
@@ -49,7 +56,13 @@ abstract contract ERC4671Delegate is ERC4671, IERC4671Delegate {
     /// @notice Get the issuer of a token
     /// @param tokenId Identifier of the token
     /// @return Address who minted `tokenId`
-    function issuerOf(uint256 tokenId) public view virtual override returns (address) {
+    function issuerOf(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (address)
+    {
         return _getTokenOrRevert(tokenId).issuer;
     }
 
@@ -57,7 +70,12 @@ abstract contract ERC4671Delegate is ERC4671, IERC4671Delegate {
     /// @param operator Address of the operator
     /// @param owner Address of the token's owner
     /// @return True if the `operator` is a delegate for `owner`, false otherwise
-    function isDelegate(address operator, address owner) public view virtual returns (bool) {
+    function isDelegate(address operator, address owner)
+        public
+        view
+        virtual
+        returns (bool)
+    {
         return _allowed[operator][owner];
     }
 
@@ -68,13 +86,23 @@ abstract contract ERC4671Delegate is ERC4671, IERC4671Delegate {
         return isDelegate(msg.sender, owner);
     }
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(IERC165, ERC4671) returns (bool) {
-        return 
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(IERC165, ERC4671)
+        returns (bool)
+    {
+        return
             interfaceId == type(IERC4671Delegate).interfaceId ||
             super.supportsInterface(interfaceId);
     }
 
-    function _delegateAsDelegateOrCreator(address operator, address owner, bool isCreator) private {
+    function _delegateAsDelegateOrCreator(
+        address operator,
+        address owner,
+        bool isCreator
+    ) private {
         require(
             isCreator || _allowed[msg.sender][owner],
             "Only contract creator or allowed operator can delegate"

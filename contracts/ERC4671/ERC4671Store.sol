@@ -39,17 +39,33 @@ contract ERC4671Store is IERC4671Store, ERC165 {
 
     /// @notice Get all the IERC4671Enumerable contracts for a given owner
     /// @param owner Address for which to retrieve the IERC4671Enumerable contracts
-    function get(address owner) public view virtual override returns (address[] memory) {
+    function get(address owner)
+        public
+        view
+        virtual
+        override
+        returns (address[] memory)
+    {
         return _records[owner];
     }
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC165, IERC165) returns (bool) {
-        return 
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(ERC165, IERC165)
+        returns (bool)
+    {
+        return
             interfaceId == type(IERC4671Store).interfaceId ||
             super.supportsInterface(interfaceId);
     }
 
-    function _indexOfTokenOrRevert(address owner, address token) private view returns (uint256) {
+    function _indexOfTokenOrRevert(address owner, address token)
+        private
+        view
+        returns (uint256)
+    {
         uint256 index = _indices[owner][token];
         require(index > 0 || _records[owner].length > 0, "Address not found");
         return index;
