@@ -26,6 +26,9 @@ module.exports = {
       },
     ],
     'space-before-function-paren': 'off',
-    '@typescript-eslint/space-before-function-paren': ['error', 'never'],
+    '@typescript-eslint/space-before-function-paren': [
+      'error',
+      { anonymous: 'always', named: 'never', asyncArrow: 'always' },
+    ],
   },
 }
