@@ -18,7 +18,7 @@
     "README.md"
   ],
   "publishConfig": {
-    "@phaneroz-labs:registry":"https://npm.pkg.github.com"
+    "@phaneroz-labs:registry": "https://npm.pkg.github.com"
   },
   "scripts": {
     "prepublishOnly": "tsc"
