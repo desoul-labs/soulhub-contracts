@@ -29,7 +29,7 @@
       "pnpm exec prettier --write ."
     ],
     "*.sol": [
-      "pnpm exec solhint --fix .",
+      "pnpm exec solhint --fix contracts/**/*.sol",
       "pnpm exec prettier --write contracts/**/*.sol"
     ]
   },
