@@ -2,5 +2,3 @@ node_modules
 cache
 artifacts
 typechain
-.eslintrc.js
-contracts
