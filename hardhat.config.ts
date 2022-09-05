@@ -5,7 +5,7 @@ import { networks } from './constants/networks'
 
 const config: HardhatUserConfig = {
   solidity: '0.8.16',
-  ...(process.env.ENV === 'development' ? { defaultNetwork: 'hardhat' } : { networks: networks }),
+  ...(process.env.NODE_ENV === 'development' ? { defaultNetwork: 'hardhat' } : { networks }),
   typechain: {
     outDir: './typechain',
     target: 'ethers-v5',

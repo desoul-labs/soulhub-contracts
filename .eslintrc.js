@@ -12,5 +12,20 @@ module.exports = {
     sourceType: 'module',
     project: './tsconfig.json',
   },
-  rules: {},
+  rules: {
+    'comma-dangle': 'off',
+    '@typescript-eslint/comma-dangle': [
+      'error',
+      'only-multiline',
+      {
+        arrays: 'always',
+        objects: 'always',
+        imports: 'always',
+        exports: 'always',
+        functions: 'never',
+      },
+    ],
+    'space-before-function-paren': 'off',
+    '@typescript-eslint/space-before-function-paren': ['error', 'never'],
+  },
 }

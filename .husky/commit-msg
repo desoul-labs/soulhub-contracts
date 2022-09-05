@@ -2,4 +2,4 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 PATH="/usr/local/bin:$PATH"
-pnpx commitlint --edit $1
+pnpm exec commitlint --edit $1
