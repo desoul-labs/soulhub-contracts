@@ -11,7 +11,7 @@ env:
   STAGE: dev
 
 jobs:
-  compile:
+  publish-typechain:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -23,40 +23,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
+          registry-url: https://npm.pkg.github.com/
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
       - name: Compile
         run: pnpm run compile
-      - uses: actions/upload-artifact@v3
-        with:
-          name: typechain
-          path: ./typechain
-
-  publish-typechain:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: typechain
-    steps:
-      - uses: pnpm/action-setup@v2.2.2
-        name: Install pnpm
-        with:
-          version: 7
-      - name: Use Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-          registry-url: https://npm.pkg.github.com/
-          cache: 'pnpm'
-      - uses: actions/download-artifact@v3
-        with:
-          name: typechain
-          path: '.'
       - name: Publish
-        run: |
-          pnpm install
-          pnpm publish
+        run: pnpm --filter=typechain publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
