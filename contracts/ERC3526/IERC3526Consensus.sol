@@ -2,10 +2,9 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 import "./IERC3526.sol";
 
-interface IERC3526Consensus is IERC3526, ERC2771Context {
+interface IERC3526Consensus is IERC3526 {
     /**
      * @notice Get voters addresses for this consensus contract
      * @return Addresses of the voters

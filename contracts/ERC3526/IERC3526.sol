@@ -1,14 +1,13 @@
 //SPDX-License-Identifier: CC0-1.0
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 /**
  * @title ERC-3526
  */
-interface IERC3526 is IERC165, ERC2771Context {
+interface IERC3526 is IERC165 {
     /// Event emitted when a token `tokenId` is minted for `owner` with `value`
     event Minted(address indexed owner, uint256 indexed tokenId, uint256 value);
 

@@ -1,7 +1,6 @@
 //SPDX-License-Identifier: CC0-1.0
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 import "./IERC3526.sol";
 
 /**
@@ -14,7 +13,7 @@ import "./IERC3526.sol";
  *  to any resource stored in a centralized system.
  * Note: the ERC-165 identifier for this interface is 0xe1600902.
  */
-interface IERC3526Metadata is IERC3526, ERC2771Context {
+interface IERC3526Metadata is IERC3526 {
     /// @return Descriptive name of the tokens in this contract
     function name() external view returns (string memory);
 

@@ -2,10 +2,9 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 import "./IERC3526.sol";
 
-interface IERC3526Delegate is IERC3526, ERC2771Context {
+interface IERC3526Delegate is IERC3526 {
     /// @notice Grant one-time minting right to `operator` for `delegateRequestId`
     /// An allowed operator can call the function to transfer rights.
     /// @param operator Address allowed to mint a token
