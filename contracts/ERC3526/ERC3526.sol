@@ -14,7 +14,7 @@ import "./IERC3526Enumerable.sol";
  * @title ERC-3526
  */
 
-contract ERC3526 is
+abstract contract ERC3526 is
     IERC3526,
     IERC3526Metadata,
     IERC3526Enumerable,
@@ -107,6 +107,9 @@ contract ERC3526 is
                 : "";
     }
 
+    /**
+     * @notice get the decimal position.
+     */
     function valueDecimals() public view virtual override returns (uint8) {
         return _decimals;
     }
@@ -123,6 +126,9 @@ contract ERC3526 is
         return _tokens[tokenId].owner != address(0);
     }
 
+    /**
+     * @notice get the owner of a token and revert if it does not exist.
+     */
     function ownerOf(uint256 tokenId)
         public
         view
@@ -134,6 +140,9 @@ contract ERC3526 is
         return _tokens[tokenId].owner;
     }
 
+    /**
+     * @notice get the value of a token and revert if it does not exist.
+     */
     function balanceOf(uint256 tokenId)
         public
         view
@@ -145,6 +154,9 @@ contract ERC3526 is
         return _tokens[tokenId].value;
     }
 
+    /**
+     * @notice get the slot of a token and revert if it does not exist.
+     */
     function slotOf(uint256 tokenId)
         public
         view
@@ -156,6 +168,9 @@ contract ERC3526 is
         return _tokens[tokenId].slot;
     }
 
+    /**
+     * @notice get the slotURI of a slot.
+     */
     function slotURI(uint256 slot)
         public
         view
@@ -170,9 +185,13 @@ contract ERC3526 is
                 : "";
     }
 
-    /// @notice Mint a new token
-    /// @param owner Address for whom to assign the token
-    /// @return tokenId Identifier of the minted token
+    /**
+     * @notice Mint a new token
+     * @param owner Address for whom to assign the token
+     * @param value The value of the token
+     * @param slot The slot of the token
+     * @return tokenId Identifier of the minted token
+     */
     function _mint(
         address owner,
         uint256 value,
@@ -184,10 +203,14 @@ contract ERC3526 is
         _emittedCount += 1;
     }
 
-    /// @notice Mint a given tokenId
-    /// @param owner Address for whom to assign the token
-    /// @param tokenId Token identifier to assign to the owner
-    /// @param valid Boolean to assert of the validity of the token
+    /**
+     * @notice Mint a given tokenId
+     * @param owner Address for whom to assign the token
+     * @param tokenId Token identifier to assign to the owner
+     * @param value The value of the token
+     * @param slot The slot of the token
+     * @param valid Boolean to assert of the validity of the token
+     */
     function _mintUnsafe(
         address owner,
         uint256 tokenId,
@@ -211,6 +234,10 @@ contract ERC3526 is
         emit SlotChanged(tokenId, 0, slot);
     }
 
+    /**
+     * @notice Burn a token
+     * @param tokenId The ID of the token to burn
+     */
     function _burn(uint256 tokenId) internal virtual {
         address owner = ownerOf(tokenId);
         uint256 slot = slotOf(tokenId);
@@ -235,9 +262,11 @@ contract ERC3526 is
         emit SlotChanged(tokenId, slot, 0);
     }
 
-    /// @notice Count all tokens assigned to an owner
-    /// @param owner Address for whom to query the balance
-    /// @return Number of tokens owned by `owner`
+    /**
+     * @notice Count the number of tokens assigned to an owner
+     * @param owner Address for whom to query the balance
+     * @return Number of tokens owned by `owner`
+     */
     function balanceOf(address owner)
         public
         view
@@ -248,9 +277,11 @@ contract ERC3526 is
         return _indexedTokenIds[owner].length;
     }
 
-    /// @notice Check if a token hasn't been revoked
-    /// @param tokenId Identifier of the token
-    /// @return True if the token is valid, false otherwise
+    /**
+     * @notice Check if a token hasn't been revoked
+     * @param tokenId Identifier of the token
+     * @return True if the token is valid, false otherwise
+     */
     function isValid(uint256 tokenId)
         public
         view
@@ -262,9 +293,11 @@ contract ERC3526 is
         return _tokens[tokenId].valid;
     }
 
-    /// @notice Check if an address owns a valid token in the contract
-    /// @param owner Address for whom to check the ownership
-    /// @return True if `owner` has a valid token, false otherwise
+    /**
+     * @notice Check if an address owns a valid token in the contract
+     * @param owner Address for whom to check the ownership
+     * @return True if `owner` has a valid token, false otherwise
+     */
     function hasValid(address owner)
         public
         view
@@ -275,19 +308,25 @@ contract ERC3526 is
         return _numberOfValidTokens[owner] > 0;
     }
 
-    /// @return Descriptive name of the tokens in this contract
+    /**
+     * @return Descriptive name of the tokens in this contract
+     */
     function name() public view virtual override returns (string memory) {
         return _name;
     }
 
-    /// @return An abbreviated name of the tokens in this contract
+    /**
+     * @return An abbreviated name of the tokens in this contract
+     */
     function symbol() public view virtual override returns (string memory) {
         return _symbol;
     }
 
-    /// @notice URI to query to get the token's metadata
-    /// @param tokenId Identifier of the token
-    /// @return URI for the token
+    /**
+     * @notice URI to query to get the token's metadata
+     * @param tokenId Identifier of the token
+     * @return URI for the token
+     */
     function tokenURI(uint256 tokenId)
         public
         view
@@ -306,20 +345,26 @@ contract ERC3526 is
         return "";
     }
 
-    /// @return emittedCount Number of tokens emitted
+    /**
+     * @return emittedCount Number of tokens emitted
+     */
     function emittedCount() public view override returns (uint256) {
         return _emittedCount;
     }
 
-    /// @return holdersCount Number of token holders
+    /**
+     * @return holdersCount Number of token holders
+     */
     function holdersCount() public view override returns (uint256) {
         return _holdersCount;
     }
 
-    /// @notice Get the tokenId of a token using its position in the owner's list
-    /// @param owner Address for whom to get the token
-    /// @param index Index of the token
-    /// @return tokenId of the token
+    /**
+     *  @notice Get the tokenId of a token using its position in the owner's list
+     *  @param owner Address for whom to get the token
+     *  @param index Index of the token
+     *  @return tokenId of the token
+     */
     function tokenOfOwnerByIndex(address owner, uint256 index)
         public
         view
@@ -332,9 +377,11 @@ contract ERC3526 is
         return ids[index];
     }
 
-    /// @notice Get a tokenId by it's index, where 0 <= index < total()
-    /// @param index Index of the token
-    /// @return tokenId of the token
+    /**
+     *  @notice Get a tokenId by it's index, where 0 <= index < total()
+     *  @param index Index of the token
+     *  @return tokenId of the token
+     */
     function tokenByIndex(uint256 index)
         public
         view
@@ -345,14 +392,18 @@ contract ERC3526 is
         return index;
     }
 
-    /// @notice Prefix for all calls to tokenURI
-    /// @return Common base URI for all token
+    /**
+     *  @notice Prefix for all calls to tokenURI
+     *  @return Common base URI for all token
+     */
     function _baseURI() internal view virtual returns (string memory) {
         return "";
     }
 
-    /// @notice Mark the token as revoked
-    /// @param tokenId Identifier of the token
+    /**
+     *  @notice Mark the token as revoked
+     *  @param tokenId Identifier of the token
+     */
     function _revoke(uint256 tokenId) internal virtual {
         _exists(tokenId);
         require(_tokens[tokenId].valid, "Token is already invalid");
@@ -362,14 +413,18 @@ contract ERC3526 is
         emit Revoked(_tokens[tokenId].owner, tokenId);
     }
 
-    /// @return True if the caller is the contract's creator, false otherwise
+    /**
+     *  @return True if the caller is the contract's creator, false otherwise
+     */
     function _isCreator() internal view virtual returns (bool) {
         return _msgSender() == _creator;
     }
 
-    /// @notice Removes an entry in an array by its index
-    /// @param array Array for which to remove the entry
-    /// @param index Index of the entry to remove
+    /**
+     *  @notice Removes an entry in an array by its index
+     *  @param array Array for which to remove the entry
+     *  @param index Index of the entry to remove
+     */
     function _removeFromUnorderedArray(uint256[] storage array, uint256 index)
         internal
     {
@@ -380,9 +435,11 @@ contract ERC3526 is
         array.pop();
     }
 
-    /// @notice Retrieve a token or revert if it does not exist
-    /// @param tokenId Identifier of the token
-    /// @return The Token struct
+    /**
+     *  @notice Retrieve a token or revert if it does not exist
+     *  @param tokenId Identifier of the token
+     *  @return The Token struct
+     */
     function _getTokenOrRevert(uint256 tokenId)
         internal
         view

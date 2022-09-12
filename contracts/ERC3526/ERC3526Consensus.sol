@@ -8,14 +8,17 @@ import "./ERC3526.sol";
 import "./IERC3526Consensus.sol";
 
 contract ERC3526Consensus is ERC3526, IERC3526Consensus {
+    // Number of approval requests
     uint256 private _approvalRequestCount;
 
+    // Approval Request
     struct ApprovalRequest {
         address creator;
         uint256 value;
         uint256 slot;
     }
 
+    // Mapping from approval request ID to approval request
     mapping(uint256 => ApprovalRequest) private _approvalRequests;
 
     // Consensus voters addresses
@@ -47,14 +50,18 @@ contract ERC3526Consensus is ERC3526, IERC3526Consensus {
         }
     }
 
-    /// @notice Get voters addresses for this consensus contract
-    /// @return Addresses of the voters
+    /**
+     *  @notice Get voters addresses for this consensus contract
+     *  @return Addresses of the voters
+     */
     function voters() public view virtual override returns (address[] memory) {
         return _votersArray;
     }
 
-    /// @notice Cast a vote to mint a token for a specific address
-    /// @param owner Address for whom to mint the token
+    /**
+     *  @notice Cast a vote to mint a token for a specific address
+     *  @param owner Address for whom to mint the token
+     */
     function approveMint(address owner, uint256 approvalRequestId)
         public
         virtual
@@ -79,8 +86,10 @@ contract ERC3526Consensus is ERC3526, IERC3526Consensus {
         }
     }
 
-    /// @notice Cast a vote to revoke a token for a specific address
-    /// @param tokenId Identifier of the token to revoke
+    /**
+     *  @notice Cast a vote to revoke a token for a specific address
+     *  @param tokenId Identifier of the token to revoke
+     */
     function approveRevoke(uint256 tokenId) public virtual override {
         require(_voters[_msgSender()], "You are not a voter");
         require(
