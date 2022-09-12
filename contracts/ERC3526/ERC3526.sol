@@ -118,7 +118,7 @@ contract ERC3526 is IERC3526, IERC3526Metadata, IERC3526Enumerable, ERC165 {
         override
         returns (address)
     {
-        require(_exists(tokenId), "ERC3526: owner query for nonexistent token");
+        require(_exists(tokenId), "ERC3526: token does not exist");
         return _tokens[tokenId].owner;
     }
 
@@ -129,10 +129,7 @@ contract ERC3526 is IERC3526, IERC3526Metadata, IERC3526Enumerable, ERC165 {
         override
         returns (uint256)
     {
-        require(
-            _exists(tokenId),
-            "ERC3526: balance query for nonexistent token"
-        );
+        require(_exists(tokenId), "ERC3526: token does not exist");
         return _tokens[tokenId].value;
     }
 
@@ -143,7 +140,7 @@ contract ERC3526 is IERC3526, IERC3526Metadata, IERC3526Enumerable, ERC165 {
         override
         returns (uint256)
     {
-        require(_exists(tokenId), "ERC3526: slot query for nonexistent token");
+        require(_exists(tokenId), "ERC3526: token does not exist");
         return _tokens[tokenId].slot;
     }
 
@@ -249,10 +246,7 @@ contract ERC3526 is IERC3526, IERC3526Metadata, IERC3526Enumerable, ERC165 {
         override
         returns (bool)
     {
-        require(
-            _exists(tokenId),
-            "ERC3526: validity query for nonexistent token"
-        );
+        require(_exists(tokenId), "ERC3526: token does not exist");
         return _tokens[tokenId].valid;
     }
 
@@ -367,10 +361,24 @@ contract ERC3526 is IERC3526, IERC3526Metadata, IERC3526Enumerable, ERC165 {
     function _removeFromUnorderedArray(uint256[] storage array, uint256 index)
         internal
     {
-        require(index < array.length, "Trying to delete out of bound index");
+        require(index < array.length, "ERC3526: Index overflow");
         if (index != array.length - 1) {
             array[index] = array[array.length - 1];
         }
         array.pop();
+    }
+
+    /// @notice Retrieve a token or revert if it does not exist
+    /// @param tokenId Identifier of the token
+    /// @return The Token struct
+    function _getTokenOrRevert(uint256 tokenId)
+        internal
+        view
+        virtual
+        returns (Token storage)
+    {
+        Token storage token = _tokens[tokenId];
+        require(token.owner != address(0), "Token does not exist");
+        return token;
     }
 }
