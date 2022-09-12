@@ -8,15 +8,26 @@ import "./ERC3526.sol";
 import "./IERC3526Consensus.sol";
 
 contract ERC3526Consensus is ERC3526, IERC3526Consensus {
+    uint256 private _approvalRequestCount;
+
+    struct ApprovalRequest {
+        address creator;
+        uint256 value;
+        uint256 slot;
+    }
+
+    mapping(uint256 => ApprovalRequest) private _approvalRequests;
+
     // Consensus voters addresses
     mapping(address => bool) private _voters;
     address[] private _votersArray;
 
     // Mapping from voter to mint approvals
-    mapping(address => mapping(address => bool)) private _mintApprovals;
+    mapping(address => mapping(uint256 => mapping(address => bool)))
+        private _mintApprovals;
 
     // Mapping from owner to approval counts
-    mapping(address => uint256) private _mintApprovalCounts;
+    mapping(uint256 => mapping(address => uint256)) private _mintApprovalCounts;
 
     // Mapping from voter to revoke approvals
     mapping(address => mapping(uint256 => bool)) private _revokeApprovals;
@@ -44,21 +55,27 @@ contract ERC3526Consensus is ERC3526, IERC3526Consensus {
 
     /// @notice Cast a vote to mint a token for a specific address
     /// @param owner Address for whom to mint the token
-    function approveMint(
-        address owner,
-        uint256 value,
-        uint256 slot
-    ) public virtual override {
+    function approveMint(address owner, uint256 approvalRequestId)
+        public
+        virtual
+        override
+    {
         require(_voters[msg.sender], "You are not a voter");
         require(
-            !_mintApprovals[msg.sender][owner],
+            !_mintApprovals[msg.sender][approvalRequestId][owner],
             "You already approved this address"
         );
-        _mintApprovals[msg.sender][owner] = true;
-        _mintApprovalCounts[owner] += 1;
-        if (_mintApprovalCounts[owner] == _votersArray.length) {
-            _resetMintApprovals(owner);
-            _mint(owner, value, slot);
+        _mintApprovals[msg.sender][approvalRequestId][owner] = true;
+        _mintApprovalCounts[approvalRequestId][owner] += 1;
+        if (
+            _mintApprovalCounts[approvalRequestId][owner] == _votersArray.length
+        ) {
+            _resetMintApprovals(approvalRequestId, owner);
+            _mint(
+                owner,
+                _approvalRequests[approvalRequestId].value,
+                _approvalRequests[approvalRequestId].slot
+            );
         }
     }
 
@@ -90,11 +107,13 @@ contract ERC3526Consensus is ERC3526, IERC3526Consensus {
             super.supportsInterface(interfaceId);
     }
 
-    function _resetMintApprovals(address owner) private {
+    function _resetMintApprovals(uint256 approvalRequestId, address owner)
+        private
+    {
         for (uint256 i = 0; i < _votersArray.length; i++) {
-            _mintApprovals[_votersArray[i]][owner] = false;
+            _mintApprovals[_votersArray[i]][approvalRequestId][owner] = false;
         }
-        _mintApprovalCounts[owner] = 0;
+        _mintApprovalCounts[approvalRequestId][owner] = 0;
     }
 
     function _resetRevokeApprovals(uint256 tokenId) private {
@@ -102,5 +121,28 @@ contract ERC3526Consensus is ERC3526, IERC3526Consensus {
             _revokeApprovals[_votersArray[i]][tokenId] = false;
         }
         _revokeApprovalCounts[tokenId] = 0;
+    }
+
+    function createApprovalRequest(uint256 value, uint256 slot)
+        external
+        virtual
+        override
+    {
+        _approvalRequests[_approvalRequestCount].creator = msg.sender;
+        _approvalRequests[_approvalRequestCount].value = value;
+        _approvalRequests[_approvalRequestCount].slot = slot;
+        _approvalRequestCount++;
+    }
+
+    function removeApprovalRequest(uint256 approvalRequestId)
+        external
+        virtual
+        override
+    {
+        require(
+            msg.sender == _approvalRequests[approvalRequestId].creator,
+            "You are not the creator"
+        );
+        delete _approvalRequests[approvalRequestId];
     }
 }
