@@ -2,14 +2,15 @@
 
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 import "./ERC3526.sol";
 import "./IERC3526Delegate.sol";
 
-abstract contract ERC3526Delegate is ERC3526, IERC3526Delegate {
+abstract contract ERC3526Delegate is ERC3526, IERC3526Delegate, ERC2771Context {
     struct DelegateRequest {
-        address delegateRequestId;
+        address owner;
         uint256 value;
         uint256 slot;
     }
@@ -109,7 +110,7 @@ abstract contract ERC3526Delegate is ERC3526, IERC3526Delegate {
         virtual
         returns (bool)
     {
-        return isDelegate(msg.sender, delegateRequestId);
+        return isDelegate(_msgSender(), delegateRequestId);
     }
 
     function supportsInterface(bytes4 interfaceId)
@@ -130,11 +131,11 @@ abstract contract ERC3526Delegate is ERC3526, IERC3526Delegate {
         bool isCreator
     ) private {
         require(
-            isCreator || _allowed[msg.sender][delegateRequestId],
+            isCreator || _allowed[_msgSender()][delegateRequestId],
             "Only contract creator or allowed operator can delegate"
         );
         if (!isCreator) {
-            _allowed[msg.sender][delegateRequestId] = false;
+            _allowed[_msgSender()][delegateRequestId] = false;
         }
         _allowed[operator][delegateRequestId] = true;
     }
@@ -143,27 +144,26 @@ abstract contract ERC3526Delegate is ERC3526, IERC3526Delegate {
         private
     {
         require(
-            isCreator || _allowed[msg.sender][delegateRequestId],
+            isCreator || _allowed[_msgSender()][delegateRequestId],
             "Only contract creator or allowed operator can mint"
         );
         if (!isCreator) {
-            _allowed[msg.sender][delegateRequestId] = false;
+            _allowed[_msgSender()][delegateRequestId] = false;
         }
         _mint(
-            _delegateRequests[delegateRequestId].delegateRequestId,
+            _delegateRequests[delegateRequestId].owner,
             _delegateRequests[delegateRequestId].value,
             _delegateRequests[delegateRequestId].slot
         );
     }
 
     function createDelegateRequest(
-        address delegateRequestId,
+        address owner,
         uint256 value,
         uint256 slot
     ) external virtual override {
         require(_isCreator(), "You are not the creator");
-        _delegateRequests[_delegateRequestCount]
-            .delegateRequestId = delegateRequestId;
+        _delegateRequests[_delegateRequestCount].owner = owner;
         _delegateRequests[_delegateRequestCount].value = value;
         _delegateRequests[_delegateRequestCount].slot = slot;
         _delegateRequestCount++;

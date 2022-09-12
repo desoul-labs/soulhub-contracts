@@ -2,10 +2,15 @@
 
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 import "./ERC3526.sol";
 import "./IERC3526SlotEnumerable.sol";
 
-abstract contract ERC3526SlotEnumerable is ERC3526, IERC3526SlotEnumerable {
+abstract contract ERC3526SlotEnumerable is
+    ERC3526,
+    IERC3526SlotEnumerable,
+    ERC2771Context
+{
     struct SlotData {
         uint256 slot;
         uint256[] slotTokens;

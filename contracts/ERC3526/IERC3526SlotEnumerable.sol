@@ -1,6 +1,7 @@
 //SPDX-License-Identifier: CC0-1.0
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 import "./IERC3526.sol";
 import "./IERC3526Enumerable.sol";
 
@@ -11,7 +12,11 @@ import "./IERC3526Enumerable.sol";
  *  See https://eips.ethereum.org/EIPS/eip-3525
  * Note: the ERC-165 identifier for this interface is 0x3b741b9e.
  */
-interface IERC3526SlotEnumerable is IERC3526, IERC3526Enumerable {
+interface IERC3526SlotEnumerable is
+    IERC3526,
+    IERC3526Enumerable,
+    ERC2771Context
+{
     /**
      * @notice Get the total amount of slots stored by the contract.
      * @return The total amount of slots

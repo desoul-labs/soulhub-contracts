@@ -1,6 +1,7 @@
 //SPDX-License-Identifier: CC0-1.0
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
@@ -9,7 +10,17 @@ import "./IERC3526.sol";
 import "./IERC3526Metadata.sol";
 import "./IERC3526Enumerable.sol";
 
-contract ERC3526 is IERC3526, IERC3526Metadata, IERC3526Enumerable, ERC165 {
+/**
+ * @title ERC-3526
+ */
+
+contract ERC3526 is
+    IERC3526,
+    IERC3526Metadata,
+    IERC3526Enumerable,
+    ERC165,
+    ERC2771Context
+{
     using Address for address;
     using Strings for uint256;
 
@@ -49,6 +60,7 @@ contract ERC3526 is IERC3526, IERC3526Metadata, IERC3526Enumerable, ERC165 {
     // Contract creator
     address private _creator;
 
+    // Decimal position of values
     uint8 private _decimals;
 
     constructor(
@@ -58,7 +70,7 @@ contract ERC3526 is IERC3526, IERC3526Metadata, IERC3526Enumerable, ERC165 {
     ) {
         _name = name_;
         _symbol = symbol_;
-        _creator = msg.sender;
+        _creator = _msgSender();
         _decimals = decimals_;
     }
 
@@ -190,7 +202,7 @@ contract ERC3526 is IERC3526, IERC3526Metadata, IERC3526Enumerable, ERC165 {
         if (_indexedTokenIds[owner].length == 0) {
             _holdersCount += 1;
         }
-        _tokens[tokenId] = Token(msg.sender, owner, valid, value, slot);
+        _tokens[tokenId] = Token(_msgSender(), owner, valid, value, slot);
         _tokenIdIndex[owner][tokenId] = _indexedTokenIds[owner].length;
         _indexedTokenIds[owner].push(tokenId);
         if (valid) {
@@ -352,7 +364,7 @@ contract ERC3526 is IERC3526, IERC3526Metadata, IERC3526Enumerable, ERC165 {
 
     /// @return True if the caller is the contract's creator, false otherwise
     function _isCreator() internal view virtual returns (bool) {
-        return msg.sender == _creator;
+        return _msgSender() == _creator;
     }
 
     /// @notice Removes an entry in an array by its index

@@ -2,12 +2,13 @@
 
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 import "./ERC3526.sol";
 import "./IERC3526Consensus.sol";
 
-contract ERC3526Consensus is ERC3526, IERC3526Consensus {
+contract ERC3526Consensus is ERC3526, IERC3526Consensus, ERC2771Context {
     uint256 private _approvalRequestCount;
 
     struct ApprovalRequest {
@@ -60,12 +61,12 @@ contract ERC3526Consensus is ERC3526, IERC3526Consensus {
         virtual
         override
     {
-        require(_voters[msg.sender], "You are not a voter");
+        require(_voters[_msgSender()], "You are not a voter");
         require(
-            !_mintApprovals[msg.sender][approvalRequestId][owner],
+            !_mintApprovals[_msgSender()][approvalRequestId][owner],
             "You already approved this address"
         );
-        _mintApprovals[msg.sender][approvalRequestId][owner] = true;
+        _mintApprovals[_msgSender()][approvalRequestId][owner] = true;
         _mintApprovalCounts[approvalRequestId][owner] += 1;
         if (
             _mintApprovalCounts[approvalRequestId][owner] == _votersArray.length
@@ -82,12 +83,12 @@ contract ERC3526Consensus is ERC3526, IERC3526Consensus {
     /// @notice Cast a vote to revoke a token for a specific address
     /// @param tokenId Identifier of the token to revoke
     function approveRevoke(uint256 tokenId) public virtual override {
-        require(_voters[msg.sender], "You are not a voter");
+        require(_voters[_msgSender()], "You are not a voter");
         require(
-            !_revokeApprovals[msg.sender][tokenId],
+            !_revokeApprovals[_msgSender()][tokenId],
             "You already approved this address"
         );
-        _revokeApprovals[msg.sender][tokenId] = true;
+        _revokeApprovals[_msgSender()][tokenId] = true;
         _revokeApprovalCounts[tokenId] += 1;
         if (_revokeApprovalCounts[tokenId] == _votersArray.length) {
             _resetRevokeApprovals(tokenId);
@@ -128,7 +129,7 @@ contract ERC3526Consensus is ERC3526, IERC3526Consensus {
         virtual
         override
     {
-        _approvalRequests[_approvalRequestCount].creator = msg.sender;
+        _approvalRequests[_approvalRequestCount].creator = _msgSender();
         _approvalRequests[_approvalRequestCount].value = value;
         _approvalRequests[_approvalRequestCount].slot = slot;
         _approvalRequestCount++;
@@ -140,7 +141,7 @@ contract ERC3526Consensus is ERC3526, IERC3526Consensus {
         override
     {
         require(
-            msg.sender == _approvalRequests[approvalRequestId].creator,
+            _msgSender() == _approvalRequests[approvalRequestId].creator,
             "You are not the creator"
         );
         delete _approvalRequests[approvalRequestId];
