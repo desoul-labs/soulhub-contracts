@@ -2,13 +2,12 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 import "./ERC3526.sol";
 import "./IERC3526Delegate.sol";
 
-abstract contract ERC3526Delegate is ERC3526, IERC3526Delegate, ERC2771Context {
+abstract contract ERC3526Delegate is ERC3526, IERC3526Delegate {
     struct DelegateRequest {
         address owner;
         uint256 value;

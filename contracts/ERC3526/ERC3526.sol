@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: CC0-1.0
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/metatx/ERC2771Context.sol";
+import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
@@ -19,7 +19,7 @@ contract ERC3526 is
     IERC3526Metadata,
     IERC3526Enumerable,
     ERC165,
-    ERC2771Context
+    Context
 {
     using Address for address;
     using Strings for uint256;

@@ -2,13 +2,12 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 import "./ERC3526.sol";
 import "./IERC3526Consensus.sol";
 
-contract ERC3526Consensus is ERC3526, IERC3526Consensus, ERC2771Context {
+contract ERC3526Consensus is ERC3526, IERC3526Consensus {
     uint256 private _approvalRequestCount;
 
     struct ApprovalRequest {
