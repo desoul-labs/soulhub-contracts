@@ -50,7 +50,7 @@ abstract contract ERC3526Delegate is ERC3526, IERC3526Delegate {
     ) public virtual override {
         require(
             operators.length == delegateRequestIds.length,
-            "operators and delegateRequestIds must have the same length"
+            "ERC3526Delegate: operators and delegateRequestIds must have the same length"
         );
         bool isCreator = _isCreator();
         for (uint256 i = 0; i < operators.length; i++) {
@@ -148,7 +148,7 @@ abstract contract ERC3526Delegate is ERC3526, IERC3526Delegate {
     ) private {
         require(
             isCreator || _allowed[_msgSender()][delegateRequestId],
-            "Only contract creator or allowed operator can delegate"
+            "ERC3526Delegate: Only contract creator or allowed operator can delegate"
         );
         if (!isCreator) {
             _allowed[_msgSender()][delegateRequestId] = false;
@@ -161,7 +161,7 @@ abstract contract ERC3526Delegate is ERC3526, IERC3526Delegate {
     {
         require(
             isCreator || _allowed[_msgSender()][delegateRequestId],
-            "Only contract creator or allowed operator can mint"
+            "ERC3526Delegate: Only contract creator or allowed operator can mint"
         );
         if (!isCreator) {
             _allowed[_msgSender()][delegateRequestId] = false;
@@ -178,7 +178,11 @@ abstract contract ERC3526Delegate is ERC3526, IERC3526Delegate {
         uint256 value,
         uint256 slot
     ) external virtual override {
-        require(_isCreator(), "You are not the creator");
+        require(_isCreator(), "ERC3526Delegate: You are not the creator");
+        require(
+            value != 0,
+            "ERC3526Delegate: Value of Delegate Request cannot be 0"
+        );
         _delegateRequests[_delegateRequestCount].owner = owner;
         _delegateRequests[_delegateRequestCount].value = value;
         _delegateRequests[_delegateRequestCount].slot = slot;
@@ -190,7 +194,7 @@ abstract contract ERC3526Delegate is ERC3526, IERC3526Delegate {
         virtual
         override
     {
-        require(_isCreator(), "You are not the creator");
+        require(_isCreator(), "ERC3526Delegate: You are not the creator");
         delete _delegateRequests[delegateRequestId];
     }
 }

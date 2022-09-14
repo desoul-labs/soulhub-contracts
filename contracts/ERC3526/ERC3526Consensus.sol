@@ -67,10 +67,10 @@ contract ERC3526Consensus is ERC3526, IERC3526Consensus {
         virtual
         override
     {
-        require(_voters[_msgSender()], "You are not a voter");
+        require(_voters[_msgSender()], "ERC3526Consensus: You are not a voter");
         require(
             !_mintApprovals[_msgSender()][approvalRequestId][owner],
-            "You already approved this address"
+            "ERC3526Consensus: You already approved this address"
         );
         _mintApprovals[_msgSender()][approvalRequestId][owner] = true;
         _mintApprovalCounts[approvalRequestId][owner] += 1;
@@ -91,10 +91,10 @@ contract ERC3526Consensus is ERC3526, IERC3526Consensus {
      *  @param tokenId Identifier of the token to revoke
      */
     function approveRevoke(uint256 tokenId) public virtual override {
-        require(_voters[_msgSender()], "You are not a voter");
+        require(_voters[_msgSender()], "ERC3526Consensus: You are not a voter");
         require(
             !_revokeApprovals[_msgSender()][tokenId],
-            "You already approved this address"
+            "ERC3526Consensus: You already approved this address"
         );
         _revokeApprovals[_msgSender()][tokenId] = true;
         _revokeApprovalCounts[tokenId] += 1;
@@ -137,6 +137,10 @@ contract ERC3526Consensus is ERC3526, IERC3526Consensus {
         virtual
         override
     {
+        require(
+            value != 0,
+            "ERC3526Consensus: Value of Approval Request cannot be 0"
+        );
         _approvalRequests[_approvalRequestCount].creator = _msgSender();
         _approvalRequests[_approvalRequestCount].value = value;
         _approvalRequests[_approvalRequestCount].slot = slot;
@@ -150,7 +154,7 @@ contract ERC3526Consensus is ERC3526, IERC3526Consensus {
     {
         require(
             _msgSender() == _approvalRequests[approvalRequestId].creator,
-            "You are not the creator"
+            "ERC3526Consensus: You are not the creator"
         );
         delete _approvalRequests[approvalRequestId];
     }

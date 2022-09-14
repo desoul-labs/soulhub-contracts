@@ -220,7 +220,7 @@ abstract contract ERC3526 is
     ) internal {
         require(
             _tokens[tokenId].owner == address(0),
-            "Cannot mint an assigned token"
+            "ERC3526: Cannot mint an assigned token"
         );
         if (_indexedTokenIds[owner].length == 0) {
             _holdersCount += 1;
@@ -373,7 +373,7 @@ abstract contract ERC3526 is
         returns (uint256)
     {
         uint256[] storage ids = _indexedTokenIds[owner];
-        require(index < ids.length, "Token does not exist");
+        require(index < ids.length, "ERC3526: Token does not exist");
         return ids[index];
     }
 
@@ -406,7 +406,7 @@ abstract contract ERC3526 is
      */
     function _revoke(uint256 tokenId) internal virtual {
         _exists(tokenId);
-        require(_tokens[tokenId].valid, "Token is already invalid");
+        require(_tokens[tokenId].valid, "ERC3526: Token is already invalid");
         _tokens[tokenId].valid = false;
         assert(_numberOfValidTokens[_tokens[tokenId].owner] > 0);
         _numberOfValidTokens[_tokens[tokenId].owner] -= 1;
@@ -447,7 +447,7 @@ abstract contract ERC3526 is
         returns (Token storage)
     {
         Token storage token = _tokens[tokenId];
-        require(token.owner != address(0), "Token does not exist");
+        require(token.owner != address(0), "ERC3526: Token does not exist");
         return token;
     }
 }
