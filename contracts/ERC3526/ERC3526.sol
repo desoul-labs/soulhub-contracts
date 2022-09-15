@@ -5,6 +5,8 @@ import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 
 import "./IERC3526.sol";
 import "./IERC3526Metadata.sol";
@@ -19,7 +21,8 @@ abstract contract ERC3526 is
     IERC3526Metadata,
     IERC3526Enumerable,
     ERC165,
-    Context
+    Ownable,
+    AccessControlEnumerable
 {
     using Address for address;
     using Strings for uint256;
@@ -57,9 +60,6 @@ abstract contract ERC3526 is
     // Total number of token holders
     uint256 private _holdersCount;
 
-    // Contract creator
-    address private _creator;
-
     // Decimal position of values
     uint8 private _decimals;
 
@@ -67,10 +67,9 @@ abstract contract ERC3526 is
         string memory name_,
         string memory symbol_,
         uint8 decimals_
-    ) {
+    ) Ownable() {
         _name = name_;
         _symbol = symbol_;
-        _creator = _msgSender();
         _decimals = decimals_;
     }
 
@@ -78,7 +77,7 @@ abstract contract ERC3526 is
         public
         view
         virtual
-        override(ERC165, IERC165)
+        override(ERC165, IERC165, AccessControlEnumerable)
         returns (bool)
     {
         return
@@ -417,7 +416,7 @@ abstract contract ERC3526 is
      *  @return True if the caller is the contract's creator, false otherwise
      */
     function _isCreator() internal view virtual returns (bool) {
-        return _msgSender() == _creator;
+        return _msgSender() == owner();
     }
 
     /**
@@ -449,5 +448,13 @@ abstract contract ERC3526 is
         Token storage token = _tokens[tokenId];
         require(token.owner != address(0), "ERC3526: Token does not exist");
         return token;
+    }
+
+    function _getEmittedCount() internal view returns (uint256) {
+        return _emittedCount;
+    }
+
+    function _increaseEmittedCount() internal {
+        _emittedCount++;
     }
 }
