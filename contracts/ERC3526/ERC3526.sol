@@ -1,6 +1,7 @@
 //SPDX-License-Identifier: CC0-1.0
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
@@ -26,6 +27,7 @@ abstract contract ERC3526 is
 {
     using Address for address;
     using Strings for uint256;
+    using Counters for Counters.Counter;
 
     // Token data
     struct Token {
@@ -55,10 +57,10 @@ abstract contract ERC3526 is
     string private _symbol;
 
     // Total number of tokens emitted
-    uint256 private _emittedCount;
+    Counters.Counter private _emittedCount;
 
     // Total number of token holders
-    uint256 private _holdersCount;
+    Counters.Counter private _holdersCount;
 
     // Decimal position of values
     uint8 private _decimals;
@@ -71,6 +73,7 @@ abstract contract ERC3526 is
         _name = name_;
         _symbol = symbol_;
         _decimals = decimals_;
+        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
 
     function supportsInterface(bytes4 interfaceId)
@@ -196,10 +199,10 @@ abstract contract ERC3526 is
         uint256 value,
         uint256 slot
     ) internal virtual returns (uint256 tokenId) {
-        tokenId = _emittedCount;
+        tokenId = Counters.current(_emittedCount);
         _mintUnsafe(owner, tokenId, value, slot, true);
         emit Minted(owner, tokenId, value);
-        _emittedCount += 1;
+        Counters.increment(_emittedCount);
     }
 
     /**
@@ -222,7 +225,7 @@ abstract contract ERC3526 is
             "ERC3526: Cannot mint an assigned token"
         );
         if (_indexedTokenIds[owner].length == 0) {
-            _holdersCount += 1;
+            Counters.increment(_holdersCount);
         }
         _tokens[tokenId] = Token(_msgSender(), owner, valid, value, slot);
         _tokenIdIndex[owner][tokenId] = _indexedTokenIds[owner].length;
@@ -252,8 +255,8 @@ abstract contract ERC3526 is
             _tokenIdIndex[owner][tokenId]
         );
         if (_indexedTokenIds[owner].length == 0) {
-            assert(_holdersCount > 0);
-            _holdersCount -= 1;
+            assert(Counters.current(_holdersCount) > 0);
+            Counters.decrement(_holdersCount);
         }
         delete _tokenIdIndex[owner][tokenId];
 
@@ -348,14 +351,14 @@ abstract contract ERC3526 is
      * @return emittedCount Number of tokens emitted
      */
     function emittedCount() public view override returns (uint256) {
-        return _emittedCount;
+        return Counters.current(_emittedCount);
     }
 
     /**
      * @return holdersCount Number of token holders
      */
     function holdersCount() public view override returns (uint256) {
-        return _holdersCount;
+        return Counters.current(_holdersCount);
     }
 
     /**
@@ -450,11 +453,7 @@ abstract contract ERC3526 is
         return token;
     }
 
-    function _getEmittedCount() internal view returns (uint256) {
-        return _emittedCount;
-    }
-
     function _increaseEmittedCount() internal {
-        _emittedCount++;
+        Counters.increment(_emittedCount);
     }
 }

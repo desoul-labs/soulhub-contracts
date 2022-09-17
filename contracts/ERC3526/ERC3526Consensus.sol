@@ -22,7 +22,6 @@ contract ERC3526Consensus is ERC3526, IERC3526Consensus {
     mapping(uint256 => ApprovalRequest) private _approvalRequests;
 
     // Consensus voters addresses
-    mapping(address => bool) private _voters;
     address[] private _votersArray;
 
     // Mapping from voter to mint approvals
@@ -38,6 +37,8 @@ contract ERC3526Consensus is ERC3526, IERC3526Consensus {
     // Mapping from tokenId to revoke counts
     mapping(uint256 => uint256) private _revokeApprovalCounts;
 
+    bytes32 public constant VOTER_ROLE = keccak256("VOTER_ROLE");
+
     constructor(
         string memory name_,
         string memory symbol_,
@@ -46,7 +47,7 @@ contract ERC3526Consensus is ERC3526, IERC3526Consensus {
     ) ERC3526(name_, symbol_, decimals_) {
         _votersArray = voters_;
         for (uint256 i = 0; i < voters_.length; i++) {
-            _voters[voters_[i]] = true;
+            _setupRole(VOTER_ROLE, voters_[i]);
         }
     }
 
@@ -66,8 +67,8 @@ contract ERC3526Consensus is ERC3526, IERC3526Consensus {
         public
         virtual
         override
+        onlyRole(VOTER_ROLE)
     {
-        require(_voters[_msgSender()], "ERC3526Consensus: You are not a voter");
         require(
             !_mintApprovals[_msgSender()][approvalRequestId][owner],
             "ERC3526Consensus: You already approved this address"
@@ -90,8 +91,12 @@ contract ERC3526Consensus is ERC3526, IERC3526Consensus {
      *  @notice Cast a vote to revoke a token for a specific address
      *  @param tokenId Identifier of the token to revoke
      */
-    function approveRevoke(uint256 tokenId) public virtual override {
-        require(_voters[_msgSender()], "ERC3526Consensus: You are not a voter");
+    function approveRevoke(uint256 tokenId)
+        public
+        virtual
+        override
+        onlyRole(VOTER_ROLE)
+    {
         require(
             !_revokeApprovals[_msgSender()][tokenId],
             "ERC3526Consensus: You already approved this address"
