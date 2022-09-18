@@ -62,17 +62,9 @@ abstract contract ERC3526 is
     // Total number of token holders
     Counters.Counter private _holdersCount;
 
-    // Decimal position of values
-    uint8 private _decimals;
-
-    constructor(
-        string memory name_,
-        string memory symbol_,
-        uint8 decimals_
-    ) Ownable() {
+    constructor(string memory name_, string memory symbol_) Ownable() {
         _name = name_;
         _symbol = symbol_;
-        _decimals = decimals_;
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
 
@@ -107,13 +99,6 @@ abstract contract ERC3526 is
                     )
                 )
                 : "";
-    }
-
-    /**
-     * @notice get the decimal position.
-     */
-    function valueDecimals() public view virtual override returns (uint8) {
-        return _decimals;
     }
 
     /**
@@ -203,6 +188,24 @@ abstract contract ERC3526 is
         _mintUnsafe(owner, tokenId, value, slot, true);
         emit Minted(owner, tokenId, value);
         Counters.increment(_emittedCount);
+    }
+
+    function _mintBatch(
+        address owner,
+        uint256[] memory value,
+        uint256 slot
+    ) internal virtual returns (uint256[] memory tokenId) {
+        for (uint256 i = 0; i < value.length; i++) {
+            tokenId[i] = Counters.current(_emittedCount);
+            _mintUnsafe(owner, tokenId[i], value[i], slot, true);
+            emit Minted(owner, tokenId[i], value[i]);
+            Counters.increment(_emittedCount);
+        }
+    }
+
+    function _charge(uint256 tokenId, uint256 value) internal virtual {
+        require(_exists(tokenId), "ERC3526: token does not exist");
+        _tokens[tokenId].value += value;
     }
 
     /**

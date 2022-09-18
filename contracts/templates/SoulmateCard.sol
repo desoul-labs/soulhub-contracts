@@ -11,7 +11,7 @@ contract SoulmateCard is ERC3526Expirable {
         string memory name,
         string memory symbol,
         string memory baseTokenURI
-    ) ERC3526(name, symbol, 0) {
+    ) ERC3526(name, symbol) {
         _baseTokenURI = baseTokenURI;
     }
 
@@ -29,7 +29,12 @@ contract SoulmateCard is ERC3526Expirable {
         return super.supportsInterface(interfaceId);
     }
 
-    function mint(address owner) public onlyOwner {
-        _mint(owner, 1, 0);
+    function mintNonFungible(address owner, uint256 slot) public onlyOwner {
+        require(slot != 0, "SoulmateCard: slot 0 is for points");
+        _mint(owner, 1, slot);
+    }
+
+    function mintFungible(address owner, uint256 value) public onlyOwner {
+        _mint(owner, value, 0);
     }
 }

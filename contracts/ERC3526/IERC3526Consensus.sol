@@ -22,4 +22,8 @@ interface IERC3526Consensus is IERC3526 {
     function createApprovalRequest(uint256 value, uint256 slot) external;
 
     function removeApprovalRequest(uint256 approvalRequestId) external;
+
+    function addVoter(address newVoter) external;
+
+    function removeVoter(uint256 index) external;
 }

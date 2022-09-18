@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "./ERC3526.sol";
 import "./IERC3526Consensus.sol";
 
-contract ERC3526Consensus is ERC3526, IERC3526Consensus {
+abstract contract ERC3526Consensus is ERC3526, IERC3526Consensus {
     // Number of approval requests
     uint256 private _approvalRequestCount;
 
@@ -42,9 +42,8 @@ contract ERC3526Consensus is ERC3526, IERC3526Consensus {
     constructor(
         string memory name_,
         string memory symbol_,
-        uint8 decimals_,
         address[] memory voters_
-    ) ERC3526(name_, symbol_, decimals_) {
+    ) ERC3526(name_, symbol_) {
         _votersArray = voters_;
         for (uint256 i = 0; i < voters_.length; i++) {
             _setupRole(VOTER_ROLE, voters_[i]);
@@ -162,5 +161,33 @@ contract ERC3526Consensus is ERC3526, IERC3526Consensus {
             "ERC3526Consensus: You are not the creator"
         );
         delete _approvalRequests[approvalRequestId];
+    }
+
+    function addVoter(address newVoter) public onlyOwner {
+        require(
+            !hasRole(VOTER_ROLE, newVoter),
+            "ERC3526Consensus: newVoter is already a voter"
+        );
+        _votersArray[_votersArray.length] = newVoter;
+        _setupRole(VOTER_ROLE, newVoter);
+    }
+
+    function removeVoter(uint256 index) public onlyOwner {
+        require(
+            index < _votersArray.length,
+            "ERC3526Consensus: Index overflow"
+        );
+        _revokeRole(VOTER_ROLE, _votersArray[index]);
+        _removeFromUnorderedArray(_votersArray, index);
+    }
+
+    function _removeFromUnorderedArray(address[] storage array, uint256 index)
+        internal
+    {
+        require(index < array.length, "ERC3526Consensus: Index overflow");
+        if (index != array.length - 1) {
+            array[index] = array[array.length - 1];
+        }
+        array.pop();
     }
 }
