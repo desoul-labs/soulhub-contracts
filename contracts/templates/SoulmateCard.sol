@@ -29,12 +29,30 @@ contract SoulmateCard is ERC3526Expirable {
         return super.supportsInterface(interfaceId);
     }
 
-    function mintNonFungible(address owner, uint256 slot) public onlyOwner {
+    function mintNonFungible(
+        address owner,
+        uint256 slot,
+        uint256 date
+    ) public onlyOwner returns (uint256) {
         require(slot != 0, "SoulmateCard: slot 0 is for points");
-        _mint(owner, 1, slot);
+        uint256 tokenId = _mint(owner, 1, slot);
+        _setExpiryDate(tokenId, date);
+        return tokenId;
     }
 
     function mintFungible(address owner, uint256 value) public onlyOwner {
         _mint(owner, value, 0);
+    }
+
+    function charge(uint256 tokenId, uint256 value) public onlyOwner {
+        require(
+            _getTokenOrRevert(tokenId).slot == 0,
+            "SoulmateCard: only points can be charged"
+        );
+        _charge(tokenId, value);
+    }
+
+    function revoke(uint256 tokenId) public onlyOwner {
+        _revoke(tokenId);
     }
 }

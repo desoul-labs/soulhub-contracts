@@ -17,6 +17,8 @@ interface IERC3526 is IERC165 {
     /// Event emitted when token `tokenId` of `owner` is revoked
     event Revoked(address indexed owner, uint256 indexed tokenId);
 
+    event Charged(uint256 tokenId, uint256 value);
+
     /**
      * @dev MUST emit when the slot of a token is set or changed.
      * @param tokenId The token of which slot is set or changed

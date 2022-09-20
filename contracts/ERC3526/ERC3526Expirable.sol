@@ -44,7 +44,11 @@ abstract contract ERC3526Expirable is IERC3526Expirable, ERC3526 {
      * Requirements:
      * - The new date must be after the current expiry date.
      */
-    function _setExpiryDate(uint256 id, uint256 date) internal virtual {
+    function _setExpiryDate(uint256 id, uint256 date)
+        internal
+        virtual
+        onlyOwner
+    {
         require(
             date > block.timestamp,
             "ERC3526Expirable: Expiry date cannot be in the past"

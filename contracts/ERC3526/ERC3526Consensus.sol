@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "./ERC3526.sol";
 import "./IERC3526Consensus.sol";
 
-abstract contract ERC3526Consensus is ERC3526, IERC3526Consensus {
+abstract contract ERC3526Consensus is IERC3526Consensus, ERC3526 {
     // Number of approval requests
     uint256 private _approvalRequestCount;
 
@@ -45,6 +45,7 @@ abstract contract ERC3526Consensus is ERC3526, IERC3526Consensus {
         address[] memory voters_
     ) ERC3526(name_, symbol_) {
         _votersArray = voters_;
+        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         for (uint256 i = 0; i < voters_.length; i++) {
             _setupRole(VOTER_ROLE, voters_[i]);
         }
