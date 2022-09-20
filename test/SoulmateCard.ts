@@ -15,7 +15,7 @@ describe('SoulmateCard', function () {
 
     await soulmateContract.deployed()
 
-    await soulmateContract.mintNonFungible(owner.address, 1)
+    await soulmateContract.mintNonFungible(owner.address, 1, 166461088100)
 
     expect(await soulmateContract['balanceOf(uint256)'](0)).equal(1)
 
