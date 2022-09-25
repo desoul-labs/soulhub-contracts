@@ -4,11 +4,6 @@ on:
   push:
     branches:
       - 'release/**'
-    paths:
-      - 'contracts/**'
-      - '.github/workflows/solidity-release.yml'
-      - '**.json'
-      - '**.yaml'
 
 jobs:
   build:

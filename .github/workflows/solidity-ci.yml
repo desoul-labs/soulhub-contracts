@@ -11,6 +11,14 @@ on:
       - '**.json'
       - '**.yaml'
   pull_request:
+    branches:
+      - '**'
+    paths:
+      - '**.ts'
+      - 'contracts/**'
+      - '.github/workflows/solidity-ci.yml'
+      - '**.json'
+      - '**.yaml'
 
 env:
   ALCHEMY_API_URL: ${{ secrets.ALCHEMY_API_URL }}
