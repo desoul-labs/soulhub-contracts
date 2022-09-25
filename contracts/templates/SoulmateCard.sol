@@ -1,17 +1,16 @@
-// SPDX-License-Identifier: CC0-1.0
-
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "../ERC3526/ERC3526Expirable.sol";
+import "../ERC5342/ERC5342Expirable.sol";
 
-contract SoulmateCard is ERC3526Expirable {
+contract SoulmateCard is ERC5342Expirable {
     string private _baseTokenURI;
 
     constructor(
         string memory name,
         string memory symbol,
         string memory baseTokenURI
-    ) ERC3526(name, symbol) {
+    ) ERC5342(name, symbol) {
         _baseTokenURI = baseTokenURI;
     }
 
@@ -23,7 +22,7 @@ contract SoulmateCard is ERC3526Expirable {
         public
         view
         virtual
-        override(ERC3526, IERC165)
+        override(ERC5342, IERC165)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
