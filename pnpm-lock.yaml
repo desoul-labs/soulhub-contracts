@@ -10,7 +10,7 @@ importers:
       '@nomiclabs/hardhat-solhint': 2.0.1
       '@openzeppelin/contracts': 4.7.3
       '@openzeppelin/hardhat-upgrades': 1.20.0
-      '@tenderly/hardhat-tenderly': ^1.1.6
+      '@tenderly/hardhat-tenderly': 1.1.6
       '@typechain/hardhat': 6.1.3
       '@types/node': 18.7.13
       '@typescript-eslint/eslint-plugin': 5.38.0
@@ -2410,8 +2410,8 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
-      is-text-path: 1.0.1
       JSONStream: 1.3.5
+      is-text-path: 1.0.1
       lodash: 4.17.21
       meow: 8.1.2
       split2: 3.2.2
@@ -3373,7 +3373,7 @@ packages:
       - utf-8-validate
 
   /ethjs-unit/0.1.6:
-    resolution: {integrity: sha1-xmWSHkduh7ziqdWIpv4EBbLEFpk=}
+    resolution: {integrity: sha512-/Sn9Y0oKl0uqQuvgFk/zQgR7aw1g36qX/jzSQ5lSwlO0GigPymk4eGQfeNTD03w1dPOqfz8V77Cy43jH56pagw==}
     engines: {node: '>=6.5.0', npm: '>=3'}
     dependencies:
       bn.js: 4.11.6
@@ -5230,7 +5230,7 @@ packages:
     dev: true
 
   /number-to-bn/1.7.0:
-    resolution: {integrity: sha1-uzYjWS9+X54AMLGXe9QaDFP+HqA=}
+    resolution: {integrity: sha512-wsJ9gfSz1/s4ZsJN01lyonwuxA1tml6X1yBDnfpMglypcBRFZZkus26EdPSlqS5GJfYddVZa22p3VNb3z5m5Ig==}
     engines: {node: '>=6.5.0', npm: '>=3'}
     dependencies:
       bn.js: 4.11.6
@@ -6952,7 +6952,7 @@ packages:
     dev: true
 
   /verror/1.10.0:
-    resolution: {integrity: sha1-OhBcoXBTr1XW4nDB+CiGguGNpAA=}
+    resolution: {integrity: sha512-ZZKSmDAEFOijERBLkmYfJ+vmk3w+7hOLYDNkRCuRuMJGEmqYNCNLyBBFwWKVMhfwaEF3WOd0Zlw86U/WC/+nYw==}
     engines: {'0': node >=0.6.0}
     dependencies:
       assert-plus: 1.0.0
@@ -7089,7 +7089,7 @@ packages:
         optional: true
 
   /xmlhttprequest/1.8.0:
-    resolution: {integrity: sha1-Z/4HXFwk/vOfnWX197f+dRcZaPw=}
+    resolution: {integrity: sha512-58Im/U0mlVBLM38NdZjHyhuMtCqa61469k2YP/AaPbvCoV9aQGUpbJBj1QRm2ytRiVQBD/fsw7L2bJGDVQswBA==}
     engines: {node: '>=0.4.0'}
     dev: true
 
