@@ -120,12 +120,12 @@ abstract contract ERC5342 is
     }
 
     function _mintBatch(
-        address soul,
-        uint256[] memory values,
+        address[] memory souls,
+        uint256 value,
         uint256 slot
-    ) internal virtual returns (uint256[] memory tokenId) {
-        for (uint256 i = 0; i < values.length; i++) {
-            tokenId[i] = _mint(soul, values[i], slot);
+    ) internal virtual returns (uint256[] memory tokenIds) {
+        for (uint256 i = 0; i < souls.length; i++) {
+            tokenIds[i] = _mint(souls[i], value, slot);
         }
     }
 

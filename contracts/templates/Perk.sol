@@ -66,4 +66,22 @@ contract Perk is
     function revoke(uint256 tokenId) public virtual onlyOwner {
         _revoke(tokenId);
     }
+
+    function mintBatch(
+        address[] memory souls,
+        uint256 value,
+        uint256 slot,
+        uint256 expiryDate,
+        bool shadowed
+    ) public virtual onlyOwner {
+        uint256[] memory tokenIds = _mintBatch(souls, value, slot);
+        for (uint256 i = 0; i < tokenIds.length; i++) {
+            if (shadowed) _shadow(tokenIds[i]);
+            _setExpiryDate(tokenIds[i], expiryDate);
+        }
+    }
+
+    function revokeBatch(uint256[] memory tokenIds) public virtual onlyOwner {
+        _revokeBatch(tokenIds);
+    }
 }
