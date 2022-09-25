@@ -3,7 +3,8 @@ name: Solidity CI
 on:
   push:
     branches:
-      - '**'
+      - main
+      - dev
     paths:
       - '**.ts'
       - 'contracts/**'

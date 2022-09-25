@@ -1,0 +1,16 @@
+{
+  "bumpFiles": [
+    {
+      "filename": "package.json",
+      "type": "json"
+    },
+    {
+      "filename": "typechain/package.json",
+      "type": "json"
+    },
+    {
+      "filename": "contracts/package.json",
+      "type": "json"
+    }
+  ]
+}
