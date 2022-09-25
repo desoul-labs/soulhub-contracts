@@ -5,7 +5,15 @@ import { networks } from './constants/networks'
 import * as tdly from '@tenderly/hardhat-tenderly'
 
 const config: HardhatUserConfig = {
-  solidity: '0.8.16',
+  solidity: {
+    version: '0.8.17',
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 1000,
+      },
+    },
+  },
   ...(process.env.NODE_ENV === 'development' ? { defaultNetwork: 'hardhat' } : { networks }),
   typechain: {
     outDir: './typechain',
