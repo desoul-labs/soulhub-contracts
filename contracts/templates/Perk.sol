@@ -1,18 +1,19 @@
-// SPDX-License-Identifier: CC0-1.0
+// SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.0;
 
-import "../ERC3526/ERC3526Expirable.sol";
-import "../ERC3526/ERC3526Consensus.sol";
-import "../ERC3526/ERC3526Delegate.sol";
-import "../ERC3526/ERC3526Shadowing.sol";
-import "../ERC3526/ERC3526SlotEnumerable.sol";
+import "../ERC5342/ERC5342Expirable.sol";
+import "../ERC5342/ERC5342Consensus.sol";
+import "../ERC5342/ERC5342Delegate.sol";
+import "../ERC5342/ERC5342Shadow.sol";
+import "../ERC5342/ERC5342SlotEnumerable.sol";
 
 contract Perk is
-    ERC3526Expirable,
-    ERC3526Consensus,
-    ERC3526Delegate,
-    ERC3526SlotEnumerable
+    ERC5342Expirable,
+    ERC5342Consensus,
+    ERC5342Delegate,
+    ERC5342SlotEnumerable,
+    ERC5342Shadow
 {
     string private _baseTokenURI;
 
@@ -21,7 +22,7 @@ contract Perk is
         string memory symbol,
         address[] memory voters,
         string memory baseTokenURI
-    ) ERC3526Consensus(name, symbol, voters) {
+    ) ERC5342Consensus(name, symbol, voters) {
         _baseTokenURI = baseTokenURI;
     }
 
@@ -33,9 +34,36 @@ contract Perk is
         public
         view
         virtual
-        override(ERC3526, IERC165, ERC3526Consensus, ERC3526Delegate)
+        override(ERC5342, IERC165, ERC5342Consensus, ERC5342Delegate)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
+    }
+
+    function _beforeView(uint256 tokenId)
+        internal
+        view
+        virtual
+        override(ERC5342, ERC5342Shadow)
+    {
+        ERC5342Shadow._beforeView(tokenId);
+    }
+
+    function mint(
+        address soul,
+        uint256 value,
+        uint256 slot,
+        uint256 expiryDate,
+        bool shadowed
+    ) public virtual onlyOwner {
+        uint256 tokenId = _mint(soul, value, slot);
+        if (shadowed) {
+            _shadow(tokenId);
+        }
+        _setExpiryDate(tokenId, expiryDate);
+    }
+
+    function revoke(uint256 tokenId) public virtual onlyOwner {
+        _revoke(tokenId);
     }
 }

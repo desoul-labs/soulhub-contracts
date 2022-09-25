@@ -34,7 +34,7 @@ interface IERC3526Delegate is IERC3526 {
     function issuerOf(uint256 tokenId) external view returns (address);
 
     function createDelegateRequest(
-        address delegateRequestId,
+        address soul,
         uint256 value,
         uint256 slot
     ) external;
