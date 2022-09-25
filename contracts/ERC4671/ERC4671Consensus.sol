@@ -24,9 +24,13 @@ contract ERC4671Consensus is ERC4671, IERC4671Consensus {
     // Mapping from tokenId to revoke counts
     mapping(uint256 => uint256) private _revokeApprovalCounts;
 
-    constructor (string memory name_, string memory symbol_, address[] memory voters_) ERC4671(name_, symbol_) {
+    constructor(
+        string memory name_,
+        string memory symbol_,
+        address[] memory voters_
+    ) ERC4671(name_, symbol_) {
         _votersArray = voters_;
-        for (uint256 i=0; i<voters_.length; i++) {
+        for (uint256 i = 0; i < voters_.length; i++) {
             _voters[voters_[i]] = true;
         }
     }
@@ -41,7 +45,10 @@ contract ERC4671Consensus is ERC4671, IERC4671Consensus {
     /// @param owner Address for whom to mint the token
     function approveMint(address owner) public virtual override {
         require(_voters[msg.sender], "You are not a voter");
-        require(!_mintApprovals[msg.sender][owner], "You already approved this address");
+        require(
+            !_mintApprovals[msg.sender][owner],
+            "You already approved this address"
+        );
         _mintApprovals[msg.sender][owner] = true;
         _mintApprovalCounts[owner] += 1;
         if (_mintApprovalCounts[owner] == _votersArray.length) {
@@ -54,7 +61,10 @@ contract ERC4671Consensus is ERC4671, IERC4671Consensus {
     /// @param tokenId Identifier of the token to revoke
     function approveRevoke(uint256 tokenId) public virtual override {
         require(_voters[msg.sender], "You are not a voter");
-        require(!_revokeApprovals[msg.sender][tokenId], "You already approved this address");
+        require(
+            !_revokeApprovals[msg.sender][tokenId],
+            "You already approved this address"
+        );
         _revokeApprovals[msg.sender][tokenId] = true;
         _revokeApprovalCounts[tokenId] += 1;
         if (_revokeApprovalCounts[tokenId] == _votersArray.length) {
@@ -63,21 +73,27 @@ contract ERC4671Consensus is ERC4671, IERC4671Consensus {
         }
     }
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(IERC165, ERC4671) returns (bool) {
-        return 
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(IERC165, ERC4671)
+        returns (bool)
+    {
+        return
             interfaceId == type(IERC4671Consensus).interfaceId ||
             super.supportsInterface(interfaceId);
     }
 
     function _resetMintApprovals(address owner) private {
-        for (uint256 i=0; i<_votersArray.length; i++) {
+        for (uint256 i = 0; i < _votersArray.length; i++) {
             _mintApprovals[_votersArray[i]][owner] = false;
         }
         _mintApprovalCounts[owner] = 0;
     }
 
     function _resetRevokeApprovals(uint256 tokenId) private {
-        for (uint256 i=0; i<_votersArray.length; i++) {
+        for (uint256 i = 0; i < _votersArray.length; i++) {
             _revokeApprovals[_votersArray[i]][tokenId] = false;
         }
         _revokeApprovalCounts[tokenId] = 0;

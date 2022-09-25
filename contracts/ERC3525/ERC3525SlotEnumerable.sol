@@ -24,7 +24,13 @@ abstract contract ERC3525SlotEnumerable is ERC3525, IERC3525SlotEnumerable {
         return _allSlots.length;
     }
 
-    function slotByIndex(uint256 index_) public view virtual override returns (uint256) {
+    function slotByIndex(uint256 index_)
+        public
+        view
+        virtual
+        override
+        returns (uint256)
+    {
         require(
             index_ < ERC3525SlotEnumerable.slotCount(),
             "ERC3525SlotEnumerable: slot index out of bounds"
@@ -38,14 +44,26 @@ abstract contract ERC3525SlotEnumerable is ERC3525, IERC3525SlotEnumerable {
             _allSlots[_allSlotsIndex[slot_]].slot == slot_;
     }
 
-    function tokenSupplyInSlot(uint256 slot_) public view virtual override returns (uint256) {
+    function tokenSupplyInSlot(uint256 slot_)
+        public
+        view
+        virtual
+        override
+        returns (uint256)
+    {
         if (!_slotExists(slot_)) {
             return 0;
         }
         return _allSlots[_allSlotsIndex[slot_]].slotTokens.length;
     }
 
-    function tokenInSlotByIndex(uint256 slot_, uint256 index_) public view virtual override returns (uint256) {
+    function tokenInSlotByIndex(uint256 slot_, uint256 index_)
+        public
+        view
+        virtual
+        override
+        returns (uint256)
+    {
         require(
             index_ < ERC3525SlotEnumerable.tokenSupplyInSlot(slot_),
             "ERC3525SlotEnumerable: slot token index out of bounds"
@@ -53,15 +71,25 @@ abstract contract ERC3525SlotEnumerable is ERC3525, IERC3525SlotEnumerable {
         return _allSlots[_allSlotsIndex[slot_]].slotTokens[index_];
     }
 
-    function _tokenExistsInSlot(uint256 slot_, uint256 tokenId_) private view returns (bool) {
+    function _tokenExistsInSlot(uint256 slot_, uint256 tokenId_)
+        private
+        view
+        returns (bool)
+    {
         SlotData storage slotData = _allSlots[_allSlotsIndex[slot_]];
         return
             slotData.slotTokens.length > 0 &&
             slotData.slotTokens[_slotTokensIndex[slot_][tokenId_]] == tokenId_;
     }
 
-    function _beforeValueTransfer( address from_, address to_, uint256 fromTokenId_, uint256 toTokenId_, uint256 slot_, 
-                                    uint256 value_) internal virtual override {
+    function _beforeValueTransfer(
+        address from_,
+        address to_,
+        uint256 fromTokenId_,
+        uint256 toTokenId_,
+        uint256 slot_,
+        uint256 value_
+    ) internal virtual override {
         if (from_ == address(0) && fromTokenId_ == 0 && !_slotExists(slot_)) {
             SlotData memory slotData = SlotData({
                 slot: slot_,
@@ -76,8 +104,14 @@ abstract contract ERC3525SlotEnumerable is ERC3525, IERC3525SlotEnumerable {
         value_;
     }
 
-    function _afterValueTransfer( address from_, address to_, uint256 fromTokenId_, uint256 toTokenId_, uint256 slot_,
-        uint256 value_) internal virtual override {
+    function _afterValueTransfer(
+        address from_,
+        address to_,
+        uint256 fromTokenId_,
+        uint256 toTokenId_,
+        uint256 slot_,
+        uint256 value_
+    ) internal virtual override {
         if (
             from_ == address(0) &&
             fromTokenId_ == 0 &&
@@ -101,13 +135,17 @@ abstract contract ERC3525SlotEnumerable is ERC3525, IERC3525SlotEnumerable {
         _allSlots.push(slotData);
     }
 
-    function _addTokenToSlotEnumeration(uint256 slot_, uint256 tokenId_) private {
+    function _addTokenToSlotEnumeration(uint256 slot_, uint256 tokenId_)
+        private
+    {
         SlotData storage slotData = _allSlots[_allSlotsIndex[slot_]];
         _slotTokensIndex[slot_][tokenId_] = slotData.slotTokens.length;
         slotData.slotTokens.push(tokenId_);
     }
 
-    function _removeTokenFromSlotEnumeration(uint256 slot_, uint256 tokenId_) private {
+    function _removeTokenFromSlotEnumeration(uint256 slot_, uint256 tokenId_)
+        private
+    {
         SlotData storage slotData = _allSlots[_allSlotsIndex[slot_]];
         uint256 lastTokenIndex = slotData.slotTokens.length - 1;
         uint256 lastTokenId = slotData.slotTokens[lastTokenIndex];

@@ -1,25 +1,28 @@
-import { writeFileSync } from 'fs'
 import { ethers } from 'hardhat'
-import { join } from 'path'
 
-async function main (): Promise<void> {
-  const membershipFactory = await ethers.getContractFactory('MembershipCard')
-  const membershipContract = await membershipFactory.deploy(
-    'SoularisMember',
-    'SMEM',
-    'https://js6azx7pn9.execute-api.ap-northeast-1.amazonaws.com/assets/membership/',
-    ['0xf786867559B705f0D3B3ec7Dc1459A6f6023D975']
+async function main(): Promise<void> {
+  const perkFactory = await ethers.getContractFactory('Perk')
+  const perkContract = await perkFactory.deploy(
+    'SoularisPerk',
+    'PERK',
+    ['0xf786867559B705f0D3B3ec7Dc1459A6f6023D975'],
+    'https://soularis-demo.s3.ap-northeast-1.amazonaws.com/perk/',
   )
+  await perkContract.deployed()
+  console.log('Perk contract deployed to:', perkContract.address)
 
-  await membershipContract.deployed()
-
-  console.log('MembershipCard contract deployed to:', membershipContract.address)
+  const cardFactory = await ethers.getContractFactory('SoulmateCard')
+  const cardContract = await cardFactory.deploy(
+    'SoulmateCard',
+    'CARD',
+    'https://soularis-demo.s3.ap-northeast-1.amazonaws.com/card/',
+  )
+  await cardContract.deployed()
+  console.log('Card contract deployed to:', cardContract.address)
 
   const gatewayFactory = await ethers.getContractFactory('SimpleGateway')
   const gatewayContract = await gatewayFactory.deploy()
-
   await gatewayContract.deployed()
-
   console.log('SimpleGateway contract deployed to:', gatewayContract.address)
 
   const ticketFactory = await ethers.getContractFactory('Ticket')
@@ -28,17 +31,10 @@ async function main (): Promise<void> {
     'STKT',
     'https://js6azx7pn9.execute-api.ap-northeast-1.amazonaws.com/assets/ticket/',
     'https://js6azx7pn9.execute-api.ap-northeast-1.amazonaws.com/badges/ticket/',
-    gatewayContract.address
+    gatewayContract.address,
   )
-
   await ticketContract.deployed()
-
   console.log('Ticket contract deployed to:', ticketContract.address)
-
-  writeFileSync(join(__dirname, '../constants/contract.ts'), `export const MEMBERSHIP_CARD_CONTRACT_ADDRESS = "${membershipContract.address}";
-export const GATEWAY_CONTRACT_ADDRESS = "${gatewayContract.address}";
-export const TICKET_CONTRACT_ADDRESS = "${ticketContract.address}";
-`)
 }
 
 // We recommend this pattern to be able to use async/await everywhere

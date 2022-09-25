@@ -1,0 +1,21 @@
+{
+  "name": "@phaneroz-labs/soularis-contracts",
+  "version": "0.0.1",
+  "description": "Soularis Contracts",
+  "homepage": "https://github.com/Phaneroz-Labs/soularis-contracts#readme",
+  "bugs": {
+    "url": "https://github.com/Phaneroz-Labs/soularis-contracts/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+git@github.com:Phaneroz-Labs/soularis-contracts.git"
+  },
+  "author": "Austin Zhu",
+  "files": [
+    "**/*.sol",
+    "README.md"
+  ],
+  "publishConfig": {
+    "@phaneroz-labs:registry": "https://npm.pkg.github.com"
+  }
+}
