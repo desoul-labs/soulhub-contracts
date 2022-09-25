@@ -1,0 +1,23 @@
+name: Release
+
+on: 
+  push:
+    branches:
+      - 'release/**'
+    paths:
+      - 'contracts/**'
+      - '.github/workflows/solidity-release.yml'
+      - '**.json'
+      - '**.yaml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          generate_release_notes: true

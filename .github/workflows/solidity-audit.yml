@@ -1,9 +1,9 @@
-name: Solidity CI
+name: Contract Audit
 
 on:
   pull_request:
     branches:
-      - main
+      - release/**
     paths:
       - 'contracts/**'
 
