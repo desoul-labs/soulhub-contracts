@@ -38,5 +38,8 @@ interface IERC3525SlotEnumerable is IERC3525, IERC721Enumerable {
      * @param _index The index in the token list of the slot
      * @return The token ID at `_index` of all tokens with `_slot`
      */
-    function tokenInSlotByIndex(uint256 _slot, uint256 _index) external view returns (uint256);
+    function tokenInSlotByIndex(uint256 _slot, uint256 _index)
+        external
+        view
+        returns (uint256);
 }

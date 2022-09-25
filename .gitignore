@@ -2,8 +2,13 @@ node_modules
 .env
 coverage
 coverage.json
-typechain
+typechain/*
+!typechain/package.json
+!typechain/tsconfig.json
+!typechain/README.md
 typechain-types
+.deps
+.vscode
 
 #Hardhat files
 cache
