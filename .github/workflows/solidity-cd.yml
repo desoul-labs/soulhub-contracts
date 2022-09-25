@@ -77,24 +77,24 @@ jobs:
           pnpm install
           pnpm run deploy:${{ matrix.network }}
 
-  # verify:
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       network: [goerli]
-  #   needs: [deploy]
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - uses: pnpm/action-setup@v2.2.2
-  #       name: Install pnpm
-  #       with:
-  #         version: 7
-  #     - name: Use Node.js
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: 18.x
-  #         cache: 'pnpm'
-  #     - name: Verify
-  #       run: |
-  #         pnpm install
-  #         pnpm run verify -- --network ${{ matrix.network }}
+  verify:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        network: [goerli]
+    needs: [deploy]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.2.2
+        name: Install pnpm
+        with:
+          version: 7
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: 'pnpm'
+      - name: Verify
+        run: |
+          pnpm install
+          pnpm run verify -- --network ${{ matrix.network }}
