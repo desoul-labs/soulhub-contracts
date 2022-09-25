@@ -26,11 +26,6 @@
     "strictPropertyInitialization": false,
     "typeRoots": ["./node_modules/@types"]
   },
-  "include": [
-    "**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "typechain-types"
-  ]
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "typechain-types"]
 }

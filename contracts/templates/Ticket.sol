@@ -13,7 +13,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-import "./ERC4671/IERC4671.sol";
+import "../ERC4671/IERC4671.sol";
 
 contract Ticket is
     Context,
@@ -37,11 +37,15 @@ contract Ticket is
 
     address private _trigger;
 
-    mapping (uint256 => bool) private _disableTransfer;
+    mapping(uint256 => bool) private _disableTransfer;
 
     event Mint(address indexed to, uint256 indexed tokenId);
 
-    event Used(address indexed user, uint256 indexed tokenId, address indexed trigger);
+    event Used(
+        address indexed user,
+        uint256 indexed tokenId,
+        address indexed trigger
+    );
 
     constructor(
         string memory name,
@@ -80,15 +84,29 @@ contract Ticket is
         return _baseTokenURIAfter;
     }
 
-    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (string memory)
+    {
         _requireMinted(tokenId);
 
-        string memory baseURI = isTransferable(tokenId) ? _baseURIBefore() : _baseURIAfter();
-        return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString())) : "";
+        string memory baseURI = isTransferable(tokenId)
+            ? _baseURIBefore()
+            : _baseURIAfter();
+        return
+            bytes(baseURI).length > 0
+                ? string(abi.encodePacked(baseURI, tokenId.toString()))
+                : "";
     }
 
     function mint(address to) public payable virtual {
-        require(hasRole(MINTER_ROLE, _msgSender()), "ERC721PresetMinterPauserAutoId: must have minter role to mint");
+        require(
+            hasRole(MINTER_ROLE, _msgSender()),
+            "ERC721PresetMinterPauserAutoId: must have minter role to mint"
+        );
         // We cannot just use balanceOf to create the new tokenId because tokens
         // can be burned (destroyed), so we need a separate counter.
         _mint(to, _tokenIdTracker.current());
@@ -98,12 +116,18 @@ contract Ticket is
     }
 
     function pause() public virtual {
-        require(hasRole(PAUSER_ROLE, _msgSender()), "ERC721PresetMinterPauserAutoId: must have pauser role to pause");
+        require(
+            hasRole(PAUSER_ROLE, _msgSender()),
+            "ERC721PresetMinterPauserAutoId: must have pauser role to pause"
+        );
         _pause();
     }
 
     function unpause() public virtual {
-        require(hasRole(PAUSER_ROLE, _msgSender()), "ERC721PresetMinterPauserAutoId: must have pauser role to unpause");
+        require(
+            hasRole(PAUSER_ROLE, _msgSender()),
+            "ERC721PresetMinterPauserAutoId: must have pauser role to unpause"
+        );
         _unpause();
     }
 
@@ -123,23 +147,41 @@ contract Ticket is
         override(AccessControlEnumerable, ERC721, ERC721Enumerable, IERC165)
         returns (bool)
     {
-        return super.supportsInterface(interfaceId) || interfaceId == type(IERC4671).interfaceId;
+        return
+            super.supportsInterface(interfaceId) ||
+            interfaceId == type(IERC4671).interfaceId;
     }
 
     function use(address user, uint256 tokenId) external virtual {
-        require(_msgSender() == _trigger, "Only the trigger contract can trigger this event");
-        require(user == tx.origin && user == ownerOf(tokenId), "Ticket not owned by caller");
+        require(
+            _msgSender() == _trigger,
+            "Only the trigger contract can trigger this event"
+        );
+        require(
+            user == tx.origin && user == ownerOf(tokenId),
+            "Ticket not owned by caller"
+        );
         require(isTransferable(tokenId), "Ticket has already been used");
         _disableTransfer[tokenId] = true;
 
         emit Used(user, tokenId, _msgSender());
     }
 
-    function balanceOf(address owner) public view override(ERC721, IERC721, IERC4671) returns (uint256) {
+    function balanceOf(address owner)
+        public
+        view
+        override(ERC721, IERC721, IERC4671)
+        returns (uint256)
+    {
         return ERC721.balanceOf(owner);
     }
 
-    function ownerOf(uint256 tokenId) public view override(ERC721, IERC721, IERC4671) returns (address) {
+    function ownerOf(uint256 tokenId)
+        public
+        view
+        override(ERC721, IERC721, IERC4671)
+        returns (address)
+    {
         return ERC721.ownerOf(tokenId);
     }
 }

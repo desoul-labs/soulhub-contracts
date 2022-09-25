@@ -1,0 +1,33 @@
+{
+  "name": "@phaneroz-labs/soularis-typechain",
+  "version": "0.0.1",
+  "description": "Soularis TypeChain",
+  "homepage": "https://github.com/Phaneroz-Labs/soularis-contracts#readme",
+  "bugs": {
+    "url": "https://github.com/Phaneroz-Labs/soularis-contracts/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+git@github.com:Phaneroz-Labs/soularis-contracts.git"
+  },
+  "author": "Austin Zhu",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "publishConfig": {
+    "@phaneroz-labs:registry": "https://npm.pkg.github.com"
+  },
+  "scripts": {
+    "prepublishOnly": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "4.8.3"
+  },
+  "dependencies": {
+    "ethers": "5.7.1",
+    "@nomiclabs/hardhat-ethers": "2.1.1"
+  }
+}

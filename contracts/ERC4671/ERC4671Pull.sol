@@ -15,12 +15,18 @@ abstract contract ERC4671Pull is ERC4671, IERC4671Pull {
     /// @param tokenId Identifier of the token to transfer
     /// @param owner Address that owns tokenId
     /// @param signature Signed data (tokenId, owner, recipient) by the owner of the token
-    function pull(uint256 tokenId, address owner, bytes memory signature) public virtual override {
+    function pull(
+        uint256 tokenId,
+        address owner,
+        bytes memory signature
+    ) public virtual override {
         Token storage token = _getTokenOrRevert(tokenId);
         require(token.owner == owner, "Provided owner does not own the token");
 
         address recipient = msg.sender;
-        bytes32 messageHash = keccak256(abi.encodePacked(tokenId, owner, recipient));
+        bytes32 messageHash = keccak256(
+            abi.encodePacked(tokenId, owner, recipient)
+        );
         bytes32 signedHash = messageHash.toEthSignedMessageHash();
         require(signedHash.recover(signature) == owner, "Invalid signature");
 
@@ -29,8 +35,14 @@ abstract contract ERC4671Pull is ERC4671, IERC4671Pull {
         _mintUnsafe(recipient, tokenId, valid);
     }
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(IERC165, ERC4671) returns (bool) {
-        return 
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(IERC165, ERC4671)
+        returns (bool)
+    {
+        return
             interfaceId == type(IERC4671Pull).interfaceId ||
             super.supportsInterface(interfaceId);
     }

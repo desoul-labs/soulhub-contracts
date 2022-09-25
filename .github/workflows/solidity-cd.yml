@@ -1,25 +1,60 @@
 name: Solidity CD
 
 on:
-  release:
-    types:
-      - created
+  push:
+    branches:
+      - main
+    paths:
+      - 'contracts/**'
+      - '.github/workflows/solidity-cd.yml'
+      - '**.json'
+      - '**.yaml'
 
 env:
   ALCHEMY_API_URL: ${{ secrets.ALCHEMY_API_URL }}
-  ADDRESS_PRIVATE_KEY: ${{ secrets.ADDRESS_PRIVATE_KEY }}
+  PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
   STAGE: dev
 
-jobs:  
+jobs:
   deploy:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        network: [goerli]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.2.2
+        name: Install pnpm
+        with:
+          version: 7
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: 'pnpm'
       - name: Deploy
+        run: |
+          pnpm install
+          pnpm run deploy:${{ matrix.network }}
 
-  verify:
-    runs-on: ubuntu-latest
-    needs: [ deploy ]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Verify
+  # verify:
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       network: [goerli]
+  #   needs: [deploy]
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: pnpm/action-setup@v2.2.2
+  #       name: Install pnpm
+  #       with:
+  #         version: 7
+  #     - name: Use Node.js
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 18.x
+  #         cache: 'pnpm'
+  #     - name: Verify
+  #       run: |
+  #         pnpm install
+  #         pnpm run verify -- --network ${{ matrix.network }}

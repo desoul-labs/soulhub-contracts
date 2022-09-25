@@ -15,7 +15,8 @@ interface IERC4671Delegate is IERC4671 {
     /// An allowed operator can call the function to transfer rights.
     /// @param operators Addresses allowed to mint
     /// @param owners Addresses for whom `operators` are allowed to mint a token
-    function delegateBatch(address[] memory operators, address[] memory owners) external;
+    function delegateBatch(address[] memory operators, address[] memory owners)
+        external;
 
     /// @notice Mint a token. Caller must have the right to mint for the owner.
     /// @param owner Address for whom the token is minted

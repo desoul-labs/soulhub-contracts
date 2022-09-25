@@ -9,7 +9,12 @@ import "./IERC4671.sol";
 import "./IERC4671Metadata.sol";
 import "./IERC4671Enumerable.sol";
 
-abstract contract ERC4671 is IERC4671, IERC4671Metadata, IERC4671Enumerable, ERC165 {
+abstract contract ERC4671 is
+    IERC4671,
+    IERC4671Metadata,
+    IERC4671Enumerable,
+    ERC165
+{
     // Token data
     struct Token {
         address issuer;
@@ -44,7 +49,7 @@ abstract contract ERC4671 is IERC4671, IERC4671Metadata, IERC4671Enumerable, ERC
     // Contract creator
     address private _creator;
 
-    constructor (string memory name_, string memory symbol_) {
+    constructor(string memory name_, string memory symbol_) {
         _name = name_;
         _symbol = symbol_;
         _creator = msg.sender;
@@ -53,28 +58,52 @@ abstract contract ERC4671 is IERC4671, IERC4671Metadata, IERC4671Enumerable, ERC
     /// @notice Count all tokens assigned to an owner
     /// @param owner Address for whom to query the balance
     /// @return Number of tokens owned by `owner`
-    function balanceOf(address owner) public view virtual override returns (uint256) {
+    function balanceOf(address owner)
+        public
+        view
+        virtual
+        override
+        returns (uint256)
+    {
         return _indexedTokenIds[owner].length;
     }
 
     /// @notice Get owner of a token
     /// @param tokenId Identifier of the token
     /// @return Address of the owner of `tokenId`
-    function ownerOf(uint256 tokenId) public view virtual override returns (address) {
+    function ownerOf(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (address)
+    {
         return _getTokenOrRevert(tokenId).owner;
     }
 
     /// @notice Check if a token hasn't been revoked
     /// @param tokenId Identifier of the token
     /// @return True if the token is valid, false otherwise
-    function isValid(uint256 tokenId) public view virtual override returns (bool) {
+    function isValid(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (bool)
+    {
         return _getTokenOrRevert(tokenId).valid;
     }
 
     /// @notice Check if an address owns a valid token in the contract
     /// @param owner Address for whom to check the ownership
     /// @return True if `owner` has a valid token, false otherwise
-    function hasValid(address owner) public view virtual override returns (bool) {
+    function hasValid(address owner)
+        public
+        view
+        virtual
+        override
+        returns (bool)
+    {
         return _numberOfValidTokens[owner] > 0;
     }
 
@@ -91,14 +120,20 @@ abstract contract ERC4671 is IERC4671, IERC4671Metadata, IERC4671Enumerable, ERC
     /// @notice URI to query to get the token's metadata
     /// @param tokenId Identifier of the token
     /// @return URI for the token
-    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (string memory)
+    {
         _getTokenOrRevert(tokenId);
         bytes memory baseURI = bytes(_baseURI());
         if (baseURI.length > 0) {
-            return string(abi.encodePacked(
-                baseURI,
-                Strings.toHexString(tokenId, 32)
-            ));
+            return
+                string(
+                    abi.encodePacked(baseURI, Strings.toHexString(tokenId, 32))
+                );
         }
         return "";
     }
@@ -108,7 +143,7 @@ abstract contract ERC4671 is IERC4671, IERC4671Metadata, IERC4671Enumerable, ERC
         return _emittedCount;
     }
 
-    /// @return holdersCount Number of token holders  
+    /// @return holdersCount Number of token holders
     function holdersCount() public view override returns (uint256) {
         return _holdersCount;
     }
@@ -117,7 +152,13 @@ abstract contract ERC4671 is IERC4671, IERC4671Metadata, IERC4671Enumerable, ERC
     /// @param owner Address for whom to get the token
     /// @param index Index of the token
     /// @return tokenId of the token
-    function tokenOfOwnerByIndex(address owner, uint256 index) public view virtual override returns (uint256) {
+    function tokenOfOwnerByIndex(address owner, uint256 index)
+        public
+        view
+        virtual
+        override
+        returns (uint256)
+    {
         uint256[] storage ids = _indexedTokenIds[owner];
         require(index < ids.length, "Token does not exist");
         return ids[index];
@@ -126,12 +167,24 @@ abstract contract ERC4671 is IERC4671, IERC4671Metadata, IERC4671Enumerable, ERC
     /// @notice Get a tokenId by it's index, where 0 <= index < total()
     /// @param index Index of the token
     /// @return tokenId of the token
-    function tokenByIndex(uint256 index) public view virtual override returns (uint256) {
+    function tokenByIndex(uint256 index)
+        public
+        view
+        virtual
+        override
+        returns (uint256)
+    {
         return index;
     }
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC165, IERC165) returns (bool) {
-        return 
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(ERC165, IERC165)
+        returns (bool)
+    {
+        return
             interfaceId == type(IERC4671).interfaceId ||
             interfaceId == type(IERC4671Metadata).interfaceId ||
             interfaceId == type(IERC4671Enumerable).interfaceId ||
@@ -168,9 +221,16 @@ abstract contract ERC4671 is IERC4671, IERC4671Metadata, IERC4671Enumerable, ERC
     /// @notice Mint a given tokenId
     /// @param owner Address for whom to assign the token
     /// @param tokenId Token identifier to assign to the owner
-    /// @param valid Boolean to assert of the validity of the token 
-    function _mintUnsafe(address owner, uint256 tokenId, bool valid) internal {
-        require(_tokens[tokenId].owner == address(0), "Cannot mint an assigned token");
+    /// @param valid Boolean to assert of the validity of the token
+    function _mintUnsafe(
+        address owner,
+        uint256 tokenId,
+        bool valid
+    ) internal {
+        require(
+            _tokens[tokenId].owner == address(0),
+            "Cannot mint an assigned token"
+        );
         if (_indexedTokenIds[owner].length == 0) {
             _holdersCount += 1;
         }
@@ -190,7 +250,12 @@ abstract contract ERC4671 is IERC4671, IERC4671Metadata, IERC4671Enumerable, ERC
     /// @notice Retrieve a token or revert if it does not exist
     /// @param tokenId Identifier of the token
     /// @return The Token struct
-    function _getTokenOrRevert(uint256 tokenId) internal view virtual returns (Token storage) {
+    function _getTokenOrRevert(uint256 tokenId)
+        internal
+        view
+        virtual
+        returns (Token storage)
+    {
         Token storage token = _tokens[tokenId];
         require(token.owner != address(0), "Token does not exist");
         return token;
@@ -200,7 +265,10 @@ abstract contract ERC4671 is IERC4671, IERC4671Metadata, IERC4671Enumerable, ERC
     /// @param tokenId Token identifier to remove
     function _removeToken(uint256 tokenId) internal virtual {
         Token storage token = _getTokenOrRevert(tokenId);
-        _removeFromUnorderedArray(_indexedTokenIds[token.owner], _tokenIdIndex[token.owner][tokenId]);
+        _removeFromUnorderedArray(
+            _indexedTokenIds[token.owner],
+            _tokenIdIndex[token.owner][tokenId]
+        );
         if (_indexedTokenIds[token.owner].length == 0) {
             assert(_holdersCount > 0);
             _holdersCount -= 1;
@@ -215,7 +283,9 @@ abstract contract ERC4671 is IERC4671, IERC4671Metadata, IERC4671Enumerable, ERC
     /// @notice Removes an entry in an array by its index
     /// @param array Array for which to remove the entry
     /// @param index Index of the entry to remove
-    function _removeFromUnorderedArray(uint256[] storage array, uint256 index) internal {
+    function _removeFromUnorderedArray(uint256[] storage array, uint256 index)
+        internal
+    {
         require(index < array.length, "Trying to delete out of bound index");
         if (index != array.length - 1) {
             array[index] = array[array.length - 1];

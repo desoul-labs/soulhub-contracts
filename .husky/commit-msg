@@ -1,4 +1,5 @@
-#!/bin/zsh
-. "$(dirname "$0")/_/husky.sh"
+#!/bin/sh
+. "$(dirname -- "$0")/_/husky.sh"
 
-pnpx --no-install commitlint --edit $1
+PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
+pnpm exec commitlint --edit $1
