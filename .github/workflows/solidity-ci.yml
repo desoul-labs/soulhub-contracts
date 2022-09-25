@@ -10,6 +10,7 @@ on:
       - '.github/workflows/solidity-ci.yml'
       - '**.json'
       - '**.yaml'
+  pull_request:
 
 env:
   ALCHEMY_API_URL: ${{ secrets.ALCHEMY_API_URL }}
