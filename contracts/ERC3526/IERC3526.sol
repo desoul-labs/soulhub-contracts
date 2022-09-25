@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 /**
  * @title ERC-3526
@@ -16,6 +15,8 @@ interface IERC3526 is IERC165 {
 
     /// Event emitted when token `tokenId` of `owner` is revoked
     event Revoked(address indexed owner, uint256 indexed tokenId);
+
+    event Charged(uint256 tokenId, uint256 value);
 
     /**
      * @dev MUST emit when the slot of a token is set or changed.

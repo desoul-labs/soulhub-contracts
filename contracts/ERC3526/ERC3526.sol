@@ -65,7 +65,6 @@ abstract contract ERC3526 is
     constructor(string memory name_, string memory symbol_) Ownable() {
         _name = name_;
         _symbol = symbol_;
-        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
 
     function supportsInterface(bytes4 interfaceId)
@@ -206,6 +205,7 @@ abstract contract ERC3526 is
     function _charge(uint256 tokenId, uint256 value) internal virtual {
         require(_exists(tokenId), "ERC3526: token does not exist");
         _tokens[tokenId].value += value;
+        emit Charged(tokenId, value);
     }
 
     /**
