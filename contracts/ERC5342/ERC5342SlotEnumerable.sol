@@ -61,4 +61,16 @@ abstract contract ERC5342SlotEnumerable is ERC5342, IERC5342SlotEnumerable {
         return
             EnumerableSet.at(_allSlots[_allSlotsIndex[slot]].slotTokens, index);
     }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(IERC165, ERC5342)
+        returns (bool)
+    {
+        return
+            interfaceId == type(IERC5342SlotEnumerable).interfaceId ||
+            super.supportsInterface(interfaceId);
+    }
 }

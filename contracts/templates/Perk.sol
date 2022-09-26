@@ -7,13 +7,15 @@ import "../ERC5342/ERC5342Consensus.sol";
 import "../ERC5342/ERC5342Delegate.sol";
 import "../ERC5342/ERC5342Shadow.sol";
 import "../ERC5342/ERC5342SlotEnumerable.sol";
+import "../ERC5342/ERC5342Pull.sol";
 
 contract Perk is
     ERC5342Expirable,
     ERC5342Consensus,
     ERC5342Delegate,
     ERC5342SlotEnumerable,
-    ERC5342Shadow
+    ERC5342Shadow,
+    ERC5342Pull
 {
     string private _baseTokenURI;
 
@@ -34,7 +36,14 @@ contract Perk is
         public
         view
         virtual
-        override(ERC5342, IERC165, ERC5342Consensus, ERC5342Delegate)
+        override(
+            ERC5342Consensus,
+            ERC5342Delegate,
+            ERC5342Expirable,
+            ERC5342Pull,
+            ERC5342Shadow,
+            ERC5342SlotEnumerable
+        )
         returns (bool)
     {
         return super.supportsInterface(interfaceId);

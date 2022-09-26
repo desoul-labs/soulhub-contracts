@@ -78,4 +78,16 @@ abstract contract ERC5342Expirable is IERC5342Expirable, ERC5342 {
     ) public onlyOwner {
         _setBatchExpiryDates(tokenIds, dates);
     }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(IERC165, ERC5342)
+        returns (bool)
+    {
+        return
+            interfaceId == type(IERC5342Expirable).interfaceId ||
+            super.supportsInterface(interfaceId);
+    }
 }

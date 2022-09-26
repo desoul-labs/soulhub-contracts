@@ -23,7 +23,7 @@ contract SoulmateCard is ERC5342Expirable, ERC5342Enumerable {
         public
         view
         virtual
-        override(ERC5342, IERC165, ERC5342Enumerable)
+        override(ERC5342Enumerable, ERC5342Expirable)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
