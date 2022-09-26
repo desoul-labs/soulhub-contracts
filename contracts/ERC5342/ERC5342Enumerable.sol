@@ -67,6 +67,18 @@ abstract contract ERC5342Enumerable is ERC5342, IERC5342Enumerable {
         Counters.increment(_emittedCount);
     }
 
+    function _mint(
+        address issuer,
+        address soul,
+        uint256 value,
+        uint256 slot
+    ) internal virtual returns (uint256 tokenId) {
+        tokenId = Counters.current(_emittedCount);
+        _mintUnsafe(issuer, soul, tokenId, value, slot, true);
+        emit Minted(soul, tokenId, value);
+        Counters.increment(_emittedCount);
+    }
+
     function _mintBatch(
         address[] memory souls,
         uint256 value,

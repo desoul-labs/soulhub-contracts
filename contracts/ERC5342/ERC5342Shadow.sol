@@ -40,11 +40,21 @@ abstract contract ERC5342Shadow is ERC5342, IERC5342Shadow {
         return _shadowed[tokenId];
     }
 
-    function shadow(uint256 tokenId) public override onlyManager(tokenId) {
+    function shadow(uint256 tokenId)
+        public
+        virtual
+        override
+        onlyManager(tokenId)
+    {
         _shadowed[tokenId] = true;
     }
 
-    function reveal(uint256 tokenId) public override onlyManager(tokenId) {
+    function reveal(uint256 tokenId)
+        public
+        virtual
+        override
+        onlyManager(tokenId)
+    {
         _shadowed[tokenId] = false;
     }
 

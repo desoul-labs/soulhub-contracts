@@ -68,6 +68,7 @@ abstract contract ERC5342Consensus is ERC5342Enumerable, IERC5342Consensus {
         ) {
             _resetMintApprovals(approvalRequestId, soul);
             _mint(
+                _approvalRequests[approvalRequestId].creator,
                 soul,
                 _approvalRequests[approvalRequestId].value,
                 _approvalRequests[approvalRequestId].slot
@@ -136,9 +137,11 @@ abstract contract ERC5342Consensus is ERC5342Enumerable, IERC5342Consensus {
             value != 0,
             "ERC5342Consensus: Value of Approval Request cannot be 0"
         );
-        _approvalRequests[_approvalRequestCount].creator = _msgSender();
-        _approvalRequests[_approvalRequestCount].value = value;
-        _approvalRequests[_approvalRequestCount].slot = slot;
+        _approvalRequests[_approvalRequestCount] = ApprovalRequest(
+            _msgSender(),
+            value,
+            slot
+        );
         _approvalRequestCount++;
     }
 
