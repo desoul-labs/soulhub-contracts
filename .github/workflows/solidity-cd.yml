@@ -1,60 +1,21 @@
 name: Solidity CD
 
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - main
+    paths:
+      - 'contracts/**'
+      - '.github/workflows/solidity-cd.yml'
+      - '**.json'
+      - '**.yaml'
 
 env:
   ALCHEMY_API_URL: ${{ secrets.ALCHEMY_API_URL }}
-  ADDRESS_PRIVATE_KEY: ${{ secrets.ADDRESS_PRIVATE_KEY }}
+  PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
   STAGE: dev
 
 jobs:
-  publish-typechain:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2.2.2
-        name: Install pnpm
-        with:
-          version: 7
-      - name: Use Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-          registry-url: https://npm.pkg.github.com/
-          cache: 'pnpm'
-      - name: Install dependencies
-        run: pnpm install
-      - name: Compile
-        run: pnpm run compile
-      - name: Publish
-        run: pnpm --filter=typechain publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
-  publish-contracts:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: contracts
-    steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2.2.2
-        name: Install pnpm
-        with:
-          version: 7
-      - name: Use Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-          registry-url: https://npm.pkg.github.com/
-          cache: 'pnpm'
-      - name: Publish
-        run: pnpm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
   deploy:
     runs-on: ubuntu-latest
     strategy:
@@ -71,7 +32,15 @@ jobs:
         with:
           node-version: 18.x
           cache: 'pnpm'
+      - name: Setup Tenderly
+        env:
+          TENDERLY_ACCESS_KEY: ${{ secrets.TENDERLY_ACCESS_KEY }}
+        run: |
+          curl https://raw.githubusercontent.com/Tenderly/tenderly-cli/master/scripts/install-linux.sh | sh
+          tenderly login --authentication-method access-key --access-key $TENDERLY_ACCESS_KEY
       - name: Deploy
+        env:
+          IPFS_AUTHORIZATION: ${{ secrets.IPFS_AUTHORIZATION }}
         run: |
           pnpm install
           pnpm run deploy:${{ matrix.network }}
