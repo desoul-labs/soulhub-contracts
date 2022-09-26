@@ -84,4 +84,56 @@ contract Perk is
     function revokeBatch(uint256[] memory tokenIds) public virtual onlyOwner {
         _revokeBatch(tokenIds);
     }
+
+    function _beforeTokenMint(
+        address issuer,
+        address soul,
+        uint256 tokenId,
+        uint256 value,
+        uint256 slot,
+        bool valid
+    ) internal virtual override(ERC5342, ERC5342Enumerable) {
+        ERC5342Enumerable._beforeTokenMint(
+            issuer,
+            soul,
+            tokenId,
+            value,
+            slot,
+            valid
+        );
+    }
+
+    function _afterTokenMint(
+        address issuer,
+        address soul,
+        uint256 tokenId,
+        uint256 value,
+        uint256 slot,
+        bool valid
+    ) internal virtual override(ERC5342, ERC5342Enumerable) {
+        ERC5342Enumerable._afterTokenMint(
+            issuer,
+            soul,
+            tokenId,
+            value,
+            slot,
+            valid
+        );
+    }
+
+    function _afterTokenRevoke(uint256 tokenId)
+        internal
+        virtual
+        override(ERC5342, ERC5342Enumerable)
+    {
+        ERC5342Enumerable._afterTokenRevoke(tokenId);
+    }
+
+    function _beforeTokenDestroy(uint256 tokenId)
+        internal
+        virtual
+        override(ERC5342, ERC5342Enumerable)
+    {
+        ERC5342Enumerable._beforeTokenDestroy(tokenId);
+    }
 }

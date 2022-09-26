@@ -5,8 +5,9 @@ import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 import "./ERC5342.sol";
 import "./IERC5342Pull.sol";
+import "./ERC5342Enumerable.sol";
 
-abstract contract ERC5342Pull is ERC5342, IERC5342Pull {
+abstract contract ERC5342Pull is ERC5342Enumerable, IERC5342Pull {
     using ECDSA for bytes32;
 
     function pull(address soul, bytes memory signature)
@@ -34,7 +35,7 @@ abstract contract ERC5342Pull is ERC5342, IERC5342Pull {
         public
         view
         virtual
-        override(IERC165, ERC5342)
+        override(IERC165, ERC5342Enumerable)
         returns (bool)
     {
         return

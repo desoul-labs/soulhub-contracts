@@ -24,8 +24,4 @@ interface IERC5342 is IERC165 {
     function isValid(uint256 tokenId) external view returns (bool);
 
     function issuerOf(uint256 tokenId) external view returns (address);
-
-    function balanceOf(address soul) external view returns (uint256);
-
-    function hasValid(address soul) external view returns (bool);
 }

@@ -2,8 +2,9 @@
 pragma solidity ^0.8.0;
 
 import "../ERC5342/ERC5342Expirable.sol";
+import "../ERC5342/ERC5342Enumerable.sol";
 
-contract SoulmateCard is ERC5342Expirable {
+contract SoulmateCard is ERC5342Expirable, ERC5342Enumerable {
     string private _baseTokenURI;
 
     constructor(
@@ -22,7 +23,7 @@ contract SoulmateCard is ERC5342Expirable {
         public
         view
         virtual
-        override(ERC5342, IERC165)
+        override(ERC5342, IERC165, ERC5342Enumerable)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
@@ -53,5 +54,57 @@ contract SoulmateCard is ERC5342Expirable {
 
     function revoke(uint256 tokenId) public onlyOwner {
         _revoke(tokenId);
+    }
+
+    function _beforeTokenMint(
+        address issuer,
+        address soul,
+        uint256 tokenId,
+        uint256 value,
+        uint256 slot,
+        bool valid
+    ) internal virtual override(ERC5342, ERC5342Enumerable) {
+        ERC5342Enumerable._beforeTokenMint(
+            issuer,
+            soul,
+            tokenId,
+            value,
+            slot,
+            valid
+        );
+    }
+
+    function _afterTokenMint(
+        address issuer,
+        address soul,
+        uint256 tokenId,
+        uint256 value,
+        uint256 slot,
+        bool valid
+    ) internal virtual override(ERC5342, ERC5342Enumerable) {
+        ERC5342Enumerable._afterTokenMint(
+            issuer,
+            soul,
+            tokenId,
+            value,
+            slot,
+            valid
+        );
+    }
+
+    function _afterTokenRevoke(uint256 tokenId)
+        internal
+        virtual
+        override(ERC5342, ERC5342Enumerable)
+    {
+        ERC5342Enumerable._afterTokenRevoke(tokenId);
+    }
+
+    function _beforeTokenDestroy(uint256 tokenId)
+        internal
+        virtual
+        override(ERC5342, ERC5342Enumerable)
+    {
+        ERC5342Enumerable._beforeTokenDestroy(tokenId);
     }
 }

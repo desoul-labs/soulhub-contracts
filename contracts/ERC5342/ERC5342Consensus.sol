@@ -6,8 +6,9 @@ import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 import "./ERC5342.sol";
 import "./IERC5342Consensus.sol";
+import "./ERC5342Enumerable.sol";
 
-abstract contract ERC5342Consensus is ERC5342, IERC5342Consensus {
+abstract contract ERC5342Consensus is ERC5342Enumerable, IERC5342Consensus {
     using EnumerableSet for EnumerableSet.AddressSet;
 
     uint256 private _approvalRequestCount;
@@ -98,7 +99,7 @@ abstract contract ERC5342Consensus is ERC5342, IERC5342Consensus {
         public
         view
         virtual
-        override(IERC165, ERC5342)
+        override(IERC165, ERC5342Enumerable)
         returns (bool)
     {
         return

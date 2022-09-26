@@ -4,8 +4,9 @@ pragma solidity ^0.8.0;
 
 import "./ERC5342.sol";
 import "./IERC5342Delegate.sol";
+import "./ERC5342Enumerable.sol";
 
-abstract contract ERC5342Delegate is ERC5342, IERC5342Delegate {
+abstract contract ERC5342Delegate is ERC5342Enumerable, IERC5342Delegate {
     struct DelegateRequest {
         address soul;
         uint256 value;
@@ -24,7 +25,7 @@ abstract contract ERC5342Delegate is ERC5342, IERC5342Delegate {
         public
         view
         virtual
-        override(IERC165, ERC5342)
+        override(IERC165, ERC5342Enumerable)
         returns (bool)
     {
         return

@@ -1,7 +1,6 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
@@ -9,22 +8,19 @@ import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
 import "./IERC5342.sol";
 import "./IERC5342Metadata.sol";
-import "./IERC5342Enumerable.sol";
 
 abstract contract ERC5342 is
     IERC5342Metadata,
-    IERC5342Enumerable,
     ERC165,
     Ownable,
     AccessControlEnumerable
 {
     using Address for address;
     using Strings for uint256;
-    using Counters for Counters.Counter;
-    using EnumerableSet for EnumerableSet.UintSet;
 
     struct Token {
         address issuer;
@@ -35,14 +31,9 @@ abstract contract ERC5342 is
     }
 
     mapping(uint256 => Token) private _tokens;
-    mapping(address => EnumerableSet.UintSet) private _indexedTokenIds;
-    mapping(address => uint256) private _numberOfValidTokens;
 
     string private _name;
     string private _symbol;
-
-    Counters.Counter private _emittedCount;
-    Counters.Counter private _soulsCount;
 
     constructor(string memory name_, string memory symbol_) Ownable() {
         _name = name_;
@@ -59,7 +50,6 @@ abstract contract ERC5342 is
         return
             interfaceId == type(IERC5342).interfaceId ||
             interfaceId == type(IERC5342Metadata).interfaceId ||
-            interfaceId == type(IERC5342Enumerable).interfaceId ||
             super.supportsInterface(interfaceId);
     }
 
@@ -97,36 +87,10 @@ abstract contract ERC5342 is
             "ERC5342: Cannot mint an assigned token"
         );
         require(value != 0, "ERC5342: Cannot mint zero value");
-        if (EnumerableSet.length(_indexedTokenIds[soul]) == 0) {
-            Counters.increment(_soulsCount);
-        }
+        _beforeTokenMint(issuer, soul, tokenId, value, slot, valid);
         _tokens[tokenId] = Token(issuer, soul, valid, value, slot);
-        EnumerableSet.add(_indexedTokenIds[soul], tokenId);
-        if (valid) {
-            _numberOfValidTokens[soul] += 1;
-        }
+        _afterTokenMint(issuer, soul, tokenId, value, slot, valid);
         emit SlotChanged(tokenId, 0, slot);
-    }
-
-    function _mint(
-        address soul,
-        uint256 value,
-        uint256 slot
-    ) internal virtual returns (uint256 tokenId) {
-        tokenId = Counters.current(_emittedCount);
-        _mintUnsafe(soul, tokenId, value, slot, true);
-        emit Minted(soul, tokenId, value);
-        Counters.increment(_emittedCount);
-    }
-
-    function _mintBatch(
-        address[] memory souls,
-        uint256 value,
-        uint256 slot
-    ) internal virtual returns (uint256[] memory tokenIds) {
-        for (uint256 i = 0; i < souls.length; i++) {
-            tokenIds[i] = _mint(souls[i], value, slot);
-        }
     }
 
     function _charge(uint256 tokenId, uint256 value) internal virtual {
@@ -174,9 +138,9 @@ abstract contract ERC5342 is
             _getTokenOrRevert(tokenId).valid,
             "ERC5342: Token is already invalid"
         );
+        _beforeTokenRevoke(tokenId);
         _tokens[tokenId].valid = false;
-        assert(_numberOfValidTokens[_tokens[tokenId].soul] > 0);
-        _numberOfValidTokens[_tokens[tokenId].soul] -= 1;
+        _afterTokenRevoke(tokenId);
         emit Revoked(_tokens[tokenId].soul, tokenId);
     }
 
@@ -191,16 +155,9 @@ abstract contract ERC5342 is
         uint256 slot = slotOf(tokenId);
         uint256 value = valueOf(tokenId);
 
-        if (_tokens[tokenId].valid) {
-            assert(_numberOfValidTokens[soul] > 0);
-            _numberOfValidTokens[soul] -= 1;
-        }
+        _beforeTokenDestroy(tokenId);
         delete _tokens[tokenId];
-        EnumerableSet.remove(_indexedTokenIds[soul], tokenId);
-        if (EnumerableSet.length(_indexedTokenIds[soul]) == 0) {
-            assert(Counters.current(_soulsCount) > 0);
-            Counters.decrement(_soulsCount);
-        }
+        _afterTokenDestroy(tokenId);
 
         emit Consumed(tokenId, value);
         emit Destroyed(soul, tokenId);
@@ -211,20 +168,33 @@ abstract contract ERC5342 is
         return _msgSender() == owner();
     }
 
-    function _increaseEmittedCount() internal {
-        Counters.increment(_emittedCount);
-    }
-
-    function _tokensOfSoul(address soul)
-        internal
-        view
-        returns (uint256[] memory tokenIds)
-    {
-        tokenIds = EnumerableSet.values(_indexedTokenIds[soul]);
-        require(tokenIds.length != 0, "ERC5342: the soul has no token");
-    }
-
     function _beforeView(uint256 tokenId) internal view virtual {}
+
+    function _beforeTokenMint(
+        address issuer,
+        address soul,
+        uint256 tokenId,
+        uint256 value,
+        uint256 slot,
+        bool valid
+    ) internal virtual {}
+
+    function _afterTokenMint(
+        address issuer,
+        address soul,
+        uint256 tokenId,
+        uint256 value,
+        uint256 slot,
+        bool valid
+    ) internal virtual {}
+
+    function _beforeTokenRevoke(uint256 tokenId) internal virtual {}
+
+    function _afterTokenRevoke(uint256 tokenId) internal virtual {}
+
+    function _beforeTokenDestroy(uint256 tokenId) internal virtual {}
+
+    function _afterTokenDestroy(uint256 tokenId) internal virtual {}
 
     function soulOf(uint256 tokenId)
         public
@@ -279,59 +249,6 @@ abstract contract ERC5342 is
     {
         _beforeView(tokenId);
         return _getTokenOrRevert(tokenId).valid;
-    }
-
-    function emittedCount() public view virtual override returns (uint256) {
-        return Counters.current(_emittedCount);
-    }
-
-    function soulsCount() public view virtual override returns (uint256) {
-        return Counters.current(_soulsCount);
-    }
-
-    function balanceOf(address soul)
-        public
-        view
-        virtual
-        override
-        returns (uint256)
-    {
-        return EnumerableSet.length(_indexedTokenIds[soul]);
-    }
-
-    function hasValid(address soul)
-        public
-        view
-        virtual
-        override
-        returns (bool)
-    {
-        return _numberOfValidTokens[soul] > 0;
-    }
-
-    function tokenOfSoulByIndex(address soul, uint256 index)
-        public
-        view
-        virtual
-        override
-        returns (uint256)
-    {
-        EnumerableSet.UintSet storage ids = _indexedTokenIds[soul];
-        require(
-            index < EnumerableSet.length(ids),
-            "ERC5342: Token does not exist"
-        );
-        return EnumerableSet.at(ids, index);
-    }
-
-    function tokenByIndex(uint256 index)
-        public
-        view
-        virtual
-        override
-        returns (uint256)
-    {
-        return index;
     }
 
     function _baseURI() internal view virtual returns (string memory) {

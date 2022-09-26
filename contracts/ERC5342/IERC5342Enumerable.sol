@@ -14,4 +14,8 @@ interface IERC5342Enumerable is IERC5342 {
         returns (uint256);
 
     function tokenByIndex(uint256 index) external view returns (uint256);
+
+    function balanceOf(address soul) external view returns (uint256);
+
+    function hasValid(address soul) external view returns (bool);
 }
