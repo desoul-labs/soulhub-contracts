@@ -4,13 +4,13 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 import "./ERC5342.sol";
-import "./IERC5342Pull.sol";
+import "./IERC5342Recovery.sol";
 import "./ERC5342Enumerable.sol";
 
-abstract contract ERC5342Pull is ERC5342Enumerable, IERC5342Pull {
+abstract contract ERC5342Recovery is ERC5342Enumerable, IERC5342Recovery {
     using ECDSA for bytes32;
 
-    function pull(address soul, bytes memory signature)
+    function recover(address soul, bytes memory signature)
         public
         virtual
         override
@@ -39,7 +39,7 @@ abstract contract ERC5342Pull is ERC5342Enumerable, IERC5342Pull {
         returns (bool)
     {
         return
-            interfaceId == type(IERC5342Pull).interfaceId ||
+            interfaceId == type(IERC5342Recovery).interfaceId ||
             super.supportsInterface(interfaceId);
     }
 }

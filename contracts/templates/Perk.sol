@@ -7,7 +7,7 @@ import "../ERC5342/ERC5342Consensus.sol";
 import "../ERC5342/ERC5342Delegate.sol";
 import "../ERC5342/ERC5342Shadow.sol";
 import "../ERC5342/ERC5342SlotEnumerable.sol";
-import "../ERC5342/ERC5342Pull.sol";
+import "../ERC5342/ERC5342Recovery.sol";
 
 contract Perk is
     ERC5342Expirable,
@@ -15,7 +15,7 @@ contract Perk is
     ERC5342Delegate,
     ERC5342SlotEnumerable,
     ERC5342Shadow,
-    ERC5342Pull
+    ERC5342Recovery
 {
     string private _baseTokenURI;
 
@@ -40,7 +40,7 @@ contract Perk is
             ERC5342Consensus,
             ERC5342Delegate,
             ERC5342Expirable,
-            ERC5342Pull,
+            ERC5342Recovery,
             ERC5342Shadow,
             ERC5342SlotEnumerable
         )
