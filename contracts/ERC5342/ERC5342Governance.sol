@@ -5,10 +5,10 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 import "./ERC5342.sol";
-import "./IERC5342Consensus.sol";
+import "./IERC5342Governance.sol";
 import "./ERC5342Enumerable.sol";
 
-abstract contract ERC5342Consensus is ERC5342Enumerable, IERC5342Consensus {
+abstract contract ERC5342Governance is ERC5342Enumerable, IERC5342Governance {
     using EnumerableSet for EnumerableSet.AddressSet;
 
     uint256 private _approvalRequestCount;
@@ -58,7 +58,7 @@ abstract contract ERC5342Consensus is ERC5342Enumerable, IERC5342Consensus {
     {
         require(
             !_mintApprovals[_msgSender()][approvalRequestId][soul],
-            "ERC5342Consensus: You already approved this address"
+            "ERC5342Governance: You already approved this address"
         );
         _mintApprovals[_msgSender()][approvalRequestId][soul] = true;
         _mintApprovalCounts[approvalRequestId][soul] += 1;
@@ -84,7 +84,7 @@ abstract contract ERC5342Consensus is ERC5342Enumerable, IERC5342Consensus {
     {
         require(
             !_revokeApprovals[_msgSender()][tokenId],
-            "ERC5342Consensus: You already approved this address"
+            "ERC5342Governance: You already approved this address"
         );
         _revokeApprovals[_msgSender()][tokenId] = true;
         _revokeApprovalCounts[tokenId] += 1;
@@ -104,7 +104,7 @@ abstract contract ERC5342Consensus is ERC5342Enumerable, IERC5342Consensus {
         returns (bool)
     {
         return
-            interfaceId == type(IERC5342Consensus).interfaceId ||
+            interfaceId == type(IERC5342Governance).interfaceId ||
             super.supportsInterface(interfaceId);
     }
 
@@ -135,7 +135,7 @@ abstract contract ERC5342Consensus is ERC5342Enumerable, IERC5342Consensus {
     {
         require(
             value != 0,
-            "ERC5342Consensus: Value of Approval Request cannot be 0"
+            "ERC5342Governance: Value of Approval Request cannot be 0"
         );
         _approvalRequests[_approvalRequestCount] = ApprovalRequest(
             _msgSender(),
@@ -152,7 +152,7 @@ abstract contract ERC5342Consensus is ERC5342Enumerable, IERC5342Consensus {
     {
         require(
             _msgSender() == _approvalRequests[approvalRequestId].creator,
-            "ERC5342Consensus: You are not the creator"
+            "ERC5342Governance: You are not the creator"
         );
         delete _approvalRequests[approvalRequestId];
     }
@@ -160,7 +160,7 @@ abstract contract ERC5342Consensus is ERC5342Enumerable, IERC5342Consensus {
     function addVoter(address newVoter) public onlyOwner {
         require(
             !hasRole(VOTER_ROLE, newVoter),
-            "ERC5342Consensus: newVoter is already a voter"
+            "ERC5342Governance: newVoter is already a voter"
         );
         EnumerableSet.add(_votersArray, newVoter);
         _setupRole(VOTER_ROLE, newVoter);
@@ -169,7 +169,7 @@ abstract contract ERC5342Consensus is ERC5342Enumerable, IERC5342Consensus {
     function removeVoter(address voter) public onlyOwner {
         require(
             EnumerableSet.contains(_votersArray, voter),
-            "ERC5342Consensus: Voter does not exist"
+            "ERC5342Governance: Voter does not exist"
         );
         _revokeRole(VOTER_ROLE, voter);
         EnumerableSet.remove(_votersArray, voter);

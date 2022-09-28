@@ -7,7 +7,7 @@ import "./IERC5342.sol";
  * @title
  * @dev
  */
-interface IERC5342Consensus is IERC5342 {
+interface IERC5342Governance is IERC5342 {
     /**
      * @notice Get the voters of the contract.
      * @return The array of the voters

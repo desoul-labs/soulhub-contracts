@@ -3,7 +3,7 @@
 pragma solidity ^0.8.0;
 
 import "../ERC5342/ERC5342Expirable.sol";
-import "../ERC5342/ERC5342Consensus.sol";
+import "../ERC5342/ERC5342Governance.sol";
 import "../ERC5342/ERC5342Delegate.sol";
 import "../ERC5342/ERC5342Shadow.sol";
 import "../ERC5342/ERC5342SlotEnumerable.sol";
@@ -11,7 +11,7 @@ import "../ERC5342/ERC5342Recovery.sol";
 
 contract Perk is
     ERC5342Expirable,
-    ERC5342Consensus,
+    ERC5342Governance,
     ERC5342Delegate,
     ERC5342SlotEnumerable,
     ERC5342Shadow,
@@ -24,7 +24,7 @@ contract Perk is
         string memory symbol,
         address[] memory voters,
         string memory baseTokenURI
-    ) ERC5342Consensus(name, symbol, voters) {
+    ) ERC5342Governance(name, symbol, voters) {
         _baseTokenURI = baseTokenURI;
     }
 
@@ -37,7 +37,7 @@ contract Perk is
         view
         virtual
         override(
-            ERC5342Consensus,
+            ERC5342Governance,
             ERC5342Delegate,
             ERC5342Expirable,
             ERC5342Recovery,
