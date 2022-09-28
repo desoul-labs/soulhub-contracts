@@ -4,24 +4,21 @@ pragma solidity ^0.8.0;
 import "./IERC5342.sol";
 
 /**
+ * @title
  * @dev
  */
 interface IERC5342Shadow is IERC5342 {
     /**
-     * @dev Shadows the `tokenId` tokens.
-     *
-     * Requirements:
-     *
-     * - `tokenId` token must exist.
+     * @notice Shadow a token.
+     * @dev MUST revert if the `tokenId` token does not exists.
+     * @param tokenId The token to shadow
      */
     function shadow(uint256 tokenId) external;
 
     /**
-     * @dev Reveals the `tokenId` tokens.
-     *
-     * Requirements:
-     *
-     * - `tokenId` token must exist.
+     * @notice Reveal a token.
+     * @dev MUST revert if the `tokenId` token does not exists.
+     * @param tokenId The token to reveal
      */
     function reveal(uint256 tokenId) external;
 }

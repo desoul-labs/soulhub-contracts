@@ -5,24 +5,24 @@ pragma solidity ^0.8.0;
 import "./IERC5342.sol";
 
 /**
+ * @title
  * @dev
  */
 interface IERC5342Delegate is IERC5342 {
     /**
-     * @dev Delegates a one-time minting right to `operator` for `delegateRequestId` delegate request.
-     *
-     * Requirement:
-     *
-     * - The caller must have the right to delegate.
+     * @notice Delegate a one-time minting right to `operator` for `delegateRequestId` delegate request.
+     * @dev MUST revert if the caller does not have the right to delegate.
+     * @param operator The soul to which the minting right is delegated
+     * @param delegateRequestId The delegate request describing the soul, value and slot of the token to mint
      */
     function mintDelegate(address operator, uint256 delegateRequestId) external;
 
     /**
-     * @dev Delegates a one-time minting right to `operators` for `delegateRequestIds` delegate requests.
-     *
-     * Requirement:
-     *
-     * - The caller must have the right to delegate.
+     * @notice Delegate one-time minting rights to `operators` for corresponding delegate request in `delegateRequestIds`.
+     * @dev MUST revert if the caller does not have the right to delegate.
+     *   MUST revert if the length of `operators` and `delegateRequestIds` do not match.
+     * @param operators The souls to which the minting right is delegated
+     * @param delegateRequestIds The delegate requests describing the soul, value and slot of the tokens to mint
      */
     function mintDelegateBatch(
         address[] memory operators,
@@ -30,20 +30,19 @@ interface IERC5342Delegate is IERC5342 {
     ) external;
 
     /**
-     * @dev Delegates a one-time revoking right to `operator` for `tokenId` token.
-     *
-     * Requirement:
-     *
-     * - The caller must have the right to delegate.
+     * @notice Delegate a one-time revoking right to `operator` for `tokenId` token.
+     * @dev MUST revert if the caller does not have the right to delegate.
+     * @param operator The soul to which the revoking right is delegated
+     * @param tokenId The token to revoke
      */
     function revokeDelegate(address operator, uint256 tokenId) external;
 
     /**
-     * @dev Delegates a one-time revoking right to `operators` for `tokenIds` tokens.
-     *
-     * Requirement:
-     *
-     * - The caller must have the right to delegate.
+     * @notice Delegate one-time minting rights to `operators` for corresponding token in `tokenIds`.
+     * @dev MUST revert if the caller does not have the right to delegate.
+     *   MUST revert if the length of `operators` and `tokenIds` do not match.
+     * @param operators The souls to which the revoking right is delegated
+     * @param tokenIds The tokens to revoke
      */
     function revokeDelegateBatch(
         address[] memory operators,
@@ -51,43 +50,39 @@ interface IERC5342Delegate is IERC5342 {
     ) external;
 
     /**
-     * @dev Mints a token described by `delegateRequestId` delegate request as a delegate.
-     *
-     * Requirement:
-     *
-     * - The caller must be delegated and have the right to mint.
+     * @notice Mint a token described by `delegateRequestId` delegate request as a delegate.
+     * @dev MUST revert if the caller is not delegated.
+     * @param delegateRequestId The delegate requests describing the soul, value and slot of the token to mint.
      */
     function delegateMint(uint256 delegateRequestId) external;
 
     /**
-     * @dev Mints tokens described by `delegateRequestIds` delegate requests as a delegate.
-     *
-     * Requirement:
-     *
-     * - The caller must be delegated and have the right to mint.
+     * @notice Mint tokens described by `delegateRequestIds` delegate request as a delegate.
+     * @dev MUST revert if the caller is not delegated.
+     * @param delegateRequestIds The delegate requests describing the soul, value and slot of the tokens to mint.
      */
     function delegateMintBatch(uint256[] memory delegateRequestIds) external;
 
     /**
-     * @dev Revokes `tokenId` token as a delegate.
-     *
-     * Requirement:
-     *
-     * - The caller must be delegated and have the right to revoke.
+     * @notice Revoke a token as a delegate.
+     * @dev MUST revert if the caller is not delegated.
+     * @param tokenId The token to revoke.
      */
     function delegateRevoke(uint256 tokenId) external;
 
     /**
-     * @dev Revokes `tokenIds` tokens as a delegate.
-     *
-     * Requirement:
-     *
-     * - The caller must be delegated and have the right to revoke.
+     * @notice Revoke multiple tokens as a delegate.
+     * @dev MUST revert if the caller is not delegated.
+     * @param tokenIds The tokens to revoke.
      */
     function delegateRevokeBatch(uint256[] memory tokenIds) external;
 
     /**
-     * @dev Creates a delegate request describing the `soul`, `value` and `slot` of a token.
+     * @notice Create a delegate request describing the `soul`, `value` and `slot` of a token.
+     * @param soul The soul of the delegate request.
+     * @param value The value of the delegate request.
+     * @param slot The slot of the delegate request.
+     * @return delegateRequestId The id of the delegate request
      */
     function createDelegateRequest(
         address soul,
@@ -96,11 +91,10 @@ interface IERC5342Delegate is IERC5342 {
     ) external returns (uint256 delegateRequestId);
 
     /**
-     * @dev Removes `delegateRequestId` delegate request.
-     *
-     * Requirement:
-     *
-     * - The caller must be the creator of the delegate request.
+     * @notice Remove a delegate request.
+     * @dev MUST revert if the delegate request does not exists.
+     *   MUST revert if the caller is not the creator of the delegate request.
+     * @param delegateRequestId The delegate request to remove.
      */
     function removeDelegateRequest(uint256 delegateRequestId) external;
 }

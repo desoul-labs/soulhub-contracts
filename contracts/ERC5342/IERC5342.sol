@@ -4,36 +4,51 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 /**
+ * @title
  * @dev
  */
 interface IERC5342 is IERC165 {
     /**
-     * @dev Emmited when `tokenId` token is minted to `soul` with `value`.
+     * @dev MUST emit when a token is minted.
+     * @param soul The address that the token is minted to
+     * @param tokenId The token minted
+     * @param value The value of the token minted
      */
     event Minted(address indexed soul, uint256 indexed tokenId, uint256 value);
 
     /**
-     * @dev Emmited when `tokenId` token of `soul` is revoked.
+     * @dev MUST emit when a token is revoked.
+     * @param soul The owner soul of the revoked token
+     * @param tokenId The revoked token
      */
     event Revoked(address indexed soul, uint256 indexed tokenId);
 
     /**
-     * @dev Emmited when `value` is charged to `tokenId` token.
+     * @dev MUST emit when a token is charged.
+     * @param tokenId The token to charge
+     * @param value The value to charge
      */
     event Charged(uint256 indexed tokenId, uint256 value);
 
     /**
-     * @dev Emmited when `value` of `tokenId` token is consumed.
+     * @dev MUST emit when a token is consumed.
+     * @param tokenId The token to consume
+     * @param value The value to consume
      */
     event Consumed(uint256 indexed tokenId, uint256 value);
 
     /**
-     * @dev Emmited when `tokenId` token of `soul` is destroyed.
+     * @dev MUST emit when a token is destroyed.
+     * @param soul The owner soul of the destroyed token
+     * @param tokenId The token to destroy.
      */
     event Destroyed(address indexed soul, uint256 indexed tokenId);
 
     /**
-     * @dev Emmited when slot of `tokenId` token is changed from `oldSlot` to `newSlot`.
+     * @dev MUST emit when the slot of a token is set or changed.
+     * @param tokenId The token of which slot is set or changed
+     * @param oldSlot The previous slot of the token
+     * @param newSlot The updated slot of the token
      */
     event SlotChanged(
         uint256 indexed tokenId,
@@ -42,47 +57,42 @@ interface IERC5342 is IERC165 {
     );
 
     /**
-     * @dev Returns the value of `tokenId` token.
-     *
-     * Requirements:
-     *
-     * - `tokenId` token must exist.
+     * @notice Get the value of a token.
+     * @dev MUST revert if the `tokenId` does not exist
+     * @param tokenId the token for which to query the balance
+     * @return The value of `tokenId`
      */
     function valueOf(uint256 tokenId) external view returns (uint256);
 
     /**
-     * @dev Returns the slot of `tokenId` token.
-     *
-     * Requirements:
-     *
-     * - `tokenId` token must exist.
+     * @notice Get the slot of a token.
+     * @dev MUST revert if the `tokenId` does not exist
+     * @param tokenId the token for which to query the slot
+     * @return The slot of `tokenId`
      */
     function slotOf(uint256 tokenId) external view returns (uint256);
 
     /**
-     * @dev Returns the soul of `tokenId` token.
-     *
-     * Requirements:
-     *
-     * - `tokenId` token must exist.
+     * @notice Get the owner soul of a token.
+     * @dev MUST revert if the `tokenId` does not exist
+     * @param tokenId the token for which to query the owner soul
+     * @return The address of the owner soul of `tokenId`
      */
     function soulOf(uint256 tokenId) external view returns (address);
 
     /**
-     * @dev Returns if `tokenId` token is valid.
-     *
-     * Requirements:
-     *
-     * - `tokenId` token must exist.
+     * @notice Get the validity of a token.
+     * @dev MUST revert if the `tokenId` does not exist
+     * @param tokenId the token for which to query the validity
+     * @return If the token is valid
      */
     function isValid(uint256 tokenId) external view returns (bool);
 
     /**
-     * @dev Returns the issuer of `tokenId` token.
-     *
-     * Requirements:
-     *
-     * - `tokenId` token must exist.
+     * @notice Get the issuer of a token.
+     * @dev MUST revert if the `tokenId` does not exist
+     * @param tokenId the token for which to query the issuer
+     * @return The address of the issuer of `tokenId`
      */
     function issuerOf(uint256 tokenId) external view returns (address);
 }
