@@ -1,14 +1,14 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./IERC5342.sol";
-import "./IERC5342Enumerable.sol";
+import "./IERC5727.sol";
+import "./IERC5727Enumerable.sol";
 
 /**
  * @title
  * @dev
  */
-interface IERC5342SlotEnumerable is IERC5342, IERC5342Enumerable {
+interface IERC5727SlotEnumerable is IERC5727, IERC5727Enumerable {
     /**
      * @notice Get the total number of slots.
      * @return The total number of slots.

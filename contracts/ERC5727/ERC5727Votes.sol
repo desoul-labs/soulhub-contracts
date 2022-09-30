@@ -2,4 +2,4 @@
 
 pragma solidity ^0.8.0;
 
-import "./ERC5342Enumerable.sol";
+import "./ERC5727Enumerable.sol";

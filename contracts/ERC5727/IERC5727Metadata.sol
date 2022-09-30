@@ -1,13 +1,13 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./IERC5342.sol";
+import "./IERC5727.sol";
 
 /**
  * @title
  * @dev
  */
-interface IERC5342Metadata is IERC5342 {
+interface IERC5727Metadata is IERC5727 {
     /**
      * @notice Get the name of the contract.
      * @return The name of the contract

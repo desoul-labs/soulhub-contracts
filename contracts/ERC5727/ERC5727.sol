@@ -10,11 +10,11 @@ import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-import "./IERC5342.sol";
-import "./IERC5342Metadata.sol";
+import "./IERC5727.sol";
+import "./IERC5727Metadata.sol";
 
-abstract contract ERC5342 is
-    IERC5342Metadata,
+abstract contract ERC5727 is
+    IERC5727Metadata,
     ERC165,
     Ownable,
     AccessControlEnumerable
@@ -48,8 +48,8 @@ abstract contract ERC5342 is
         returns (bool)
     {
         return
-            interfaceId == type(IERC5342).interfaceId ||
-            interfaceId == type(IERC5342Metadata).interfaceId ||
+            interfaceId == type(IERC5727).interfaceId ||
+            interfaceId == type(IERC5727Metadata).interfaceId ||
             super.supportsInterface(interfaceId);
     }
 
@@ -60,7 +60,7 @@ abstract contract ERC5342 is
         returns (Token storage)
     {
         Token storage token = _tokens[tokenId];
-        require(token.soul != address(0), "ERC5342: Token does not exist");
+        require(token.soul != address(0), "ERC5727: Token does not exist");
         return token;
     }
 
@@ -84,9 +84,9 @@ abstract contract ERC5342 is
     ) internal {
         require(
             _tokens[tokenId].soul == address(0),
-            "ERC5342: Cannot mint an assigned token"
+            "ERC5727: Cannot mint an assigned token"
         );
-        require(value != 0, "ERC5342: Cannot mint zero value");
+        require(value != 0, "ERC5727: Cannot mint zero value");
         _beforeTokenMint(issuer, soul, tokenId, value, slot, valid);
         _tokens[tokenId] = Token(issuer, soul, valid, value, slot);
         _afterTokenMint(issuer, soul, tokenId, value, slot, valid);
@@ -104,7 +104,7 @@ abstract contract ERC5342 is
     {
         require(
             tokenIds.length == values.length,
-            "ERC5342: unmatched size of tokenIds and values"
+            "ERC5727: unmatched size of tokenIds and values"
         );
         for (uint256 i = 0; i < tokenIds.length; i++) {
             _charge(tokenIds[i], values[i]);
@@ -114,7 +114,7 @@ abstract contract ERC5342 is
     function _consume(uint256 tokenId, uint256 value) internal virtual {
         require(
             _getTokenOrRevert(tokenId).value > value,
-            "ERC5342: not enough balance"
+            "ERC5727: not enough balance"
         );
         _getTokenOrRevert(tokenId).value -= value;
         emit Consumed(tokenId, value);
@@ -126,7 +126,7 @@ abstract contract ERC5342 is
     {
         require(
             tokenIds.length == values.length,
-            "ERC5342: unmatched size of tokenIds and values"
+            "ERC5727: unmatched size of tokenIds and values"
         );
         for (uint256 i = 0; i < tokenIds.length; i++) {
             _consume(tokenIds[i], values[i]);
@@ -136,7 +136,7 @@ abstract contract ERC5342 is
     function _revoke(uint256 tokenId) internal virtual {
         require(
             _getTokenOrRevert(tokenId).valid,
-            "ERC5342: Token is already invalid"
+            "ERC5727: Token is already invalid"
         );
         _beforeTokenRevoke(tokenId);
         _tokens[tokenId].valid = false;

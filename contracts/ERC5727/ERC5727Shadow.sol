@@ -1,17 +1,17 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./ERC5342.sol";
-import "./IERC5342Shadow.sol";
+import "./ERC5727.sol";
+import "./IERC5727Shadow.sol";
 
-abstract contract ERC5342Shadow is ERC5342, IERC5342Shadow {
+abstract contract ERC5727Shadow is ERC5727, IERC5727Shadow {
     mapping(uint256 => bool) private _shadowed;
 
     modifier onlyManager(uint256 tokenId) {
         require(
             _msgSender() == _getTokenOrRevert(tokenId).soul ||
                 _msgSender() == _getTokenOrRevert(tokenId).issuer,
-            "ERC5342Shadow: You are not the manager"
+            "ERC5727Shadow: You are not the manager"
         );
         _;
     }
@@ -21,7 +21,7 @@ abstract contract ERC5342Shadow is ERC5342, IERC5342Shadow {
             !_shadowed[tokenId] ||
                 _msgSender() == _getTokenOrRevert(tokenId).soul ||
                 _msgSender() == _getTokenOrRevert(tokenId).issuer,
-            "ERC5342Shadow: the token is shadowed"
+            "ERC5727Shadow: the token is shadowed"
         );
     }
 
@@ -62,11 +62,11 @@ abstract contract ERC5342Shadow is ERC5342, IERC5342Shadow {
         public
         view
         virtual
-        override(IERC165, ERC5342)
+        override(IERC165, ERC5727)
         returns (bool)
     {
         return
-            interfaceId == type(IERC5342Shadow).interfaceId ||
+            interfaceId == type(IERC5727Shadow).interfaceId ||
             super.supportsInterface(interfaceId);
     }
 }

@@ -2,20 +2,20 @@
 
 pragma solidity ^0.8.0;
 
-import "../ERC5342/ERC5342Expirable.sol";
-import "../ERC5342/ERC5342Governance.sol";
-import "../ERC5342/ERC5342Delegate.sol";
-import "../ERC5342/ERC5342Shadow.sol";
-import "../ERC5342/ERC5342SlotEnumerable.sol";
-import "../ERC5342/ERC5342Recovery.sol";
+import "../ERC5727/ERC5727Expirable.sol";
+import "../ERC5727/ERC5727Governance.sol";
+import "../ERC5727/ERC5727Delegate.sol";
+import "../ERC5727/ERC5727Shadow.sol";
+import "../ERC5727/ERC5727SlotEnumerable.sol";
+import "../ERC5727/ERC5727Recovery.sol";
 
 contract Perk is
-    ERC5342Expirable,
-    ERC5342Governance,
-    ERC5342Delegate,
-    ERC5342SlotEnumerable,
-    ERC5342Shadow,
-    ERC5342Recovery
+    ERC5727Expirable,
+    ERC5727Governance,
+    ERC5727Delegate,
+    ERC5727SlotEnumerable,
+    ERC5727Shadow,
+    ERC5727Recovery
 {
     string private _baseTokenURI;
 
@@ -24,7 +24,7 @@ contract Perk is
         string memory symbol,
         address[] memory voters,
         string memory baseTokenURI
-    ) ERC5342Governance(name, symbol, voters) {
+    ) ERC5727Governance(name, symbol, voters) {
         _baseTokenURI = baseTokenURI;
     }
 
@@ -37,12 +37,12 @@ contract Perk is
         view
         virtual
         override(
-            ERC5342Governance,
-            ERC5342Delegate,
-            ERC5342Expirable,
-            ERC5342Recovery,
-            ERC5342Shadow,
-            ERC5342SlotEnumerable
+            ERC5727Governance,
+            ERC5727Delegate,
+            ERC5727Expirable,
+            ERC5727Recovery,
+            ERC5727Shadow,
+            ERC5727SlotEnumerable
         )
         returns (bool)
     {
@@ -53,9 +53,9 @@ contract Perk is
         internal
         view
         virtual
-        override(ERC5342, ERC5342Shadow)
+        override(ERC5727, ERC5727Shadow)
     {
-        ERC5342Shadow._beforeView(tokenId);
+        ERC5727Shadow._beforeView(tokenId);
     }
 
     function mint(
@@ -101,8 +101,8 @@ contract Perk is
         uint256 value,
         uint256 slot,
         bool valid
-    ) internal virtual override(ERC5342, ERC5342Enumerable) {
-        ERC5342Enumerable._beforeTokenMint(
+    ) internal virtual override(ERC5727, ERC5727Enumerable) {
+        ERC5727Enumerable._beforeTokenMint(
             issuer,
             soul,
             tokenId,
@@ -119,8 +119,8 @@ contract Perk is
         uint256 value,
         uint256 slot,
         bool valid
-    ) internal virtual override(ERC5342, ERC5342Enumerable) {
-        ERC5342Enumerable._afterTokenMint(
+    ) internal virtual override(ERC5727, ERC5727Enumerable) {
+        ERC5727Enumerable._afterTokenMint(
             issuer,
             soul,
             tokenId,
@@ -133,16 +133,16 @@ contract Perk is
     function _afterTokenRevoke(uint256 tokenId)
         internal
         virtual
-        override(ERC5342, ERC5342Enumerable)
+        override(ERC5727, ERC5727Enumerable)
     {
-        ERC5342Enumerable._afterTokenRevoke(tokenId);
+        ERC5727Enumerable._afterTokenRevoke(tokenId);
     }
 
     function _beforeTokenDestroy(uint256 tokenId)
         internal
         virtual
-        override(ERC5342, ERC5342Enumerable)
+        override(ERC5727, ERC5727Enumerable)
     {
-        ERC5342Enumerable._beforeTokenDestroy(tokenId);
+        ERC5727Enumerable._beforeTokenDestroy(tokenId);
     }
 }

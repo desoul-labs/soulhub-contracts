@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./IERC5342.sol";
+import "./IERC5727.sol";
 
 /**
  * @title
  * @dev
  */
-interface IERC5342Governance is IERC5342 {
+interface IERC5727Governance is IERC5727 {
     /**
      * @notice Get the voters of the contract.
      * @return The array of the voters

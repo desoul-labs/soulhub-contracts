@@ -2,11 +2,11 @@
 
 pragma solidity ^0.8.0;
 
-import "./ERC5342.sol";
-import "./IERC5342Delegate.sol";
-import "./ERC5342Enumerable.sol";
+import "./ERC5727.sol";
+import "./IERC5727Delegate.sol";
+import "./ERC5727Enumerable.sol";
 
-abstract contract ERC5342Delegate is ERC5342Enumerable, IERC5342Delegate {
+abstract contract ERC5727Delegate is ERC5727Enumerable, IERC5727Delegate {
     struct DelegateRequest {
         address soul;
         uint256 value;
@@ -25,11 +25,11 @@ abstract contract ERC5342Delegate is ERC5342Enumerable, IERC5342Delegate {
         public
         view
         virtual
-        override(IERC165, ERC5342Enumerable)
+        override(IERC165, ERC5727Enumerable)
         returns (bool)
     {
         return
-            interfaceId == type(IERC5342Delegate).interfaceId ||
+            interfaceId == type(IERC5727Delegate).interfaceId ||
             super.supportsInterface(interfaceId);
     }
 
@@ -40,7 +40,7 @@ abstract contract ERC5342Delegate is ERC5342Enumerable, IERC5342Delegate {
     ) private {
         require(
             isCreator || _mintAllowed[_msgSender()][delegateRequestId],
-            "ERC5342Delegate: Only contract creator or allowed operator can delegate"
+            "ERC5727Delegate: Only contract creator or allowed operator can delegate"
         );
         if (!isCreator) {
             _mintAllowed[_msgSender()][delegateRequestId] = false;
@@ -55,7 +55,7 @@ abstract contract ERC5342Delegate is ERC5342Enumerable, IERC5342Delegate {
     ) private {
         require(
             isCreator || _revokeAllowed[_msgSender()][tokenId],
-            "ERC5342Delegate: Only contract creator or allowed operator can delegate"
+            "ERC5727Delegate: Only contract creator or allowed operator can delegate"
         );
         if (!isCreator) {
             _revokeAllowed[_msgSender()][tokenId] = false;
@@ -68,7 +68,7 @@ abstract contract ERC5342Delegate is ERC5342Enumerable, IERC5342Delegate {
     {
         require(
             isCreator || _mintAllowed[_msgSender()][delegateRequestId],
-            "ERC5342Delegate: Only contract creator or allowed operator can mint"
+            "ERC5727Delegate: Only contract creator or allowed operator can mint"
         );
         if (!isCreator) {
             _mintAllowed[_msgSender()][delegateRequestId] = false;
@@ -85,7 +85,7 @@ abstract contract ERC5342Delegate is ERC5342Enumerable, IERC5342Delegate {
     {
         require(
             isCreator || _revokeAllowed[_msgSender()][tokenId],
-            "ERC5342Delegate: Only contract creator or allowed operator can revoke"
+            "ERC5727Delegate: Only contract creator or allowed operator can revoke"
         );
         if (!isCreator) {
             _revokeAllowed[_msgSender()][tokenId] = false;
@@ -111,7 +111,7 @@ abstract contract ERC5342Delegate is ERC5342Enumerable, IERC5342Delegate {
     ) public virtual override {
         require(
             operators.length == delegateRequestIds.length,
-            "ERC5342Delegate: operators and delegateRequestIds must have the same length"
+            "ERC5727Delegate: operators and delegateRequestIds must have the same length"
         );
         bool isCreator = _isCreator();
         for (uint256 i = 0; i < operators.length; i++) {
@@ -137,7 +137,7 @@ abstract contract ERC5342Delegate is ERC5342Enumerable, IERC5342Delegate {
     ) public virtual override {
         require(
             operators.length == tokenIds.length,
-            "ERC5342Delegate: operators and tokenIds must have the same length"
+            "ERC5727Delegate: operators and tokenIds must have the same length"
         );
         bool isCreator = _isCreator();
         for (uint256 i = 0; i < operators.length; i++) {
@@ -184,10 +184,10 @@ abstract contract ERC5342Delegate is ERC5342Enumerable, IERC5342Delegate {
         uint256 value,
         uint256 slot
     ) external virtual override returns (uint256 delegateRequestId) {
-        require(_isCreator(), "ERC5342Delegate: You are not the creator");
+        require(_isCreator(), "ERC5727Delegate: You are not the creator");
         require(
             value != 0,
-            "ERC5342Delegate: Value of Delegate Request cannot be zero"
+            "ERC5727Delegate: Value of Delegate Request cannot be zero"
         );
         delegateRequestId = _delegateRequestCount;
         _delegateRequests[_delegateRequestCount].soul = soul;
@@ -201,7 +201,7 @@ abstract contract ERC5342Delegate is ERC5342Enumerable, IERC5342Delegate {
         virtual
         override
     {
-        require(_isCreator(), "ERC5342Delegate: You are not the creator");
+        require(_isCreator(), "ERC5727Delegate: You are not the creator");
         delete _delegateRequests[delegateRequestId];
     }
 }

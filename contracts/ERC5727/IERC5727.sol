@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
  * @title
  * @dev
  */
-interface IERC5342 is IERC165 {
+interface IERC5727 is IERC165 {
     /**
      * @dev MUST emit when a token is minted.
      * @param soul The address that the token is minted to

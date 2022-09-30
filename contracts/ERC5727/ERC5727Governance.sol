@@ -4,11 +4,11 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
-import "./ERC5342.sol";
-import "./IERC5342Governance.sol";
-import "./ERC5342Enumerable.sol";
+import "./ERC5727.sol";
+import "./IERC5727Governance.sol";
+import "./ERC5727Enumerable.sol";
 
-abstract contract ERC5342Governance is ERC5342Enumerable, IERC5342Governance {
+abstract contract ERC5727Governance is ERC5727Enumerable, IERC5727Governance {
     using EnumerableSet for EnumerableSet.AddressSet;
 
     uint256 private _approvalRequestCount;
@@ -38,7 +38,7 @@ abstract contract ERC5342Governance is ERC5342Enumerable, IERC5342Governance {
         string memory name_,
         string memory symbol_,
         address[] memory voters_
-    ) ERC5342(name_, symbol_) {
+    ) ERC5727(name_, symbol_) {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         for (uint256 i = 0; i < voters_.length; i++) {
             EnumerableSet.add(_votersArray, voters_[i]);
@@ -58,7 +58,7 @@ abstract contract ERC5342Governance is ERC5342Enumerable, IERC5342Governance {
     {
         require(
             !_mintApprovals[_msgSender()][approvalRequestId][soul],
-            "ERC5342Governance: You already approved this address"
+            "ERC5727Governance: You already approved this address"
         );
         _mintApprovals[_msgSender()][approvalRequestId][soul] = true;
         _mintApprovalCounts[approvalRequestId][soul] += 1;
@@ -84,7 +84,7 @@ abstract contract ERC5342Governance is ERC5342Enumerable, IERC5342Governance {
     {
         require(
             !_revokeApprovals[_msgSender()][tokenId],
-            "ERC5342Governance: You already approved this address"
+            "ERC5727Governance: You already approved this address"
         );
         _revokeApprovals[_msgSender()][tokenId] = true;
         _revokeApprovalCounts[tokenId] += 1;
@@ -100,11 +100,11 @@ abstract contract ERC5342Governance is ERC5342Enumerable, IERC5342Governance {
         public
         view
         virtual
-        override(IERC165, ERC5342Enumerable)
+        override(IERC165, ERC5727Enumerable)
         returns (bool)
     {
         return
-            interfaceId == type(IERC5342Governance).interfaceId ||
+            interfaceId == type(IERC5727Governance).interfaceId ||
             super.supportsInterface(interfaceId);
     }
 
@@ -135,7 +135,7 @@ abstract contract ERC5342Governance is ERC5342Enumerable, IERC5342Governance {
     {
         require(
             value != 0,
-            "ERC5342Governance: Value of Approval Request cannot be 0"
+            "ERC5727Governance: Value of Approval Request cannot be 0"
         );
         _approvalRequests[_approvalRequestCount] = ApprovalRequest(
             _msgSender(),
@@ -152,7 +152,7 @@ abstract contract ERC5342Governance is ERC5342Enumerable, IERC5342Governance {
     {
         require(
             _msgSender() == _approvalRequests[approvalRequestId].creator,
-            "ERC5342Governance: You are not the creator"
+            "ERC5727Governance: You are not the creator"
         );
         delete _approvalRequests[approvalRequestId];
     }
@@ -160,7 +160,7 @@ abstract contract ERC5342Governance is ERC5342Enumerable, IERC5342Governance {
     function addVoter(address newVoter) public onlyOwner {
         require(
             !hasRole(VOTER_ROLE, newVoter),
-            "ERC5342Governance: newVoter is already a voter"
+            "ERC5727Governance: newVoter is already a voter"
         );
         EnumerableSet.add(_votersArray, newVoter);
         _setupRole(VOTER_ROLE, newVoter);
@@ -169,7 +169,7 @@ abstract contract ERC5342Governance is ERC5342Enumerable, IERC5342Governance {
     function removeVoter(address voter) public onlyOwner {
         require(
             EnumerableSet.contains(_votersArray, voter),
-            "ERC5342Governance: Voter does not exist"
+            "ERC5727Governance: Voter does not exist"
         );
         _revokeRole(VOTER_ROLE, voter);
         EnumerableSet.remove(_votersArray, voter);

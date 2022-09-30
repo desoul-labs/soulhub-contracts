@@ -4,10 +4,10 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
-import "./ERC5342.sol";
-import "./IERC5342Enumerable.sol";
+import "./ERC5727.sol";
+import "./IERC5727Enumerable.sol";
 
-abstract contract ERC5342Enumerable is ERC5342, IERC5342Enumerable {
+abstract contract ERC5727Enumerable is ERC5727, IERC5727Enumerable {
     using Counters for Counters.Counter;
     using EnumerableSet for EnumerableSet.UintSet;
 
@@ -21,11 +21,11 @@ abstract contract ERC5342Enumerable is ERC5342, IERC5342Enumerable {
         public
         view
         virtual
-        override(IERC165, ERC5342)
+        override(IERC165, ERC5727)
         returns (bool)
     {
         return
-            interfaceId == type(IERC5342Enumerable).interfaceId ||
+            interfaceId == type(IERC5727Enumerable).interfaceId ||
             super.supportsInterface(interfaceId);
     }
 
@@ -118,7 +118,7 @@ abstract contract ERC5342Enumerable is ERC5342, IERC5342Enumerable {
         returns (uint256[] memory tokenIds)
     {
         tokenIds = EnumerableSet.values(_indexedTokenIds[soul]);
-        require(tokenIds.length != 0, "ERC5342: the soul has no token");
+        require(tokenIds.length != 0, "ERC5727: the soul has no token");
     }
 
     function emittedCount() public view virtual override returns (uint256) {
@@ -159,7 +159,7 @@ abstract contract ERC5342Enumerable is ERC5342, IERC5342Enumerable {
         EnumerableSet.UintSet storage ids = _indexedTokenIds[soul];
         require(
             index < EnumerableSet.length(ids),
-            "ERC5342: Token does not exist"
+            "ERC5727: Token does not exist"
         );
         return EnumerableSet.at(ids, index);
     }

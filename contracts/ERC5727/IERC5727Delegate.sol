@@ -2,13 +2,13 @@
 
 pragma solidity ^0.8.0;
 
-import "./IERC5342.sol";
+import "./IERC5727.sol";
 
 /**
  * @title
  * @dev
  */
-interface IERC5342Delegate is IERC5342 {
+interface IERC5727Delegate is IERC5727 {
     /**
      * @notice Delegate a one-time minting right to `operator` for `delegateRequestId` delegate request.
      * @dev MUST revert if the caller does not have the right to delegate.

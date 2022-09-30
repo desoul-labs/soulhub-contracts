@@ -1,10 +1,10 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./ERC5342.sol";
-import "./IERC5342Expirable.sol";
+import "./ERC5727.sol";
+import "./IERC5727Expirable.sol";
 
-abstract contract ERC5342Expirable is IERC5342Expirable, ERC5342 {
+abstract contract ERC5727Expirable is IERC5727Expirable, ERC5727 {
     mapping(uint256 => uint256) private _expiryDate;
 
     function expiryDate(uint256 tokenId)
@@ -15,7 +15,7 @@ abstract contract ERC5342Expirable is IERC5342Expirable, ERC5342 {
         returns (uint256)
     {
         uint256 date = _expiryDate[tokenId];
-        require(date != 0, "ERC5342Expirable: No expiry date set");
+        require(date != 0, "ERC5727Expirable: No expiry date set");
         return date;
     }
 
@@ -27,7 +27,7 @@ abstract contract ERC5342Expirable is IERC5342Expirable, ERC5342 {
         returns (bool)
     {
         uint256 date = _expiryDate[tokenId];
-        require(date != 0, "ERC5342Expirable: No expiry date set");
+        require(date != 0, "ERC5727Expirable: No expiry date set");
         return date < block.timestamp;
     }
 
@@ -38,11 +38,11 @@ abstract contract ERC5342Expirable is IERC5342Expirable, ERC5342 {
     {
         require(
             date > block.timestamp,
-            "ERC5342Expirable: Expiry date cannot be in the past"
+            "ERC5727Expirable: Expiry date cannot be in the past"
         );
         require(
             date > _expiryDate[tokenId],
-            "ERC5342Expirable: Expiry date can only be extended"
+            "ERC5727Expirable: Expiry date can only be extended"
         );
         _expiryDate[tokenId] = date;
     }
@@ -53,7 +53,7 @@ abstract contract ERC5342Expirable is IERC5342Expirable, ERC5342 {
     ) internal {
         require(
             tokenIds.length == dates.length,
-            "ERC5342Expirable: Ids and token URIs length mismatch"
+            "ERC5727Expirable: Ids and token URIs length mismatch"
         );
         for (uint256 i = 0; i < tokenIds.length; i++) {
             _setExpiryDate(tokenIds[i], dates[i]);
@@ -83,11 +83,11 @@ abstract contract ERC5342Expirable is IERC5342Expirable, ERC5342 {
         public
         view
         virtual
-        override(IERC165, ERC5342)
+        override(IERC165, ERC5727)
         returns (bool)
     {
         return
-            interfaceId == type(IERC5342Expirable).interfaceId ||
+            interfaceId == type(IERC5727Expirable).interfaceId ||
             super.supportsInterface(interfaceId);
     }
 }

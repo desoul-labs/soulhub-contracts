@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./IERC5342.sol";
+import "./IERC5727.sol";
 
 /**
  * @title
  * @dev
  */
-interface IERC5342Recovery is IERC5342 {
+interface IERC5727Recovery is IERC5727 {
     /**
      * @notice Recover the tokens of `soul` with `signature`.
      * @dev MUST revert if the signature is invalid.

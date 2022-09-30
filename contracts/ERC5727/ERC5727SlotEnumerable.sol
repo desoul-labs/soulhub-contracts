@@ -3,10 +3,10 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
-import "./ERC5342.sol";
-import "./IERC5342SlotEnumerable.sol";
+import "./ERC5727.sol";
+import "./IERC5727SlotEnumerable.sol";
 
-abstract contract ERC5342SlotEnumerable is ERC5342, IERC5342SlotEnumerable {
+abstract contract ERC5727SlotEnumerable is ERC5727, IERC5727SlotEnumerable {
     using EnumerableSet for EnumerableSet.UintSet;
 
     struct SlotData {
@@ -24,8 +24,8 @@ abstract contract ERC5342SlotEnumerable is ERC5342, IERC5342SlotEnumerable {
 
     function slotByIndex(uint256 index) public view override returns (uint256) {
         require(
-            index < ERC5342SlotEnumerable.slotCount(),
-            "ERC5342SlotEnumerable: slot index out of bounds"
+            index < ERC5727SlotEnumerable.slotCount(),
+            "ERC5727SlotEnumerable: slot index out of bounds"
         );
         return _allSlots[index].slot;
     }
@@ -55,8 +55,8 @@ abstract contract ERC5342SlotEnumerable is ERC5342, IERC5342SlotEnumerable {
         returns (uint256)
     {
         require(
-            index < ERC5342SlotEnumerable.tokenSupplyInSlot(slot),
-            "ERC5342SlotEnumerable: slot token index out of bounds"
+            index < ERC5727SlotEnumerable.tokenSupplyInSlot(slot),
+            "ERC5727SlotEnumerable: slot token index out of bounds"
         );
         return
             EnumerableSet.at(_allSlots[_allSlotsIndex[slot]].slotTokens, index);
@@ -66,11 +66,11 @@ abstract contract ERC5342SlotEnumerable is ERC5342, IERC5342SlotEnumerable {
         public
         view
         virtual
-        override(IERC165, ERC5342)
+        override(IERC165, ERC5727)
         returns (bool)
     {
         return
-            interfaceId == type(IERC5342SlotEnumerable).interfaceId ||
+            interfaceId == type(IERC5727SlotEnumerable).interfaceId ||
             super.supportsInterface(interfaceId);
     }
 }

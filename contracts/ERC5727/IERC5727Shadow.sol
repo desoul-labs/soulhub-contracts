@@ -1,13 +1,13 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./IERC5342.sol";
+import "./IERC5727.sol";
 
 /**
  * @title
  * @dev
  */
-interface IERC5342Shadow is IERC5342 {
+interface IERC5727Shadow is IERC5727 {
     /**
      * @notice Shadow a token.
      * @dev MUST revert if the `tokenId` token does not exists.
