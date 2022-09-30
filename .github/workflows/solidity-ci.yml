@@ -22,7 +22,6 @@ on:
 
 env:
   ALCHEMY_API_URL: ${{ secrets.ALCHEMY_API_URL }}
-  ADDRESS_PRIVATE_KEY: ${{ secrets.ADDRESS_PRIVATE_KEY }}
   STAGE: dev
 
 jobs:
@@ -60,6 +59,12 @@ jobs:
         with:
           node-version: 18.x
           cache: 'pnpm'
+      - name: Setup Tenderly
+        env:
+          TENDERLY_ACCESS_KEY: ${{ secrets.TENDERLY_ACCESS_KEY }}
+        run: |
+          curl https://raw.githubusercontent.com/Tenderly/tenderly-cli/master/scripts/install-linux.sh | sh
+          tenderly login --authentication-method access-key --access-key $TENDERLY_ACCESS_KEY
       - name: Install dependencies
         run: pnpm install
       - name: Test

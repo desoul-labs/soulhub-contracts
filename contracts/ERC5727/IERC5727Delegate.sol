@@ -1,12 +1,12 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: CC0-1.0
 
 pragma solidity ^0.8.0;
 
 import "./IERC5727.sol";
 
 /**
- * @title
- * @dev
+ * @title ERC5727 Soulbound Token Delegate Interface
+ * @dev This extension allows delegation of (batch) minting and revocation of tokens to operator(s).
  */
 interface IERC5727Delegate is IERC5727 {
     /**

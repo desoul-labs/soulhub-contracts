@@ -1,12 +1,12 @@
-//SPDX-License-Identifier: MIT
+//SPDX-License-Identifier: CC0-1.0
 pragma solidity ^0.8.0;
 
 import "./IERC5727.sol";
 import "./IERC5727Enumerable.sol";
 
 /**
- * @title
- * @dev
+ * @title ERC5727 Soulbound Token Slot Enumerable Interface
+ * @dev This extension allows querying information about slots.
  */
 interface IERC5727SlotEnumerable is IERC5727, IERC5727Enumerable {
     /**

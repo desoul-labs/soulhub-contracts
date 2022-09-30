@@ -1,11 +1,11 @@
-//SPDX-License-Identifier: MIT
+//SPDX-License-Identifier: CC0-1.0
 pragma solidity ^0.8.0;
 
 import "./IERC5727.sol";
 
 /**
- * @title
- * @dev
+ * @title ERC5727 Soulbound Token Expirable Interface
+ * @dev This extension allows soulbound tokens to be expired.
  */
 interface IERC5727Expirable is IERC5727 {
     /**

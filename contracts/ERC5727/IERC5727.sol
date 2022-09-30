@@ -1,11 +1,11 @@
-//SPDX-License-Identifier: MIT
+//SPDX-License-Identifier: CC0-1.0
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 /**
- * @title
- * @dev
+ * @title ERC5727 Soulbound Token Interface
+ * @dev The core interface of the ERC5727 standard.
  */
 interface IERC5727 is IERC165 {
     /**
