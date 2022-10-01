@@ -1,16 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "../ERC5342/ERC5342Expirable.sol";
+import "../ERC5727/ERC5727Expirable.sol";
+import "../ERC5727/ERC5727Enumerable.sol";
 
-contract SoulmateCard is ERC5342Expirable {
+contract SoulmateCard is ERC5727Expirable, ERC5727Enumerable {
     string private _baseTokenURI;
 
     constructor(
         string memory name,
         string memory symbol,
         string memory baseTokenURI
-    ) ERC5342(name, symbol) {
+    ) ERC5727(name, symbol) {
         _baseTokenURI = baseTokenURI;
     }
 
@@ -22,7 +23,7 @@ contract SoulmateCard is ERC5342Expirable {
         public
         view
         virtual
-        override(ERC5342, IERC165)
+        override(ERC5727Enumerable, ERC5727Expirable)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
@@ -53,5 +54,57 @@ contract SoulmateCard is ERC5342Expirable {
 
     function revoke(uint256 tokenId) public onlyOwner {
         _revoke(tokenId);
+    }
+
+    function _beforeTokenMint(
+        address issuer,
+        address soul,
+        uint256 tokenId,
+        uint256 value,
+        uint256 slot,
+        bool valid
+    ) internal virtual override(ERC5727, ERC5727Enumerable) {
+        ERC5727Enumerable._beforeTokenMint(
+            issuer,
+            soul,
+            tokenId,
+            value,
+            slot,
+            valid
+        );
+    }
+
+    function _afterTokenMint(
+        address issuer,
+        address soul,
+        uint256 tokenId,
+        uint256 value,
+        uint256 slot,
+        bool valid
+    ) internal virtual override(ERC5727, ERC5727Enumerable) {
+        ERC5727Enumerable._afterTokenMint(
+            issuer,
+            soul,
+            tokenId,
+            value,
+            slot,
+            valid
+        );
+    }
+
+    function _afterTokenRevoke(uint256 tokenId)
+        internal
+        virtual
+        override(ERC5727, ERC5727Enumerable)
+    {
+        ERC5727Enumerable._afterTokenRevoke(tokenId);
+    }
+
+    function _beforeTokenDestroy(uint256 tokenId)
+        internal
+        virtual
+        override(ERC5727, ERC5727Enumerable)
+    {
+        ERC5727Enumerable._beforeTokenDestroy(tokenId);
     }
 }

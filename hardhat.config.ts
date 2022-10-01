@@ -2,7 +2,9 @@ import '@nomicfoundation/hardhat-toolbox'
 import '@nomiclabs/hardhat-solhint'
 import { HardhatUserConfig } from 'hardhat/types'
 import { networks } from './constants/networks'
-import * as tdly from '@tenderly/hardhat-tenderly'
+import * as tenderly from '@tenderly/hardhat-tenderly'
+import 'solidity-coverage'
+import '@primitivefi/hardhat-dodoc'
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -34,6 +36,6 @@ const config: HardhatUserConfig = {
   },
 }
 
-tdly.setup()
+tenderly.setup()
 
 export default config

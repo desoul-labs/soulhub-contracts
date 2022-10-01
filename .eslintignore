@@ -4,3 +4,5 @@ artifacts
 typechain
 .eslintrc.js
 contracts
+coverage
+doc
