@@ -84,6 +84,7 @@ abstract contract ERC5727Enumerable is ERC5727, IERC5727Enumerable {
         uint256 value,
         uint256 slot
     ) internal virtual returns (uint256[] memory tokenIds) {
+        tokenIds = new uint256[](souls.length);
         for (uint256 i = 0; i < souls.length; i++) {
             tokenIds[i] = _mint(souls[i], value, slot);
         }
