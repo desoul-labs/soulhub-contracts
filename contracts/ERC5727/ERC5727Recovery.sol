@@ -15,7 +15,7 @@ abstract contract ERC5727Recovery is ERC5727Enumerable, IERC5727Recovery {
         virtual
         override
     {
-        address recipient = msg.sender;
+        address recipient = _msgSender();
         bytes32 messageHash = keccak256(abi.encodePacked(soul, recipient));
         bytes32 signedHash = messageHash.toEthSignedMessageHash();
         require(signedHash.recover(signature) == soul, "Invalid signature");

@@ -236,7 +236,6 @@ abstract contract ERC5727 is
         override
         returns (address)
     {
-        _beforeView(tokenId);
         return _getTokenOrRevert(tokenId).issuer;
     }
 
