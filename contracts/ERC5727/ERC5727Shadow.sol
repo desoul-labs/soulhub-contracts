@@ -40,6 +40,18 @@ abstract contract ERC5727Shadow is ERC5727, IERC5727Shadow {
         return _shadowed[tokenId];
     }
 
+    function isShadowed(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        onlyManager(tokenId)
+        returns (bool)
+    {
+        _getTokenOrRevert(tokenId);
+        return _shadowed[tokenId];
+    }
+
     function shadow(uint256 tokenId)
         public
         virtual

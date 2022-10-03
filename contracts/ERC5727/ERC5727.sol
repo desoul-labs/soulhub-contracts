@@ -90,6 +90,7 @@ abstract contract ERC5727 is
         _beforeTokenMint(issuer, soul, tokenId, value, slot, valid);
         _tokens[tokenId] = Token(issuer, soul, valid, value, slot);
         _afterTokenMint(issuer, soul, tokenId, value, slot, valid);
+        emit Minted(soul, tokenId, value);
         emit SlotChanged(tokenId, 0, slot);
     }
 
