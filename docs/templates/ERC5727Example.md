@@ -389,6 +389,28 @@ _MUST revert if the `tokenId` token does not exist._
 | ---- | ---- | ----------------------- |
 | \_0  | bool | If the token is expired |
 
+### isShadowed
+
+```solidity
+function isShadowed(uint256 tokenId) external view returns (bool)
+```
+
+Get if a token is shadowed.
+
+_MUST revert if the `tokenId` token does not exists._
+
+#### Parameters
+
+| Name    | Type    | Description        |
+| ------- | ------- | ------------------ |
+| tokenId | uint256 | The token to query |
+
+#### Returns
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| \_0  | bool | undefined   |
+
 ### isValid
 
 ```solidity

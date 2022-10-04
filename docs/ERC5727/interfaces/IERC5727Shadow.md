@@ -6,6 +6,28 @@ _This extension allows restricting the visibility of specific soulbound tokens._
 
 ## Methods
 
+### isShadowed
+
+```solidity
+function isShadowed(uint256 tokenId) external nonpayable returns (bool)
+```
+
+Get if a token is shadowed.
+
+_MUST revert if the `tokenId` token does not exists._
+
+#### Parameters
+
+| Name    | Type    | Description        |
+| ------- | ------- | ------------------ |
+| tokenId | uint256 | The token to query |
+
+#### Returns
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| \_0  | bool | undefined   |
+
 ### isValid
 
 ```solidity

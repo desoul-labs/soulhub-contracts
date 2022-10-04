@@ -1,27 +1,27 @@
 import { expect } from 'chai'
 import { ethers } from 'hardhat'
 
-beforeEach(async function () {
-  const ERC5727ExampleFactory = await ethers.getContractFactory('ERC5727Example')
-  ;[
-    this.owner,
-    this.tokenOwnerSoul1,
-    this.tokenOwnerSoul2,
-    this.voterSoul1,
-    this.voterSoul2,
-    this.delegateSoul1,
-    this.delegateSoul2,
-  ] = await ethers.getSigners()
-  this.ERC5727ExampleContract = await ERC5727ExampleFactory.deploy(
-    'Soularis',
-    'SOUL',
-    [this.voterSoul1.address, this.voterSoul2.address],
-    'https://soularis-demo.s3.ap-northeast-1.amazonaws.com/perk/',
-  )
-  await this.ERC5727ExampleContract.deployed()
-})
-
 describe('ERC5727Test', function () {
+  beforeEach(async function () {
+    const ERC5727ExampleFactory = await ethers.getContractFactory('ERC5727Example')
+    ;[
+      this.owner,
+      this.tokenOwnerSoul1,
+      this.tokenOwnerSoul2,
+      this.voterSoul1,
+      this.voterSoul2,
+      this.delegateSoul1,
+      this.delegateSoul2,
+    ] = await ethers.getSigners()
+    this.ERC5727ExampleContract = await ERC5727ExampleFactory.deploy(
+      'Soularis',
+      'SOUL',
+      [this.voterSoul1.address, this.voterSoul2.address],
+      'https://soularis-demo.s3.ap-northeast-1.amazonaws.com/perk/',
+    )
+    await this.ERC5727ExampleContract.deployed()
+  })
+
   describe('ERC5727Example', function () {
     it('Only contract owner can mint with mint', async function () {
       expect(await this.ERC5727ExampleContract.owner()).equal(this.owner.address)

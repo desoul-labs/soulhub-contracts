@@ -1,4 +1,4 @@
-# ERC5727Shadow
+# ERC5727Registrant
 
 ## Methods
 
@@ -27,6 +27,18 @@ Get the URI of the contract.
 | Name | Type   | Description             |
 | ---- | ------ | ----------------------- |
 | \_0  | string | The URI of the contract |
+
+### deregister
+
+```solidity
+function deregister(address _registry) external nonpayable
+```
+
+#### Parameters
+
+| Name       | Type    | Description |
+| ---------- | ------- | ----------- |
+| \_registry | address | undefined   |
 
 ### getRoleAdmin
 
@@ -125,21 +137,17 @@ _Returns `true` if `account` has been granted `role`._
 | ---- | ---- | ----------- |
 | \_0  | bool | undefined   |
 
-### isShadowed
+### isRegistered
 
 ```solidity
-function isShadowed(uint256 tokenId) external view returns (bool)
+function isRegistered(address _registry) external view returns (bool)
 ```
-
-Get if a token is shadowed.
-
-_MUST revert if the `tokenId` token does not exists._
 
 #### Parameters
 
-| Name    | Type    | Description        |
-| ------- | ------- | ------------------ |
-| tokenId | uint256 | The token to query |
+| Name       | Type    | Description |
+| ---------- | ------- | ----------- |
+| \_registry | address | undefined   |
 
 #### Returns
 
@@ -219,6 +227,30 @@ _Returns the address of the current owner._
 | ---- | ------- | ----------- |
 | \_0  | address | undefined   |
 
+### register
+
+```solidity
+function register(address _registry) external nonpayable
+```
+
+#### Parameters
+
+| Name       | Type    | Description |
+| ---------- | ------- | ----------- |
+| \_registry | address | undefined   |
+
+### registryTransferOwnership
+
+```solidity
+function registryTransferOwnership(address newOwner) external nonpayable
+```
+
+#### Parameters
+
+| Name     | Type    | Description |
+| -------- | ------- | ----------- |
+| newOwner | address | undefined   |
+
 ### renounceOwnership
 
 ```solidity
@@ -242,22 +274,6 @@ _Revokes `role` from the calling account. Roles are often managed via {grantRole
 | role    | bytes32 | undefined   |
 | account | address | undefined   |
 
-### reveal
-
-```solidity
-function reveal(uint256 tokenId) external nonpayable
-```
-
-Reveal a token.
-
-_MUST revert if the `tokenId` token does not exists._
-
-#### Parameters
-
-| Name    | Type    | Description         |
-| ------- | ------- | ------------------- |
-| tokenId | uint256 | The token to reveal |
-
 ### revokeRole
 
 ```solidity
@@ -272,22 +288,6 @@ _Revokes `role` from `account`. If `account` had been granted `role`, emits a {R
 | ------- | ------- | ----------- |
 | role    | bytes32 | undefined   |
 | account | address | undefined   |
-
-### shadow
-
-```solidity
-function shadow(uint256 tokenId) external nonpayable
-```
-
-Shadow a token.
-
-_MUST revert if the `tokenId` token does not exists._
-
-#### Parameters
-
-| Name    | Type    | Description         |
-| ------- | ------- | ------------------- |
-| tokenId | uint256 | The token to shadow |
 
 ### slotOf
 
@@ -473,6 +473,18 @@ event Consumed(uint256 indexed tokenId, uint256 value)
 | tokenId `indexed` | uint256 | undefined   |
 | value             | uint256 | undefined   |
 
+### Deregistered
+
+```solidity
+event Deregistered(address indexed registry)
+```
+
+#### Parameters
+
+| Name               | Type    | Description |
+| ------------------ | ------- | ----------- |
+| registry `indexed` | address | undefined   |
+
 ### Destroyed
 
 ```solidity
@@ -512,6 +524,18 @@ event OwnershipTransferred(address indexed previousOwner, address indexed newOwn
 | ----------------------- | ------- | ----------- |
 | previousOwner `indexed` | address | undefined   |
 | newOwner `indexed`      | address | undefined   |
+
+### Registered
+
+```solidity
+event Registered(address indexed registry)
+```
+
+#### Parameters
+
+| Name               | Type    | Description |
+| ------------------ | ------- | ----------- |
+| registry `indexed` | address | undefined   |
 
 ### Revoked
 

@@ -1,5 +1,7 @@
 import '@nomicfoundation/hardhat-toolbox'
 import '@nomiclabs/hardhat-solhint'
+import '@typechain/hardhat'
+import '@nomiclabs/hardhat-ethers'
 import { HardhatUserConfig } from 'hardhat/types'
 import { networks } from './constants/networks'
 import * as tenderly from '@tenderly/hardhat-tenderly'
@@ -36,6 +38,6 @@ const config: HardhatUserConfig = {
   },
 }
 
-tenderly.setup()
+tenderly.setup({ automaticVerifications: false })
 
 export default config
