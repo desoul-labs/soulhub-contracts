@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableMap.sol";
 import "../ERC5727/interfaces/IERC5727.sol";
@@ -121,6 +121,7 @@ abstract contract ERC5727Registry is
     function supportsInterface(bytes4 interfaceId)
         public
         view
+        virtual
         override(ERC165, IERC165)
         returns (bool)
     {
