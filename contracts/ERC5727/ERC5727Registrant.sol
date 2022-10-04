@@ -2,7 +2,7 @@
 pragma solidity ^0.8.4;
 
 import "./interfaces/IERC5727Registrant.sol";
-import "../ERC5727Registry/IERC5727Registry.sol";
+import "../ERC5727Registry/interfaces/IERC5727Registry.sol";
 import "./ERC5727.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 
