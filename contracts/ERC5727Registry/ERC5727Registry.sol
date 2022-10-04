@@ -13,8 +13,8 @@ import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableMap.sol";
 import "../ERC5727/interfaces/IERC5727.sol";
 import "../ERC5727/interfaces/IERC5727Metadata.sol";
-import "./IERC5727Registry.sol";
-import "./IERC5727RegistryMetadata.sol";
+import "./interfaces/IERC5727Registry.sol";
+import "./interfaces/IERC5727RegistryMetadata.sol";
 
 abstract contract ERC5727Registry is
     Context,
