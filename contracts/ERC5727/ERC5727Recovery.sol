@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 import "./ERC5727.sol";
-import "./IERC5727Recovery.sol";
+import "./interfaces/IERC5727Recovery.sol";
 import "./ERC5727Enumerable.sol";
 
 abstract contract ERC5727Recovery is ERC5727Enumerable, IERC5727Recovery {

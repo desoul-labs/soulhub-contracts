@@ -10,8 +10,8 @@ import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-import "./IERC5727.sol";
-import "./IERC5727Metadata.sol";
+import "./interfaces/IERC5727.sol";
+import "./interfaces/IERC5727Metadata.sol";
 
 abstract contract ERC5727 is
     IERC5727Metadata,

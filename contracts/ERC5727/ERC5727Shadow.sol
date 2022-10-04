@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "./ERC5727.sol";
-import "./IERC5727Shadow.sol";
+import "./interfaces/IERC5727Shadow.sol";
 
 abstract contract ERC5727Shadow is ERC5727, IERC5727Shadow {
     mapping(uint256 => bool) private _shadowed;

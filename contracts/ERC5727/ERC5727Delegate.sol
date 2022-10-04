@@ -3,7 +3,7 @@
 pragma solidity ^0.8.0;
 
 import "./ERC5727.sol";
-import "./IERC5727Delegate.sol";
+import "./interfaces/IERC5727Delegate.sol";
 import "./ERC5727Enumerable.sol";
 
 abstract contract ERC5727Delegate is ERC5727Enumerable, IERC5727Delegate {

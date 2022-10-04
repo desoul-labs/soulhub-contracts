@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 import "./ERC5727.sol";
-import "./IERC5727Enumerable.sol";
+import "./interfaces/IERC5727Enumerable.sol";
 
 abstract contract ERC5727Enumerable is ERC5727, IERC5727Enumerable {
     using Counters for Counters.Counter;

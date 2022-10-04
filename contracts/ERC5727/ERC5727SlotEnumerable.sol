@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 import "./ERC5727.sol";
-import "./IERC5727SlotEnumerable.sol";
+import "./interfaces/IERC5727SlotEnumerable.sol";
 
 abstract contract ERC5727SlotEnumerable is ERC5727, IERC5727SlotEnumerable {
     using EnumerableSet for EnumerableSet.UintSet;

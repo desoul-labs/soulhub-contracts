@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 import "./ERC5727.sol";
-import "./IERC5727Governance.sol";
+import "./interfaces/IERC5727Governance.sol";
 import "./ERC5727Enumerable.sol";
 
 abstract contract ERC5727Governance is ERC5727Enumerable, IERC5727Governance {
