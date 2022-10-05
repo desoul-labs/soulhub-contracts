@@ -19,6 +19,8 @@
     "deploy:goerli": "hardhat run scripts/deploy.ts --network goerli",
     "deploy:sepolia": "hardhat run scripts/deploy.ts --network sepolia",
     "deploy:mainnet": "hardhat run scripts/deploy.ts --network mainnet",
+    "deploy:mumbai": "hardhat run scripts/deploy.ts --network mumbai",
+    "deploy:polygon": "hardhat run scripts/deploy.ts --network polygon",
     "lint-staged": "lint-staged --allow-empty",
     "prepare": "husky install",
     "release": "standard-version",

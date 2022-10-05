@@ -18,7 +18,7 @@ const config: HardhatUserConfig = {
       },
     },
   },
-  ...(process.env.NODE_ENV === 'development' ? { defaultNetwork: 'hardhat' } : { networks }),
+  ...(process.env.NODE_ENV === 'production' ? { networks } : { defaultNetwork: 'hardhat' }),
   typechain: {
     outDir: './typechain',
     target: 'ethers-v5',
