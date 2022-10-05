@@ -60,7 +60,7 @@ contract ERC5727RegistryExample is
     function register(address addr) public onlyOwnable returns (uint256) {
         uint256 tokenId = _register(addr);
         address owner = Ownable(addr).owner();
-        string memory uri = IERC5727Metadata(addr).tokenURI(tokenId);
+        string memory uri = IERC5727Metadata(addr).contractURI();
         _safeMint(owner, tokenId, uri);
 
         return tokenId;
@@ -72,8 +72,10 @@ contract ERC5727RegistryExample is
         uint256 tokenId
     ) internal override(ERC721, ERC721Enumerable) whenNotPaused {
         super._beforeTokenTransfer(from, to, tokenId);
-        address addr = addressOf(tokenId);
-        ERC5727Registrant(addr).registryTransferOwnership(to);
+        if (from != address(0) && to != address(0)) {
+            address addr = addressOf(tokenId);
+            ERC5727Registrant(addr).registryTransferOwnership(to);
+        }
     }
 
     // The following functions are overrides required by Solidity.

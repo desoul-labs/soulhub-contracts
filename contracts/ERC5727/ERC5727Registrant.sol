@@ -16,28 +16,62 @@ abstract contract ERC5727Registrant is ERC5727, IERC5727Registrant {
         ERC5727(name, symbol)
     {}
 
-    function register(address _registry) public override onlyOwner {
+    function _register(address _registry) internal returns (uint256) {
         require(_isRegistry(_registry), "ERC5727Registrant: not a registry");
 
-        bool success = _registered.add(_registry);
-        require(success, "ERC5727Registrant: already registered");
-
         IERC5727Registry registry = IERC5727Registry(_registry);
-        registry.register(address(this));
+        uint256 id = registry.register(address(this));
 
         emit Registered(_registry);
+
+        return id;
     }
 
-    function deregister(address _registry) public override onlyOwner {
+    function register(address _registry)
+        public
+        override
+        onlyOwner
+        returns (uint256)
+    {
+        require(
+            !_registered.contains(_registry),
+            "ERC5727Registrant: already registered"
+        );
+        uint256 id = _register(_registry);
+
+        bool success = _registered.add(_registry);
+        require(success, "ERC5727Registrant: failed to register");
+
+        return id;
+    }
+
+    function _deregister(address _registry) internal returns (uint256) {
         require(_isRegistry(_registry), "ERC5727Registrant: not a registry");
 
-        bool success = _registered.remove(_registry);
-        require(success, "ERC5727Registrant: already registered");
-
         IERC5727Registry registry = IERC5727Registry(_registry);
-        registry.deregister(address(this));
+        uint256 id = registry.deregister(address(this));
 
         emit Deregistered(_registry);
+
+        return id;
+    }
+
+    function deregister(address _registry)
+        public
+        override
+        onlyOwner
+        returns (uint256)
+    {
+        require(
+            _registered.contains(_registry),
+            "ERC5727Registrant: not registered"
+        );
+        uint256 id = _deregister(_registry);
+
+        bool success = _registered.remove(_registry);
+        require(success, "ERC5727Registrant: failed to deregister");
+
+        return id;
     }
 
     function isRegistered(address _registry) external view returns (bool) {
@@ -49,14 +83,17 @@ abstract contract ERC5727Registrant is ERC5727, IERC5727Registrant {
             newOwner != address(0),
             "Ownable: new owner is the zero address"
         );
-        require(_isRegistry(_msgSender()), "ERC5727Registrant: not a registry");
+
+        for (uint256 i = 0; i < _registered.length(); i++) {
+            address _registry = _registered.at(i);
+            _deregister(_registry);
+        }
 
         _transferOwnership(newOwner);
 
         for (uint256 i = 0; i < _registered.length(); i++) {
             address _registry = _registered.at(i);
-            deregister(_registry);
-            register(_registry);
+            _register(_registry);
         }
     }
 

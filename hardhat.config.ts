@@ -36,6 +36,9 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
   },
+  dodoc: {
+    runOnCompile: false,
+  },
 }
 
 tenderly.setup({ automaticVerifications: false })

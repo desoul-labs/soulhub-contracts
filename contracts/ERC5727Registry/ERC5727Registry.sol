@@ -65,8 +65,9 @@ abstract contract ERC5727Registry is
     }
 
     function _removeEntry(uint256 id) internal {
+        address addr = addressOf(id);
         bool success = _entries.remove(id);
-        bool successIndex = _indexedEntries.remove(addressOf(id));
+        bool successIndex = _indexedEntries.remove(addr);
 
         require(success && successIndex, "Entry does not exist");
     }

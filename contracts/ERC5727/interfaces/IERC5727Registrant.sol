@@ -6,9 +6,9 @@ interface IERC5727Registrant {
 
     event Deregistered(address indexed registry);
 
-    function register(address registry) external;
+    function register(address registry) external returns (uint256);
 
-    function deregister(address registry) external;
+    function deregister(address registry) external returns (uint256);
 
     function isRegistered(address registry) external view returns (bool);
 }
