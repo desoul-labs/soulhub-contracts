@@ -36,9 +36,23 @@ describe('ERC5727 Registration', function () {
 
     await registrant.register(registry.address)
 
+    expect(await registry.isRegistered(registrant.address)).to.equal(true)
     expect(await registry.addressOf(0)).to.equal(registrant.address)
     expect(await registry.ownerOf(0)).to.equal(owner.address)
     expect(await registry.tokenURI(0)).to.equal(await registrant.contractURI())
+  })
+
+  it('Should deregister ERC5727 collection from the registry', async function () {
+    const { registry, registrant } = await loadFixture(deployRegistryFixture)
+
+    await registrant.register(registry.address)
+
+    await registrant.deregister(registry.address)
+
+    expect(await registry.isRegistered(registrant.address)).to.equal(false)
+    await expect(registry.addressOf(0)).be.reverted
+    await expect(registry.ownerOf(0)).be.reverted
+    await expect(registry.tokenURI(0)).be.reverted
   })
 
   it('Should transfer ownership', async function () {
