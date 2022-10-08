@@ -40,6 +40,12 @@ abstract contract ERC5727Enumerable is ERC5727, IERC5727Enumerable {
         if (EnumerableSet.length(_indexedTokenIds[soul]) == 0) {
             Counters.increment(_soulsCount);
         }
+        //unused variables
+        issuer;
+        tokenId;
+        value;
+        slot;
+        valid;
     }
 
     function _afterTokenMint(
@@ -54,6 +60,11 @@ abstract contract ERC5727Enumerable is ERC5727, IERC5727Enumerable {
         if (valid) {
             _numberOfValidTokens[soul] += 1;
         }
+        //unused variables
+        issuer;
+        value;
+        slot;
+        valid;
     }
 
     function _mint(
