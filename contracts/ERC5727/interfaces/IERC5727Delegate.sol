@@ -97,4 +97,29 @@ interface IERC5727Delegate is IERC5727 {
      * @param delegateRequestId The delegate request to remove.
      */
     function removeDelegateRequest(uint256 delegateRequestId) external;
+
+    function delegatedRequestsOf(address operator)
+        external
+        view
+        returns (uint256[] memory);
+
+    function delegatedTokensOf(address operator)
+        external
+        view
+        returns (uint256[] memory);
+
+    function soulOfDelegateRequest(uint256 delegateRequestId)
+        external
+        view
+        returns (address);
+
+    function valueOfDelegateRequest(uint256 delegateRequestId)
+        external
+        view
+        returns (uint256);
+
+    function slotOfDelegateRequest(uint256 delegateRequestId)
+        external
+        view
+        returns (uint256);
 }

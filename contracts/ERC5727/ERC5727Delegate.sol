@@ -69,10 +69,10 @@ abstract contract ERC5727Delegate is ERC5727Enumerable, IERC5727Delegate {
         );
         if (!isCreator) {
             _revokeAllowed[_msgSender()][tokenId] = false;
-            _delegatedTokens[_msgSender()].add(tokenId);
+            _delegatedTokens[_msgSender()].remove(tokenId);
         }
         _revokeAllowed[operator][tokenId] = true;
-        _delegatedTokens[operator].remove(tokenId);
+        _delegatedTokens[operator].add(tokenId);
     }
 
     function _mintAsDelegateOrCreator(uint256 delegateRequestId, bool isCreator)
@@ -221,6 +221,7 @@ abstract contract ERC5727Delegate is ERC5727Enumerable, IERC5727Delegate {
         public
         view
         virtual
+        override
         returns (uint256[] memory)
     {
         return _delegatedRequests[operator].values();
@@ -230,6 +231,7 @@ abstract contract ERC5727Delegate is ERC5727Enumerable, IERC5727Delegate {
         public
         view
         virtual
+        override
         returns (uint256[] memory)
     {
         return _delegatedTokens[operator].values();
@@ -239,6 +241,7 @@ abstract contract ERC5727Delegate is ERC5727Enumerable, IERC5727Delegate {
         public
         view
         virtual
+        override
         returns (address)
     {
         require(
@@ -252,6 +255,7 @@ abstract contract ERC5727Delegate is ERC5727Enumerable, IERC5727Delegate {
         public
         view
         virtual
+        override
         returns (uint256)
     {
         require(
@@ -265,6 +269,7 @@ abstract contract ERC5727Delegate is ERC5727Enumerable, IERC5727Delegate {
         public
         view
         virtual
+        override
         returns (uint256)
     {
         require(

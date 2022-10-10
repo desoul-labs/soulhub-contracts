@@ -221,6 +221,53 @@ describe('ERC5727Test', function () {
       await ERC5727ExampleContract.connect(delegateSoul1).delegateRevoke(1)
       await expect(ERC5727ExampleContract.connect(delegateSoul1).delegateRevoke(2)).be.reverted
     })
+
+    it('Batch operations', async function () {
+      const { ERC5727ExampleContract, tokenOwnerSoul1, tokenOwnerSoul2, delegateSoul1 } =
+        await loadFixture(deployTokenFixture)
+      await ERC5727ExampleContract.createDelegateRequest(tokenOwnerSoul1.address, 1, 1)
+      await ERC5727ExampleContract.createDelegateRequest(tokenOwnerSoul2.address, 1, 1)
+      await ERC5727ExampleContract.mintDelegateBatch(
+        [delegateSoul1.address, delegateSoul1.address],
+        [0, 1],
+      )
+      await ERC5727ExampleContract.connect(delegateSoul1).delegateMintBatch([0, 1])
+      await ERC5727ExampleContract.delegateRevokeBatch([0, 1])
+    })
+
+    it('Query of information of delegate request', async function () {
+      const { ERC5727ExampleContract, tokenOwnerSoul1 } = await loadFixture(deployTokenFixture)
+      await ERC5727ExampleContract.createDelegateRequest(tokenOwnerSoul1.address, 1, 1)
+      expect(await ERC5727ExampleContract.soulOfDelegateRequest(0)).to.equal(
+        tokenOwnerSoul1.address,
+      )
+      expect(await ERC5727ExampleContract.valueOfDelegateRequest(0)).to.equal(1)
+      expect(await ERC5727ExampleContract.slotOfDelegateRequest(0)).to.equal(1)
+    })
+
+    it('Query for delegated requests or token of an operator', async function () {
+      const { ERC5727ExampleContract, tokenOwnerSoul1, tokenOwnerSoul2, delegateSoul1 } =
+        await loadFixture(deployTokenFixture)
+      await ERC5727ExampleContract.createDelegateRequest(tokenOwnerSoul1.address, 1, 1)
+      await ERC5727ExampleContract.createDelegateRequest(tokenOwnerSoul2.address, 1, 1)
+      await ERC5727ExampleContract.mintDelegateBatch(
+        [delegateSoul1.address, delegateSoul1.address],
+        [0, 1],
+      )
+      expect(await ERC5727ExampleContract.delegatedRequestsOf(delegateSoul1.address)).to.eql([
+        ethers.BigNumber.from(0),
+        ethers.BigNumber.from(1),
+      ])
+      await ERC5727ExampleContract.delegateMintBatch([0, 1])
+      await ERC5727ExampleContract.revokeDelegateBatch(
+        [delegateSoul1.address, delegateSoul1.address],
+        [0, 1],
+      )
+      expect(await ERC5727ExampleContract.delegatedTokensOf(delegateSoul1.address)).to.eql([
+        ethers.BigNumber.from(0),
+        ethers.BigNumber.from(1),
+      ])
+    })
   })
 
   describe('ERC5727Enumerable', function () {
@@ -483,8 +530,29 @@ describe('ERC5727Test', function () {
         true,
       )
       await expect(ERC5727ExampleContract.connect(tokenOwnerSoul2).soulOf(0)).be.reverted
+      await ERC5727ExampleContract.valueOf(3)
       await ERC5727ExampleContract.connect(tokenOwnerSoul2).valueOf(3)
       await ERC5727ExampleContract.slotOf(3)
+      await ERC5727ExampleContract.connect(tokenOwnerSoul2).slotOf(3)
+      await ERC5727ExampleContract.isShadowed(3)
+      await ERC5727ExampleContract.connect(tokenOwnerSoul2).isShadowed(3)
+    })
+  })
+
+  describe('ERC5727Recovery', function () {
+    it('Recover', async function () {
+      const { ERC5727ExampleContract, tokenOwnerSoul1, tokenOwnerSoul2 } = await loadFixture(
+        deployTokenFixture,
+      )
+      const signature = await tokenOwnerSoul1.signMessage(
+        ethers.utils.solidityPack(
+          ['address', 'address'],
+          [tokenOwnerSoul1.address, tokenOwnerSoul2.address],
+        ),
+      )
+      await expect(
+        ERC5727ExampleContract.connect(tokenOwnerSoul2).recover(tokenOwnerSoul1.address, signature),
+      ).to.be.reverted
     })
   })
 
