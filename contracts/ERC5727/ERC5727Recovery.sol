@@ -27,7 +27,7 @@ abstract contract ERC5727Recovery is ERC5727Enumerable, IERC5727Recovery {
             uint256 slot = token.slot;
             bool valid = token.valid;
             _destroy(tokenIds[i]);
-            _mintUnsafe(issuer, soul, tokenIds[i], value, slot, valid);
+            _mintUnsafe(issuer, recipient, tokenIds[i], value, slot, valid);
         }
     }
 
