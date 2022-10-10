@@ -541,18 +541,34 @@ describe('ERC5727Test', function () {
 
   describe('ERC5727Recovery', function () {
     it('Recover', async function () {
-      const { ERC5727ExampleContract, tokenOwnerSoul1, tokenOwnerSoul2 } = await loadFixture(
+      const { ERC5727ExampleContract, owner, tokenOwnerSoul1, tokenOwnerSoul2 } = await loadFixture(
         deployTokenFixture,
       )
+
+      await ERC5727ExampleContract.connect(owner).mint(
+        tokenOwnerSoul1.address,
+        1,
+        1,
+        2664539263,
+        false,
+      )
       const signature = await tokenOwnerSoul1.signMessage(
-        ethers.utils.solidityPack(
-          ['address', 'address'],
-          [tokenOwnerSoul1.address, tokenOwnerSoul2.address],
+        ethers.utils.arrayify(
+          ethers.utils.keccak256(
+            ethers.utils.solidityPack(
+              ['address', 'address'],
+              [tokenOwnerSoul1.address, tokenOwnerSoul2.address],
+            ),
+          ),
         ),
       )
+
       await expect(
-        ERC5727ExampleContract.connect(tokenOwnerSoul2).recover(tokenOwnerSoul1.address, signature),
-      ).to.be.reverted
+        await ERC5727ExampleContract.connect(tokenOwnerSoul2).callStatic.recover(
+          tokenOwnerSoul1.address,
+          signature,
+        ),
+      ).not.to.be.reverted
     })
   })
 
