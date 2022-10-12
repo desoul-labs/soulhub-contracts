@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 /**
  * @title ERC5727 Soulbound Token Interface
  * @dev The core interface of the ERC5727 standard.
+ *    interfaceId = 0x35f61d8a
  */
 interface IERC5727 is IERC165 {
     /**

@@ -540,7 +540,7 @@ describe('ERC5727Test', function () {
   })
 
   describe('ERC5727Recovery', function () {
-    it('Recover', async function () {
+    it('Successful recovery', async function () {
       const { ERC5727ExampleContract, tokenOwnerSoul1, tokenOwnerSoul2 } = await loadFixture(
         deployTokenFixture,
       )
@@ -575,13 +575,60 @@ describe('ERC5727Test', function () {
       )
 
       expect(await ERC5727ExampleContract.balanceOf(tokenOwnerSoul2.address)).to.equal(4)
+    })
+
+    it('Revert when the signature is invalid', async function () {
+      const { ERC5727ExampleContract, tokenOwnerSoul1, tokenOwnerSoul2 } = await loadFixture(
+        deployTokenFixture,
+      )
+
+      await ERC5727ExampleContract.mintBatch(
+        [
+          tokenOwnerSoul1.address,
+          tokenOwnerSoul1.address,
+          tokenOwnerSoul1.address,
+          tokenOwnerSoul2.address,
+        ],
+        1,
+        1,
+        2664539263,
+        false,
+      )
+
+      const signature = await tokenOwnerSoul1.signMessage(
+        ethers.utils.arrayify(
+          ethers.utils.keccak256(
+            ethers.utils.solidityPack(
+              ['address', 'address'],
+              [tokenOwnerSoul1.address, tokenOwnerSoul2.address],
+            ),
+          ),
+        ),
+      )
+
+      await expect(ERC5727ExampleContract.recover(tokenOwnerSoul1.address, signature)).to.be
+        .reverted
+    })
+
+    it('Revert when no token can be recover', async function () {
+      const { ERC5727ExampleContract, tokenOwnerSoul1, tokenOwnerSoul2 } = await loadFixture(
+        deployTokenFixture,
+      )
+
+      const signature = await tokenOwnerSoul1.signMessage(
+        ethers.utils.arrayify(
+          ethers.utils.keccak256(
+            ethers.utils.solidityPack(
+              ['address', 'address'],
+              [tokenOwnerSoul1.address, tokenOwnerSoul2.address],
+            ),
+          ),
+        ),
+      )
 
       await expect(
         ERC5727ExampleContract.connect(tokenOwnerSoul2).recover(tokenOwnerSoul1.address, signature),
       ).to.be.reverted
-
-      await expect(ERC5727ExampleContract.recover(tokenOwnerSoul1.address, signature)).to.be
-        .reverted
     })
   })
 
