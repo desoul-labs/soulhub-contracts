@@ -7,6 +7,7 @@ import "./IERC5727Enumerable.sol";
 /**
  * @title ERC5727 Soulbound Token Slot Enumerable Interface
  * @dev This extension allows querying information about slots.
+ *    interfaceId = 0x3b741b9e
  */
 interface IERC5727SlotEnumerable is IERC5727, IERC5727Enumerable {
     /**

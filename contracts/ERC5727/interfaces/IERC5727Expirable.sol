@@ -6,6 +6,7 @@ import "./IERC5727.sol";
 /**
  * @title ERC5727 Soulbound Token Expirable Interface
  * @dev This extension allows soulbound tokens to be expired.
+ *    interfaceId = 0x2a8cf5aa
  */
 interface IERC5727Expirable is IERC5727 {
     /**

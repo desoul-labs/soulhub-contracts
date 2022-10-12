@@ -6,6 +6,7 @@ import "./IERC5727.sol";
 /**
  * @title ERC5727 Soulbound Token Enumerable Interface
  * @dev This extension allows querying the tokens of a soul.
+ *    interfaceId = 0x211ec300
  */
 interface IERC5727Enumerable is IERC5727 {
     /**

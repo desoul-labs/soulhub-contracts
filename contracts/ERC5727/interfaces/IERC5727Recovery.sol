@@ -6,6 +6,7 @@ import "./IERC5727.sol";
 /**
  * @title ERC5727 Soulbound Token Recovery Interface
  * @dev This extension allows recovering soulbound tokens from an address provided its signature.
+ *    interfaceId = 0x379f4e66
  */
 interface IERC5727Recovery is IERC5727 {
     /**

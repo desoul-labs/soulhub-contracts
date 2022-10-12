@@ -6,6 +6,7 @@ import "./IERC5727.sol";
 /**
  * @title ERC5727 Soulbound Token Shadow Interface
  * @dev This extension allows restricting the visibility of specific soulbound tokens.
+ *    interfaceId = 0x3475cd68
  */
 interface IERC5727Shadow is IERC5727 {
     /**

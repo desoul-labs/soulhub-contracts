@@ -6,6 +6,7 @@ import "./IERC5727.sol";
 /**
  * @title ERC5727 Soulbound Token Consensus Interface
  * @dev This extension allows minting and revocation of tokens by community voting.
+ *    interfaceId = 0x3ba738d1
  */
 interface IERC5727Governance is IERC5727 {
     /**

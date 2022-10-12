@@ -7,6 +7,7 @@ import "./IERC5727.sol";
 /**
  * @title ERC5727 Soulbound Token Delegate Interface
  * @dev This extension allows delegation of (batch) minting and revocation of tokens to operator(s).
+ *    interfaceId = 0x3da384b4
  */
 interface IERC5727Delegate is IERC5727 {
     /**
@@ -97,29 +98,4 @@ interface IERC5727Delegate is IERC5727 {
      * @param delegateRequestId The delegate request to remove.
      */
     function removeDelegateRequest(uint256 delegateRequestId) external;
-
-    function delegatedRequestsOf(address operator)
-        external
-        view
-        returns (uint256[] memory);
-
-    function delegatedTokensOf(address operator)
-        external
-        view
-        returns (uint256[] memory);
-
-    function soulOfDelegateRequest(uint256 delegateRequestId)
-        external
-        view
-        returns (address);
-
-    function valueOfDelegateRequest(uint256 delegateRequestId)
-        external
-        view
-        returns (uint256);
-
-    function slotOfDelegateRequest(uint256 delegateRequestId)
-        external
-        view
-        returns (uint256);
 }

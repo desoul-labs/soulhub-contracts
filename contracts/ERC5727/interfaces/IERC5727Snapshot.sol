@@ -3,6 +3,9 @@ pragma solidity ^0.8.0;
 
 import "./IERC5727.sol";
 
+/**
+ *    interfaceId = 0x4ee2cd7e
+ */
 interface IERC5727Snapshot is IERC5727 {
     event Snapshot(uint256 id);
 
