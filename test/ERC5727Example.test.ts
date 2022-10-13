@@ -138,6 +138,19 @@ describe('ERC5727Test', function () {
       const { ERC5727ExampleContract } = await loadFixture(deployTokenFixture)
       await expect(ERC5727ExampleContract.revoke(100)).be.reverted
     })
+
+    it('Support Interface', async function () {
+      const { ERC5727ExampleContract } = await loadFixture(deployTokenFixture)
+      expect(await ERC5727ExampleContract.supportsInterface('0x35f61d8a')).to.equal(true)
+      expect(await ERC5727ExampleContract.supportsInterface('0x3da384b4')).to.equal(true)
+      expect(await ERC5727ExampleContract.supportsInterface('0x211ec300')).to.equal(true)
+      expect(await ERC5727ExampleContract.supportsInterface('0x2a8cf5aa')).to.equal(true)
+      expect(await ERC5727ExampleContract.supportsInterface('0x3ba738d1')).to.equal(true)
+      expect(await ERC5727ExampleContract.supportsInterface('0xba3e1a9d')).to.equal(true)
+      expect(await ERC5727ExampleContract.supportsInterface('0x379f4e66')).to.equal(true)
+      expect(await ERC5727ExampleContract.supportsInterface('0x3475cd68')).to.equal(true)
+      expect(await ERC5727ExampleContract.supportsInterface('0x3b741b9e')).to.equal(true)
+    })
   })
 
   describe('ERC5727', function () {
