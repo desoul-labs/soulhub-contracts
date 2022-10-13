@@ -13,7 +13,7 @@ import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableMap.sol";
 import "../ERC5727/interfaces/IERC5727.sol";
 import "../ERC5727/ERC5727Registrant.sol";
-import "./ERC5727Registry.sol";
+import "../ERC5727Registry/ERC5727Registry.sol";
 
 contract ERC5727RegistryExample is
     ERC721,

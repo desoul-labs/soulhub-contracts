@@ -17,8 +17,9 @@ async function main(): Promise<void> {
 
   const registryFactory = await ethers.getContractFactory('ERC5727RegistryExample')
   const registry = await registryFactory.deploy(
-    'MyRegistry',
-    '/soularis/test',
+    'RegistryExample',
+    'REG',
+    '/soularis/example',
     'https://soularis-demo.s3.ap-northeast-1.amazonaws.com/registry/',
   )
   await registry.deployed()
