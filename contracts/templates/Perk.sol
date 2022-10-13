@@ -101,15 +101,12 @@ contract Perk is
         uint256 value,
         uint256 slot,
         bool valid
-    ) internal virtual override(ERC5727, ERC5727Enumerable) {
-        ERC5727Enumerable._beforeTokenMint(
-            issuer,
-            soul,
-            tokenId,
-            value,
-            slot,
-            valid
-        );
+    )
+        internal
+        virtual
+        override(ERC5727, ERC5727Enumerable, ERC5727SlotEnumerable)
+    {
+        super._beforeTokenMint(issuer, soul, tokenId, value, slot, valid);
     }
 
     function _afterTokenMint(
@@ -141,8 +138,8 @@ contract Perk is
     function _beforeTokenDestroy(uint256 tokenId)
         internal
         virtual
-        override(ERC5727, ERC5727Enumerable)
+        override(ERC5727, ERC5727Enumerable, ERC5727SlotEnumerable)
     {
-        ERC5727Enumerable._beforeTokenDestroy(tokenId);
+        super._beforeTokenDestroy(tokenId);
     }
 }

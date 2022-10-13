@@ -1,5 +1,7 @@
 import '@nomicfoundation/hardhat-toolbox'
 import '@nomiclabs/hardhat-solhint'
+import '@typechain/hardhat'
+import '@nomiclabs/hardhat-ethers'
 import { HardhatUserConfig } from 'hardhat/types'
 import { networks } from './constants/networks'
 import * as tenderly from '@tenderly/hardhat-tenderly'
@@ -16,7 +18,7 @@ const config: HardhatUserConfig = {
       },
     },
   },
-  ...(process.env.NODE_ENV === 'development' ? { defaultNetwork: 'hardhat' } : { networks }),
+  ...(process.env.PRIVATE_KEY ? { networks } : { defaultNetwork: 'hardhat' }),
   typechain: {
     outDir: './typechain',
     target: 'ethers-v5',
@@ -34,8 +36,11 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
   },
+  dodoc: {
+    runOnCompile: false,
+  },
 }
 
-tenderly.setup()
+tenderly.setup({ automaticVerifications: false })
 
 export default config
