@@ -18,7 +18,8 @@ const config: HardhatUserConfig = {
       },
     },
   },
-  ...(process.env.NODE_ENV === 'production' ? { networks } : { defaultNetwork: 'hardhat' }),
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+  ...(process.env.PRIVATE_KEY ? { networks } : { defaultNetwork: 'hardhat' }),
   typechain: {
     outDir: './typechain',
     target: 'ethers-v5',
