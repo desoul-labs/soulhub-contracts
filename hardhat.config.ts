@@ -18,6 +18,7 @@ const config: HardhatUserConfig = {
       },
     },
   },
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   ...(process.env.PRIVATE_KEY ? { networks } : { defaultNetwork: 'hardhat' }),
   typechain: {
     outDir: './typechain',
