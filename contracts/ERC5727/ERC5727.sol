@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
@@ -12,6 +13,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 import "./interfaces/IERC5727.sol";
 import "./interfaces/IERC5727Metadata.sol";
+import "../ERC3525/IERC3525Metadata.sol";
 
 abstract contract ERC5727 is
     IERC5727Metadata,
@@ -50,6 +52,8 @@ abstract contract ERC5727 is
         return
             interfaceId == type(IERC5727).interfaceId ||
             interfaceId == type(IERC5727Metadata).interfaceId ||
+            interfaceId == type(IERC3525Metadata).interfaceId ||
+            interfaceId == type(IERC721Metadata).interfaceId ||
             super.supportsInterface(interfaceId);
     }
 
