@@ -7,7 +7,7 @@ importers:
       '@commitlint/cli': 17.1.2
       '@commitlint/config-conventional': 17.1.0
       '@ethersproject/abi': 5.7.0
-      '@ethersproject/providers': 5.7.1
+      '@ethersproject/providers': 5.7.2
       '@nomicfoundation/hardhat-chai-matchers': 1.0.4
       '@nomicfoundation/hardhat-network-helpers': 1.0.6
       '@nomicfoundation/hardhat-toolbox': 2.0.0
@@ -44,17 +44,17 @@ importers:
       '@commitlint/cli': 17.1.2
       '@commitlint/config-conventional': 17.1.0
       '@ethersproject/abi': 5.7.0
-      '@ethersproject/providers': 5.7.1
+      '@ethersproject/providers': 5.7.2
       '@nomicfoundation/hardhat-chai-matchers': 1.0.4_pwh3hjhu5ei7ygknrjcxes4eue
       '@nomicfoundation/hardhat-network-helpers': 1.0.6_hardhat@2.12.0
-      '@nomicfoundation/hardhat-toolbox': 2.0.0_uyhi3xaqsuhdsptnhkpa6y775a
+      '@nomicfoundation/hardhat-toolbox': 2.0.0_f7etx6ze4n4l5bhwlccc6hlox4
       '@nomiclabs/hardhat-ethers': 2.2.0_h4qtpcxkfvtpy6ldthi4lq2o6i
       '@nomiclabs/hardhat-etherscan': 3.1.1_hardhat@2.12.0
       '@nomiclabs/hardhat-solhint': 2.0.1_hardhat@2.12.0
       '@openzeppelin/hardhat-upgrades': 1.21.0_oq4mlnuxxh52mujstd5sbiowdi
       '@primitivefi/hardhat-dodoc': 0.2.3_6pcdc6zd3ikbag2j4bfq3gfsha
       '@tenderly/hardhat-tenderly': 1.1.6_hardhat@2.12.0
-      '@typechain/hardhat': 6.1.3_3f3g63yxksx2t7kxcbzxotv4sq
+      '@typechain/hardhat': 6.1.3_ka7uffjokmx5wyn36ganoemriy
       '@types/node': 18.7.13
       '@typescript-eslint/eslint-plugin': 5.40.1_mv5zc5oswpaoclhpccin6wdonu
       eslint: 8.25.0
@@ -479,6 +479,34 @@ packages:
       - bufferutil
       - utf-8-validate
 
+  /@ethersproject/providers/5.7.2:
+    resolution: {integrity: sha512-g34EWZ1WWAVgr4aptGlVBF8mhl3VWjv+8hoAnzStu8Ah22VHBsuGzP17eb6xDVRzw895G4W7vvx60lFFur/1Rg==}
+    dependencies:
+      '@ethersproject/abstract-provider': 5.7.0
+      '@ethersproject/abstract-signer': 5.7.0
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/base64': 5.7.0
+      '@ethersproject/basex': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
+      '@ethersproject/bytes': 5.7.0
+      '@ethersproject/constants': 5.7.0
+      '@ethersproject/hash': 5.7.0
+      '@ethersproject/logger': 5.7.0
+      '@ethersproject/networks': 5.7.1
+      '@ethersproject/properties': 5.7.0
+      '@ethersproject/random': 5.7.0
+      '@ethersproject/rlp': 5.7.0
+      '@ethersproject/sha2': 5.7.0
+      '@ethersproject/strings': 5.7.0
+      '@ethersproject/transactions': 5.7.0
+      '@ethersproject/web': 5.7.1
+      bech32: 1.1.4
+      ws: 7.4.6
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: true
+
   /@ethersproject/random/5.7.0:
     resolution: {integrity: sha512-19WjScqRA8IIeWclFme75VMXSBvi4e6InrUNuaR4s5pTF2qNhcGdCUwdxUVGtDDqC00sDLCO93jPQoDUH4HVmQ==}
     dependencies:
@@ -814,7 +842,7 @@ packages:
       hardhat: 2.12.0_mwhvu7sfp6vq5ryuwb6hlbjfka
     dev: true
 
-  /@nomicfoundation/hardhat-toolbox/2.0.0_uyhi3xaqsuhdsptnhkpa6y775a:
+  /@nomicfoundation/hardhat-toolbox/2.0.0_f7etx6ze4n4l5bhwlccc6hlox4:
     resolution: {integrity: sha512-BoOPbzLQ1GArnBZd4Jz4IU8FY3RY4nUwpXlfymXwxlXNimngkPRJj7ivVNurD7igohEjf90v/Axn2M5WwAdCJQ==}
     peerDependencies:
       '@ethersproject/abi': ^5.4.7
@@ -838,13 +866,13 @@ packages:
       typescript: '>=4.5.0'
     dependencies:
       '@ethersproject/abi': 5.7.0
-      '@ethersproject/providers': 5.7.1
+      '@ethersproject/providers': 5.7.2
       '@nomicfoundation/hardhat-chai-matchers': 1.0.4_pwh3hjhu5ei7ygknrjcxes4eue
       '@nomicfoundation/hardhat-network-helpers': 1.0.6_hardhat@2.12.0
       '@nomiclabs/hardhat-ethers': 2.2.0_h4qtpcxkfvtpy6ldthi4lq2o6i
       '@nomiclabs/hardhat-etherscan': 3.1.1_hardhat@2.12.0
-      '@typechain/ethers-v5': 10.1.0_ap4nli2xeolmikzlf5243gdnwy
-      '@typechain/hardhat': 6.1.3_3f3g63yxksx2t7kxcbzxotv4sq
+      '@typechain/ethers-v5': 10.1.0_l3hvhoztaezycpaqjzp4hle3je
+      '@typechain/hardhat': 6.1.3_ka7uffjokmx5wyn36ganoemriy
       '@types/chai': 4.3.3
       '@types/mocha': 9.1.1
       '@types/node': 18.7.13
@@ -1163,7 +1191,7 @@ packages:
   /@tsconfig/node16/1.0.3:
     resolution: {integrity: sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ==}
 
-  /@typechain/ethers-v5/10.1.0_ap4nli2xeolmikzlf5243gdnwy:
+  /@typechain/ethers-v5/10.1.0_l3hvhoztaezycpaqjzp4hle3je:
     resolution: {integrity: sha512-3LIb+eUpV3mNCrjUKT5oqp8PBsZYSnVrkfk6pY/ZM0boRs2mKxjFZ7bktx42vfDye8PPz3NxtW4DL5NsNsFqlg==}
     peerDependencies:
       '@ethersproject/abi': ^5.0.0
@@ -1175,7 +1203,7 @@ packages:
     dependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/bytes': 5.7.0
-      '@ethersproject/providers': 5.7.1
+      '@ethersproject/providers': 5.7.2
       ethers: 5.7.1
       lodash: 4.17.21
       ts-essentials: 7.0.3_typescript@4.8.4
@@ -1183,7 +1211,7 @@ packages:
       typescript: 4.8.4
     dev: true
 
-  /@typechain/hardhat/6.1.3_3f3g63yxksx2t7kxcbzxotv4sq:
+  /@typechain/hardhat/6.1.3_ka7uffjokmx5wyn36ganoemriy:
     resolution: {integrity: sha512-e1H9MVl286ma0HuD9CBL248+pbdA7lWF6+I7FYwzykIrjilKhvLUv0Q7LtcyZztzgbP2g4Tyg1UPE+xy+qR7cA==}
     peerDependencies:
       '@ethersproject/abi': ^5.4.7
@@ -1194,8 +1222,8 @@ packages:
       typechain: ^8.1.0
     dependencies:
       '@ethersproject/abi': 5.7.0
-      '@ethersproject/providers': 5.7.1
-      '@typechain/ethers-v5': 10.1.0_ap4nli2xeolmikzlf5243gdnwy
+      '@ethersproject/providers': 5.7.2
+      '@typechain/ethers-v5': 10.1.0_l3hvhoztaezycpaqjzp4hle3je
       ethers: 5.7.1
       fs-extra: 9.1.0
       hardhat: 2.12.0_mwhvu7sfp6vq5ryuwb6hlbjfka
