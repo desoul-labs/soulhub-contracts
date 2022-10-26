@@ -115,6 +115,10 @@ abstract contract ERC5727Registry is
         return id;
     }
 
+    function total() external view override returns (uint256) {
+        return _entryIdCounter.current();
+    }
+
     function registryURI() external view returns (string memory) {
         return _uri;
     }
