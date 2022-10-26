@@ -1,8 +1,12 @@
 import '@nomicfoundation/hardhat-toolbox'
 import '@nomiclabs/hardhat-solhint'
+import '@typechain/hardhat'
+import '@nomiclabs/hardhat-ethers'
 import { HardhatUserConfig } from 'hardhat/types'
 import { networks } from './constants/networks'
-import * as tdly from '@tenderly/hardhat-tenderly'
+import * as tenderly from '@tenderly/hardhat-tenderly'
+import 'solidity-coverage'
+import '@primitivefi/hardhat-dodoc'
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -14,7 +18,8 @@ const config: HardhatUserConfig = {
       },
     },
   },
-  ...(process.env.NODE_ENV === 'development' ? { defaultNetwork: 'hardhat' } : { networks }),
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+  ...(process.env.PRIVATE_KEY ? { networks } : { defaultNetwork: 'hardhat' }),
   typechain: {
     outDir: './typechain',
     target: 'ethers-v5',
@@ -32,8 +37,11 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
   },
+  dodoc: {
+    runOnCompile: false,
+  },
 }
 
-tdly.setup()
+tenderly.setup({ automaticVerifications: false })
 
 export default config

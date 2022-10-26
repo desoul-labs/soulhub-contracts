@@ -1,6 +1,6 @@
 {
   "name": "@phaneroz-labs/soularis-typechain",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Soularis TypeChain",
   "homepage": "https://github.com/Phaneroz-Labs/soularis-contracts#readme",
   "bugs": {
@@ -27,7 +27,7 @@
     "typescript": "4.8.4"
   },
   "dependencies": {
-    "ethers": "5.7.1",
-    "@nomiclabs/hardhat-ethers": "2.1.1"
+    "ethers": "5.7.2",
+    "@nomiclabs/hardhat-ethers": "2.2.0"
   }
 }

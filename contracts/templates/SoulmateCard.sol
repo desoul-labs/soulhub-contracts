@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "../ERC5727/ERC5727Expirable.sol";
 import "../ERC5727/ERC5727Enumerable.sol";
 
-contract SoulmateCard is ERC5727Expirable, ERC5727Enumerable {
+contract SoulmateCard is ERC5727Enumerable {
     string private _baseTokenURI;
 
     constructor(
@@ -23,88 +23,17 @@ contract SoulmateCard is ERC5727Expirable, ERC5727Enumerable {
         public
         view
         virtual
-        override(ERC5727Enumerable, ERC5727Expirable)
+        override(ERC5727Enumerable)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
     }
 
-    function mintNonFungible(
-        address owner,
-        uint256 slot,
-        uint256 date
-    ) public onlyOwner returns (uint256) {
-        require(slot != 0, "SoulmateCard: slot 0 is for points");
-        uint256 tokenId = _mint(owner, 1, slot);
-        _setExpiryDate(tokenId, date);
-        return tokenId;
-    }
-
-    function mintFungible(address owner, uint256 value) public onlyOwner {
-        _mint(owner, value, 0);
-    }
-
-    function charge(uint256 tokenId, uint256 value) public onlyOwner {
-        require(
-            _getTokenOrRevert(tokenId).slot == 0,
-            "SoulmateCard: only points can be charged"
-        );
-        _charge(tokenId, value);
-    }
-
-    function revoke(uint256 tokenId) public onlyOwner {
-        _revoke(tokenId);
-    }
-
-    function _beforeTokenMint(
-        address issuer,
+    function mint(
         address soul,
-        uint256 tokenId,
         uint256 value,
-        uint256 slot,
-        bool valid
-    ) internal virtual override(ERC5727, ERC5727Enumerable) {
-        ERC5727Enumerable._beforeTokenMint(
-            issuer,
-            soul,
-            tokenId,
-            value,
-            slot,
-            valid
-        );
-    }
-
-    function _afterTokenMint(
-        address issuer,
-        address soul,
-        uint256 tokenId,
-        uint256 value,
-        uint256 slot,
-        bool valid
-    ) internal virtual override(ERC5727, ERC5727Enumerable) {
-        ERC5727Enumerable._afterTokenMint(
-            issuer,
-            soul,
-            tokenId,
-            value,
-            slot,
-            valid
-        );
-    }
-
-    function _afterTokenRevoke(uint256 tokenId)
-        internal
-        virtual
-        override(ERC5727, ERC5727Enumerable)
-    {
-        ERC5727Enumerable._afterTokenRevoke(tokenId);
-    }
-
-    function _beforeTokenDestroy(uint256 tokenId)
-        internal
-        virtual
-        override(ERC5727, ERC5727Enumerable)
-    {
-        ERC5727Enumerable._beforeTokenDestroy(tokenId);
+        uint256 slot
+    ) public returns (uint256) {
+        return _mint(soul, value, slot);
     }
 }
