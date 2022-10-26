@@ -2,6 +2,8 @@
 
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol";
+
 import "./ERC5727Upgradeable.sol";
 import "./interfaces/IERC5727DelegateUpgradeable.sol";
 import "./ERC5727EnumerableUpgradeable.sol";
@@ -16,6 +18,8 @@ abstract contract ERC5727DelegateUpgradeable is
         uint256 slot;
     }
 
+    using EnumerableSetUpgradeable for EnumerableSetUpgradeable.UintSet;
+
     uint256 private _delegateRequestCount;
 
     mapping(uint256 => DelegateRequest) private _delegateRequests;
@@ -23,6 +27,12 @@ abstract contract ERC5727DelegateUpgradeable is
     mapping(address => mapping(uint256 => bool)) private _mintAllowed;
 
     mapping(address => mapping(uint256 => bool)) private _revokeAllowed;
+
+    mapping(address => EnumerableSetUpgradeable.UintSet)
+        private _delegatedRequests;
+
+    mapping(address => EnumerableSetUpgradeable.UintSet)
+        private _delegatedTokens;
 
     function __ERC5727Delegate_init_unchained() internal onlyInitializing {}
 
@@ -58,8 +68,10 @@ abstract contract ERC5727DelegateUpgradeable is
         );
         if (!isCreator) {
             _mintAllowed[_msgSender()][delegateRequestId] = false;
+            _delegatedRequests[_msgSender()].remove(delegateRequestId);
         }
         _mintAllowed[operator][delegateRequestId] = true;
+        _delegatedRequests[operator].add(delegateRequestId);
     }
 
     function _revokeDelegateAsDelegateOrCreator(
@@ -73,8 +85,10 @@ abstract contract ERC5727DelegateUpgradeable is
         );
         if (!isCreator) {
             _revokeAllowed[_msgSender()][tokenId] = false;
+            _delegatedTokens[_msgSender()].remove(tokenId);
         }
         _revokeAllowed[operator][tokenId] = true;
+        _delegatedTokens[operator].add(tokenId);
     }
 
     function _mintAsDelegateOrCreator(uint256 delegateRequestId, bool isCreator)
@@ -217,5 +231,62 @@ abstract contract ERC5727DelegateUpgradeable is
     {
         require(_isCreator(), "ERC5727Delegate: You are not the creator");
         delete _delegateRequests[delegateRequestId];
+    }
+
+    function delegatedRequestsOf(address operator)
+        public
+        view
+        virtual
+        returns (uint256[] memory)
+    {
+        return _delegatedRequests[operator].values();
+    }
+
+    function delegatedTokensOf(address operator)
+        public
+        view
+        virtual
+        returns (uint256[] memory)
+    {
+        return _delegatedTokens[operator].values();
+    }
+
+    function soulOfDelegateRequest(uint256 delegateRequestId)
+        public
+        view
+        virtual
+        returns (address)
+    {
+        require(
+            delegateRequestId < _delegateRequestCount,
+            "ERC5727Delegate: Delegate request does not exist"
+        );
+        return _delegateRequests[delegateRequestId].soul;
+    }
+
+    function valueOfDelegateRequest(uint256 delegateRequestId)
+        public
+        view
+        virtual
+        returns (uint256)
+    {
+        require(
+            delegateRequestId < _delegateRequestCount,
+            "ERC5727Delegate: Delegate request does not exist"
+        );
+        return _delegateRequests[delegateRequestId].value;
+    }
+
+    function slotOfDelegateRequest(uint256 delegateRequestId)
+        public
+        view
+        virtual
+        returns (uint256)
+    {
+        require(
+            delegateRequestId < _delegateRequestCount,
+            "ERC5727Delegate: Delegate request does not exist"
+        );
+        return _delegateRequests[delegateRequestId].slot;
     }
 }
