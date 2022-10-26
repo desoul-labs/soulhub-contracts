@@ -6,6 +6,7 @@ import "./IERC5727Upgradeable.sol";
 /**
  * @title ERC5727 Soulbound Token Shadow Interface
  * @dev This extension allows restricting the visibility of specific soulbound tokens.
+ *    interfaceId = 0x3475cd68
  */
 interface IERC5727ShadowUpgradeable is IERC5727Upgradeable {
     /**
@@ -21,4 +22,11 @@ interface IERC5727ShadowUpgradeable is IERC5727Upgradeable {
      * @param tokenId The token to reveal
      */
     function reveal(uint256 tokenId) external;
+
+    /**
+     * @notice Get if a token is shadowed.
+     * @dev MUST revert if the `tokenId` token does not exists.
+     * @param tokenId The token to query
+     */
+    function isShadowed(uint256 tokenId) external returns (bool);
 }
