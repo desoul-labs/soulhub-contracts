@@ -5,6 +5,7 @@ import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/IERC721MetadataUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlEnumerableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol";
@@ -13,6 +14,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 import "./interfaces/IERC5727Upgradeable.sol";
 import "./interfaces/IERC5727MetadataUpgradeable.sol";
+import "../ERC3525/IERC3525Metadata.sol";
 
 abstract contract ERC5727Upgradeable is
     Initializable,
@@ -71,6 +73,8 @@ abstract contract ERC5727Upgradeable is
         return
             interfaceId == type(IERC5727Upgradeable).interfaceId ||
             interfaceId == type(IERC5727MetadataUpgradeable).interfaceId ||
+            interfaceId == type(IERC3525Metadata).interfaceId ||
+            interfaceId == type(IERC721MetadataUpgradeable).interfaceId ||
             super.supportsInterface(interfaceId);
     }
 
