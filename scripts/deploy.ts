@@ -1,13 +1,8 @@
 import { ethers, tenderly } from 'hardhat'
 
 async function main(): Promise<void> {
-  const erc5727Factory = await ethers.getContractFactory('ERC5727Example')
-  const erc5727 = await erc5727Factory.deploy(
-    'ERC5727Example',
-    'ERC',
-    ['0xf786867559B705f0D3B3ec7Dc1459A6f6023D975'],
-    'https://soularis-demo.s3.ap-northeast-1.amazonaws.com/erc5727/',
-  )
+  const erc5727Factory = await ethers.getContractFactory('ERC5727ExampleUpgradeable')
+  const erc5727 = await erc5727Factory.deploy()
   await erc5727.deployed()
   console.log('ERC5727Example contract deployed to:', erc5727.address)
   await tenderly.verify({
@@ -27,6 +22,18 @@ async function main(): Promise<void> {
   await tenderly.verify({
     name: 'ERC5727RegistryExample',
     address: registry.address,
+  })
+
+  const minimalProxyDeployerFactory = await ethers.getContractFactory('MinimalProxyDeployer')
+  const minimalProxyDeployer = await minimalProxyDeployerFactory.deploy(
+    '0x0000000000000000000000000000000000000000',
+    registry.address,
+  )
+  await minimalProxyDeployer.deployed()
+  console.log('MinimalProxyFactory contract deployed to:', minimalProxyDeployer.address)
+  await tenderly.verify({
+    name: 'MinimalProxyFactory',
+    address: minimalProxyDeployer.address,
   })
 
   const cardFactory = await ethers.getContractFactory('SoulmateCard')

@@ -183,4 +183,8 @@ contract ERC5727ExampleUpgradeable is
         ERC5727EnumerableUpgradeable._beforeTokenDestroy(tokenId);
         ERC5727SlotEnumerableUpgradeable._beforeTokenDestroy(tokenId);
     }
+
+    function valueOf_(uint256 tokenId) public virtual returns (uint256) {
+        return valueOf(tokenId);
+    }
 }
