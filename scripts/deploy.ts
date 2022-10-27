@@ -27,7 +27,6 @@ async function main(): Promise<void> {
   const minimalProxyDeployerFactory = await ethers.getContractFactory('MinimalProxyDeployer')
   const minimalProxyDeployer = await minimalProxyDeployerFactory.deploy(
     '0x0000000000000000000000000000000000000000',
-    registry.address,
   )
   await minimalProxyDeployer.deployed()
   console.log('MinimalProxyFactory contract deployed to:', minimalProxyDeployer.address)

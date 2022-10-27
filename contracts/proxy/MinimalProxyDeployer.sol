@@ -9,13 +9,7 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 
 import "../ERC5727Registry/ERC5727Registry.sol";
 
-contract MinimalProxyDeployer is
-    Multicall,
-    ERC2771Context,
-    AccessControlEnumerable
-{
-    ERC5727Registry public immutable registry;
-
+contract MinimalProxyDeployer is Multicall, ERC2771Context {
     /// @dev Emitted when a proxy is deployed.
     event ProxyDeployed(
         address indexed implementation,
@@ -26,13 +20,7 @@ contract MinimalProxyDeployer is
     /// @dev mapping of proxy address to deployer address
     mapping(address => address) public deployer;
 
-    constructor(address _trustedForwarder, address _registry)
-        ERC2771Context(_trustedForwarder)
-    {
-        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
-
-        registry = ERC5727Registry(_registry);
-    }
+    constructor(address _trustedForwarder) ERC2771Context(_trustedForwarder) {}
 
     /// @dev Deploys a proxy that points to the given implementation.
     function deployProxyByImplementation(
@@ -47,31 +35,9 @@ contract MinimalProxyDeployer is
 
         emit ProxyDeployed(_implementation, deployedProxy, _msgSender());
 
-        registry.register(deployedProxy);
-
         if (_data.length > 0) {
             // slither-disable-next-line unused-return
             Address.functionCall(deployedProxy, _data);
         }
-    }
-
-    function _msgSender()
-        internal
-        view
-        virtual
-        override(Context, ERC2771Context)
-        returns (address sender)
-    {
-        return ERC2771Context._msgSender();
-    }
-
-    function _msgData()
-        internal
-        view
-        virtual
-        override(Context, ERC2771Context)
-        returns (bytes calldata)
-    {
-        return ERC2771Context._msgData();
     }
 }

@@ -21,7 +21,7 @@ contract ERC5727ExampleUpgradeable is
 
     function __ERC5727Example_init_unchained(string memory baseTokenURI)
         internal
-        initializer
+        onlyInitializing
     {
         _baseTokenURI = baseTokenURI;
     }
@@ -31,7 +31,7 @@ contract ERC5727ExampleUpgradeable is
         string memory symbol,
         address[] memory voters,
         string memory baseTokenURI
-    ) internal initializer {
+    ) public initializer {
         __Context_init_unchained();
         __ERC165_init_unchained();
         __AccessControlEnumerable_init_unchained();
