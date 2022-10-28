@@ -27,6 +27,7 @@ contract ERC5727ExampleUpgradeable is
     }
 
     function __ERC5727Example_init(
+        address owner,
         string memory name,
         string memory symbol,
         address[] memory voters,
@@ -39,6 +40,7 @@ contract ERC5727ExampleUpgradeable is
         __ERC5727_init_unchained(name, symbol);
         __ERC5727Governance_init_unchained(voters);
         __ERC5727Example_init_unchained(baseTokenURI);
+        _transferOwnership(owner);
     }
 
     function _baseURI() internal view virtual override returns (string memory) {
