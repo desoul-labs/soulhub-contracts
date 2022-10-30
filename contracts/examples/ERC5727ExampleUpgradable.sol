@@ -8,6 +8,7 @@ import "../ERC5727Upgradeable/ERC5727DelegateUpgradeable.sol";
 import "../ERC5727Upgradeable/ERC5727ShadowUpgradeable.sol";
 import "../ERC5727Upgradeable/ERC5727SlotEnumerableUpgradeable.sol";
 import "../ERC5727Upgradeable/ERC5727RecoveryUpgradeable.sol";
+import "../ERC5727Upgradeable/ERC5727RegistrantUpgradeable.sol";
 
 contract ERC5727ExampleUpgradeable is
     ERC5727ExpirableUpgradeable,
@@ -15,7 +16,8 @@ contract ERC5727ExampleUpgradeable is
     ERC5727DelegateUpgradeable,
     ERC5727SlotEnumerableUpgradeable,
     ERC5727ShadowUpgradeable,
-    ERC5727RecoveryUpgradeable
+    ERC5727RecoveryUpgradeable,
+    ERC5727RegistrantUpgradeable
 {
     string private _baseTokenURI;
 
@@ -27,6 +29,7 @@ contract ERC5727ExampleUpgradeable is
     }
 
     function __ERC5727Example_init(
+        address owner,
         string memory name,
         string memory symbol,
         address[] memory voters,
@@ -39,6 +42,7 @@ contract ERC5727ExampleUpgradeable is
         __ERC5727_init_unchained(name, symbol);
         __ERC5727Governance_init_unchained(voters);
         __ERC5727Example_init_unchained(baseTokenURI);
+        _transferOwnership(owner);
     }
 
     function _baseURI() internal view virtual override returns (string memory) {
@@ -55,7 +59,8 @@ contract ERC5727ExampleUpgradeable is
             ERC5727ExpirableUpgradeable,
             ERC5727RecoveryUpgradeable,
             ERC5727ShadowUpgradeable,
-            ERC5727SlotEnumerableUpgradeable
+            ERC5727SlotEnumerableUpgradeable,
+            ERC5727Upgradeable
         )
         returns (bool)
     {
@@ -182,6 +187,15 @@ contract ERC5727ExampleUpgradeable is
     {
         ERC5727EnumerableUpgradeable._beforeTokenDestroy(tokenId);
         ERC5727SlotEnumerableUpgradeable._beforeTokenDestroy(tokenId);
+    }
+
+    function transferOwnership(address newOwner)
+        public
+        virtual
+        override(ERC5727RegistrantUpgradeable, OwnableUpgradeable)
+        onlyOwner
+    {
+        ERC5727RegistrantUpgradeable.transferOwnership(newOwner);
     }
 
     function valueOf_(uint256 tokenId) public virtual returns (uint256) {

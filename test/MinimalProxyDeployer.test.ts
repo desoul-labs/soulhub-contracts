@@ -2,13 +2,15 @@ import { loadFixture } from '@nomicfoundation/hardhat-network-helpers'
 import { ethers } from 'hardhat'
 import { expect } from 'chai'
 import { ERC5727ExampleUpgradeable, MinimalProxyDeployer } from '../typechain'
+import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 
 interface Fixture {
   erc5727: ERC5727ExampleUpgradeable
   minimalProxyDeployer: MinimalProxyDeployer
+  owner: SignerWithAddress
 }
 
-describe('ERC5727 Registration', function () {
+describe('Deploy Minimal Proxy', function () {
   async function deployRegistryFixture(): Promise<Fixture> {
     const erc5727Factory = await ethers.getContractFactory('ERC5727ExampleUpgradeable')
     const erc5727 = await erc5727Factory.deploy()
@@ -16,16 +18,18 @@ describe('ERC5727 Registration', function () {
     const minimalProxyDeployer = await minimalProxyDeployerFactory.deploy(
       '0x0000000000000000000000000000000000000000',
     )
+    const [owner] = await ethers.getSigners()
 
     await erc5727.deployed()
     await minimalProxyDeployer.deployed()
 
-    return { erc5727, minimalProxyDeployer }
+    return { erc5727, minimalProxyDeployer, owner }
   }
 
   it('Should deploy minimal proxy for ERC5727', async function () {
-    const { erc5727, minimalProxyDeployer } = await loadFixture(deployRegistryFixture)
+    const { erc5727, minimalProxyDeployer, owner } = await loadFixture(deployRegistryFixture)
     const data = erc5727.interface.encodeFunctionData('__ERC5727Example_init', [
+      owner.address,
       'ERC5727Example',
       'ERC5727',
       ['0x0000000000000000000000000000000000000000'],
