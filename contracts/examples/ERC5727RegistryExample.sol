@@ -83,12 +83,7 @@ contract ERC5727RegistryExample is ERC5727Registry {
         _safeTransfer(from, to, tokenId, "");
     }
 
-    function deregister(address addr)
-        public
-        override
-        onlyOwnable
-        returns (uint256)
-    {
+    function deregister(address addr) public onlyOwnable returns (uint256) {
         uint256 tokenId = _deregister(addr);
         return tokenId;
     }
