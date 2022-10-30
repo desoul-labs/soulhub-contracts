@@ -110,4 +110,16 @@ abstract contract ERC5727RegistrantUpgradeable is
     function _isRegistry(address _registry) internal view returns (bool) {
         return _registry.supportsInterface(type(IERC5727Registry).interfaceId);
     }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override
+        returns (bool)
+    {
+        return
+            interfaceId == type(IERC5727RegistrantUpgradeable).interfaceId ||
+            super.supportsInterface(interfaceId);
+    }
 }

@@ -56,5 +56,6 @@ describe('Deploy Minimal Proxy', function () {
     expect(await proxy.name()).to.equal('ERC5727Example')
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     expect(await erc5727.name()).to.be.empty
+    expect(await proxy.owner()).to.equal(owner.address)
   })
 })

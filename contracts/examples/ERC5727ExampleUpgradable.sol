@@ -60,7 +60,7 @@ contract ERC5727ExampleUpgradeable is
             ERC5727RecoveryUpgradeable,
             ERC5727ShadowUpgradeable,
             ERC5727SlotEnumerableUpgradeable,
-            ERC5727Upgradeable
+            ERC5727RegistrantUpgradeable
         )
         returns (bool)
     {
