@@ -87,12 +87,7 @@ contract ERC5727RegistryExample is
         super._burn(tokenId);
     }
 
-    function deregister(address addr)
-        public
-        override
-        onlyOwnable
-        returns (uint256)
-    {
+    function deregister(address addr) public onlyOwnable returns (uint256) {
         uint256 tokenId = _deregister(addr);
         _burn(tokenId);
 

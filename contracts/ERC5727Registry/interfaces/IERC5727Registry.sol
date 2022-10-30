@@ -17,4 +17,6 @@ interface IERC5727Registry is IERC165 {
     function addressOf(uint256 id) external view returns (address);
 
     function idOf(address addr) external view returns (uint256);
+
+    function total() external view returns (uint256);
 }

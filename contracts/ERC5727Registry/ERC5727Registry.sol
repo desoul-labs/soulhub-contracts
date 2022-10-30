@@ -72,11 +72,11 @@ abstract contract ERC5727Registry is
         require(success && successIndex, "Entry does not exist");
     }
 
-    function _register(address addr) public onlyERC5727 returns (uint256) {
-        require(
-            addr == _msgSender(),
-            "Only ERC5727 contract can register itself"
-        );
+    function _register(address addr) public returns (uint256) {
+        // require(
+        //     addr == _msgSender(),
+        //     "Only ERC5727 contract can register itself"
+        // );
         uint256 id = _entryIdCounter.current();
         _entryIdCounter.increment();
         _setEntry(id, addr);
@@ -86,11 +86,11 @@ abstract contract ERC5727Registry is
         return id;
     }
 
-    function _deregister(address addr) public onlyERC5727 returns (uint256) {
-        require(
-            addr == _msgSender(),
-            "Only ERC5727 contract can deregister itself"
-        );
+    function _deregister(address addr) public returns (uint256) {
+        // require(
+        //     addr == _msgSender(),
+        //     "Only ERC5727 contract can deregister itself"
+        // );
         uint256 id = idOf(addr);
         _removeEntry(id);
 
@@ -113,6 +113,10 @@ abstract contract ERC5727Registry is
         (bool exists, uint256 id) = _indexedEntries.tryGet(addr);
         require(exists, "ERC5727Registry: entry not found");
         return id;
+    }
+
+    function total() external view override returns (uint256) {
+        return _entryIdCounter.current();
     }
 
     function registryURI() external view returns (string memory) {
