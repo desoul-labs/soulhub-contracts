@@ -13,6 +13,7 @@ import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableMap.sol";
 import "../ERC5727/interfaces/IERC5727.sol";
 import "../ERC5727/interfaces/IERC5727Metadata.sol";
+import "../ERC5727/interfaces/IERC5727Registrant.sol";
 import "./interfaces/IERC5727Registry.sol";
 import "./interfaces/IERC5727RegistryMetadata.sol";
 
@@ -20,23 +21,14 @@ abstract contract ERC5727Registry is
     Context,
     ERC165,
     IERC5727Registry,
-    IERC5727RegistryMetadata
+    IERC5727RegistryMetadata,
+    ERC721Enumerable,
+    ERC721URIStorage
 {
     using Counters for Counters.Counter;
     using ERC165Checker for address;
     using EnumerableMap for EnumerableMap.AddressToUintMap;
     using EnumerableMap for EnumerableMap.UintToAddressMap;
-
-    modifier onlyERC5727() {
-        require(
-            _msgSender().supportsInterface(type(IERC5727).interfaceId) &&
-                _msgSender().supportsInterface(
-                    type(IERC5727Metadata).interfaceId
-                ),
-            "Only ERC5727 contract can call this function"
-        );
-        _;
-    }
 
     string private _name;
     string private _namespace;
@@ -72,11 +64,12 @@ abstract contract ERC5727Registry is
         require(success && successIndex, "Entry does not exist");
     }
 
-    function _register(address addr) public onlyERC5727 returns (uint256) {
+    function _register(address addr) public virtual returns (uint256) {
         require(
-            addr == _msgSender(),
-            "Only ERC5727 contract can register itself"
+            _isERC5727Contract(addr),
+            "Only ERC5727 contract can be registered"
         );
+
         uint256 id = _entryIdCounter.current();
         _entryIdCounter.increment();
         _setEntry(id, addr);
@@ -86,12 +79,14 @@ abstract contract ERC5727Registry is
         return id;
     }
 
-    function _deregister(address addr) public onlyERC5727 returns (uint256) {
+    function _deregister(address addr) public virtual returns (uint256) {
         require(
-            addr == _msgSender(),
-            "Only ERC5727 contract can deregister itself"
+            _isERC5727Contract(addr),
+            "Only ERC5727 contract can be deregistered"
         );
+
         uint256 id = idOf(addr);
+        _burn(id);
         _removeEntry(id);
 
         emit Deregistered(id, addr);
@@ -99,31 +94,76 @@ abstract contract ERC5727Registry is
         return id;
     }
 
-    function isRegistered(address addr) external view override returns (bool) {
+    function isRegistered(address addr)
+        external
+        view
+        virtual
+        override
+        returns (bool)
+    {
         return _indexedEntries.contains(addr);
     }
 
-    function addressOf(uint256 id) public view override returns (address) {
+    function addressOf(uint256 id)
+        public
+        view
+        virtual
+        override
+        returns (address)
+    {
         (bool exists, address addr) = _entries.tryGet(id);
         require(exists, "ERC5727Registry: entry not found");
         return addr;
     }
 
-    function idOf(address addr) public view override returns (uint256) {
+    function idOf(address addr) public view virtual override returns (uint256) {
         (bool exists, uint256 id) = _indexedEntries.tryGet(addr);
         require(exists, "ERC5727Registry: entry not found");
         return id;
     }
 
-    function registryURI() external view returns (string memory) {
+    function registryURI() external view virtual returns (string memory) {
         return _uri;
+    }
+
+    function _isERC5727Contract(address addr) internal view returns (bool) {
+        return
+            addr.supportsInterface(type(IERC5727).interfaceId) &&
+            addr.supportsInterface(type(IERC5727Metadata).interfaceId) &&
+            addr.supportsInterface(type(IERC5727Registrant).interfaceId);
+    }
+
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal virtual override(ERC721, ERC721Enumerable) {
+        super._beforeTokenTransfer(from, to, tokenId);
+    }
+
+    function _burn(uint256 tokenId)
+        internal
+        virtual
+        override(ERC721, ERC721URIStorage)
+    {
+        super._burn(tokenId);
+    }
+
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        virtual
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
+    {
+        return ERC721URIStorage.tokenURI(tokenId);
     }
 
     function supportsInterface(bytes4 interfaceId)
         public
         view
         virtual
-        override(ERC165, IERC165)
+        override(ERC165, IERC165, ERC721, ERC721Enumerable)
         returns (bool)
     {
         return

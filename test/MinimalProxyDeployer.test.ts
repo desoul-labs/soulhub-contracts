@@ -10,7 +10,7 @@ interface Fixture {
   owner: SignerWithAddress
 }
 
-describe('ERC5727 Registration', function () {
+describe('Deploy Minimal Proxy', function () {
   async function deployRegistryFixture(): Promise<Fixture> {
     const erc5727Factory = await ethers.getContractFactory('ERC5727ExampleUpgradeable')
     const erc5727 = await erc5727Factory.deploy()

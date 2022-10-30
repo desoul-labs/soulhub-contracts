@@ -1,13 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableMap.sol";
@@ -15,15 +11,9 @@ import "../ERC5727/interfaces/IERC5727.sol";
 import "../ERC5727/ERC5727Registrant.sol";
 import "../ERC5727Registry/ERC5727Registry.sol";
 
-contract ERC5727RegistryExample is
-    ERC721,
-    ERC721Enumerable,
-    ERC721URIStorage,
-    Pausable,
-    Ownable,
-    ERC5727Registry
-{
+contract ERC5727RegistryExample is ERC5727Registry {
     using ERC165Checker for address;
+    using Address for address;
 
     modifier onlyOwnable() {
         (bool success, bytes memory data) = _msgSender().delegatecall(
@@ -39,14 +29,6 @@ contract ERC5727RegistryExample is
         string memory namespace,
         string memory uri
     ) ERC721(name, symbol) ERC5727Registry(name, namespace, uri) {}
-
-    function pause() public onlyOwner {
-        _pause();
-    }
-
-    function unpause() public onlyOwner {
-        _unpause();
-    }
 
     function _safeMint(
         address to,
@@ -70,21 +52,35 @@ contract ERC5727RegistryExample is
         address from,
         address to,
         uint256 tokenId
-    ) internal override(ERC721, ERC721Enumerable) whenNotPaused {
-        super._beforeTokenTransfer(from, to, tokenId);
-        if (from != address(0) && to != address(0)) {
+    ) internal override {
+        require(
+            _isERC5727Contract(_msgSender()),
+            "Only ERC5727 contract can call this function"
+        );
+        if (from != address(0)) {
             address addr = addressOf(tokenId);
-            ERC5727Registrant(addr).registryTransferOwnership(to);
+            require(
+                ERC5727Registrant(addr).owner() == from,
+                "ERC5727Registry: Only registrant owner can transfer"
+            );
         }
+        super._beforeTokenTransfer(from, to, tokenId);
     }
 
-    // The following functions are overrides required by Solidity.
+    function transferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public override(ERC721, IERC721) {
+        _transfer(from, to, tokenId);
+    }
 
-    function _burn(uint256 tokenId)
-        internal
-        override(ERC721, ERC721URIStorage)
-    {
-        super._burn(tokenId);
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public override(ERC721, IERC721) onlyOwnable {
+        _safeTransfer(from, to, tokenId, "");
     }
 
     function deregister(address addr)
@@ -94,26 +90,6 @@ contract ERC5727RegistryExample is
         returns (uint256)
     {
         uint256 tokenId = _deregister(addr);
-        _burn(tokenId);
-
         return tokenId;
-    }
-
-    function tokenURI(uint256 tokenId)
-        public
-        view
-        override(ERC721, ERC721URIStorage)
-        returns (string memory)
-    {
-        return super.tokenURI(tokenId);
-    }
-
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(ERC721, ERC721Enumerable, ERC5727Registry)
-        returns (bool)
-    {
-        return super.supportsInterface(interfaceId);
     }
 }
