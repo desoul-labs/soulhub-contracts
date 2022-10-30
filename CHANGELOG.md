@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.4](https://github.com/Phaneroz-Labs/soularis-contracts/compare/v0.0.3...v0.0.4) (2022-10-30)
+
+
+### Features
+
+* add proxy contracts ([#62](https://github.com/Phaneroz-Labs/soularis-contracts/issues/62)) ([9749ef8](https://github.com/Phaneroz-Labs/soularis-contracts/commit/9749ef80ff5207fe3f13c1d5e96e3b3d2355f6c7))
+* support IERC721Metadata and IERC3525Metadata ([d8d27c4](https://github.com/Phaneroz-Labs/soularis-contracts/commit/d8d27c4c226fb4cfd7b27524c12a4ffda0cc5493))
+* upgradable contracts ([#61](https://github.com/Phaneroz-Labs/soularis-contracts/issues/61)) ([a73699d](https://github.com/Phaneroz-Labs/soularis-contracts/commit/a73699d6886293cbf61f918fc942cc33e5ffed7e))
+
+
+### Bug Fixes
+
+* **deps:** update dependency @nomiclabs/hardhat-ethers to v2.2.1 ([d6045cf](https://github.com/Phaneroz-Labs/soularis-contracts/commit/d6045cf54396086e968b02398ac8b6a56a68822d))
+* **deps:** update dependency ethers to v5.7.2 ([4f4306a](https://github.com/Phaneroz-Labs/soularis-contracts/commit/4f4306abce6b5bf7b43be3290e486563a6a7b643))
+* ownable init & refactor registry ([#66](https://github.com/Phaneroz-Labs/soularis-contracts/issues/66)) ([7d15015](https://github.com/Phaneroz-Labs/soularis-contracts/commit/7d15015e47c3f9a4d6fbfed595d964fbfebe2241))
+* remove some templates ([00e79ce](https://github.com/Phaneroz-Labs/soularis-contracts/commit/00e79cecb10fc0fcd3d9d1e250749558e91c2c84))
+* update interface discovery for registrant ([91cb22a](https://github.com/Phaneroz-Labs/soularis-contracts/commit/91cb22a8ab07d7d248644f5cfc1ae60c06c8f54f))
+
 ### 0.0.3 (2022-10-13)
 
 ### Features
