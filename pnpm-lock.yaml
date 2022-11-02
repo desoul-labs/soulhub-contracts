@@ -32,7 +32,7 @@ importers:
       husky: 8.0.1
       lint-staged: 13.0.3
       prettier: 2.7.1
-      prettier-plugin-solidity: 1.0.0-beta.24
+      prettier-plugin-solidity: 1.0.0-rc.1
       solhint: 3.3.7
       solhint-plugin-prettier: 0.0.5
       solidity-coverage: 0.8.2
@@ -69,9 +69,9 @@ importers:
       husky: 8.0.1
       lint-staged: 13.0.3
       prettier: 2.7.1
-      prettier-plugin-solidity: 1.0.0-beta.24_prettier@2.7.1
+      prettier-plugin-solidity: 1.0.0-rc.1_prettier@2.7.1
       solhint: 3.3.7
-      solhint-plugin-prettier: 0.0.5_hwxylllfazz3b32qkrkocph6du
+      solhint-plugin-prettier: 0.0.5_iylib2rcb775jk5vfon6brrxim
       solidity-coverage: 0.8.2_hardhat@2.12.2
       standard-version: 9.5.0
       ts-node: 10.9.1_cbe7ovvae6zqfnmtgctpgpys54
@@ -1133,6 +1133,12 @@ packages:
 
   /@solidity-parser/parser/0.14.3:
     resolution: {integrity: sha512-29g2SZ29HtsqA58pLCtopI1P/cPy5/UAzlcAXO6T/CNJimG6yA8kx4NaseMyJULiC+TEs02Y9/yeHzClqoA0hw==}
+    dependencies:
+      antlr4ts: 0.5.0-alpha.4
+    dev: true
+
+  /@solidity-parser/parser/0.14.5:
+    resolution: {integrity: sha512-6dKnHZn7fg/iQATVEzqyUOyEidbn05q7YA2mQ9hC0MMXhhV3/JrsxmFSYZAcr7j1yUP700LLhTruvJ3MiQmjJg==}
     dependencies:
       antlr4ts: 0.5.0-alpha.4
     dev: true
@@ -3280,7 +3286,7 @@ packages:
         optional: true
     dependencies:
       '@ethersproject/abi': 5.7.0
-      '@solidity-parser/parser': 0.14.3
+      '@solidity-parser/parser': 0.14.5
       cli-table3: 0.5.1
       colors: 1.4.0
       ethereum-cryptography: 1.1.2
@@ -5589,13 +5595,13 @@ packages:
       fast-diff: 1.2.0
     dev: true
 
-  /prettier-plugin-solidity/1.0.0-beta.24_prettier@2.7.1:
-    resolution: {integrity: sha512-6JlV5BBTWzmDSq4kZ9PTXc3eLOX7DF5HpbqmmaF+kloyUwOZbJ12hIYsUaZh2fVgZdV2t0vWcvY6qhILhlzgqg==}
+  /prettier-plugin-solidity/1.0.0-rc.1_prettier@2.7.1:
+    resolution: {integrity: sha512-horUGyCBbfNHWvJ44UVEcsfVySEoG2gxGs7TcBfTZWNvD4VU6rjzwAkrUtKV6VvRZWn9dh01XZ2UhhB3eVnMXQ==}
     engines: {node: '>=12'}
     peerDependencies:
       prettier: ^2.3.0
     dependencies:
-      '@solidity-parser/parser': 0.14.3
+      '@solidity-parser/parser': 0.14.5
       emoji-regex: 10.1.0
       escape-string-regexp: 4.0.0
       prettier: 2.7.1
@@ -6210,7 +6216,7 @@ packages:
     transitivePeerDependencies:
       - debug
 
-  /solhint-plugin-prettier/0.0.5_hwxylllfazz3b32qkrkocph6du:
+  /solhint-plugin-prettier/0.0.5_iylib2rcb775jk5vfon6brrxim:
     resolution: {integrity: sha512-7jmWcnVshIrO2FFinIvDQmhQpfpS2rRRn3RejiYgnjIE68xO2bvrYvjqVNfrio4xH9ghOqn83tKuTzLjEbmGIA==}
     peerDependencies:
       prettier: ^1.15.0 || ^2.0.0
@@ -6218,7 +6224,7 @@ packages:
     dependencies:
       prettier: 2.7.1
       prettier-linter-helpers: 1.0.0
-      prettier-plugin-solidity: 1.0.0-beta.24_prettier@2.7.1
+      prettier-plugin-solidity: 1.0.0-rc.1_prettier@2.7.1
     dev: true
 
   /solhint/2.3.1:
