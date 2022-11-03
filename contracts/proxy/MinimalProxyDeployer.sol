@@ -27,7 +27,7 @@ contract MinimalProxyDeployer is Multicall, ERC2771Context {
         address _implementation,
         bytes memory _data,
         bytes32 _salt
-    ) public returns (address deployedProxy) {
+    ) external returns (address deployedProxy) {
         bytes32 salthash = keccak256(abi.encodePacked(_msgSender(), _salt));
         deployedProxy = Clones.cloneDeterministic(_implementation, salthash);
 
@@ -39,5 +39,13 @@ contract MinimalProxyDeployer is Multicall, ERC2771Context {
             // slither-disable-next-line unused-return
             Address.functionCall(deployedProxy, _data);
         }
+    }
+
+    function calculateProxyAddressByImplementation(
+        address _implementation,
+        bytes32 _salt
+    ) external view returns (address) {
+        bytes32 salthash = keccak256(abi.encodePacked(_msgSender(), _salt));
+        return Clones.predictDeterministicAddress(_implementation, salthash);
     }
 }
