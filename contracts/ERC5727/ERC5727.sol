@@ -267,7 +267,10 @@ abstract contract ERC5727 is
         returns (string memory)
     {
         string memory baseURI = _baseURI();
-        return bytes(baseURI).length > 0 ? baseURI : "";
+        return
+            bytes(baseURI).length > 0
+                ? string(abi.encodePacked(baseURI, "contract"))
+                : "";
     }
 
     function slotURI(uint256 slot)
