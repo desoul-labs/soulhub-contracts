@@ -198,7 +198,7 @@ contract ERC5727ExampleUpgradeable is
         ERC5727RegistrantUpgradeable.transferOwnership(newOwner);
     }
 
-    function valueOf_(uint256 tokenId) public virtual returns (uint256) {
+    function valueOf_(uint256 tokenId) public view virtual returns (uint256) {
         return valueOf(tokenId);
     }
 }
