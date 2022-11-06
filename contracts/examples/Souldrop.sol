@@ -30,7 +30,7 @@ contract Souldrop is ERC721EnumerableUpgradeable, OwnableUpgradeable {
         __Ownable_init_unchained();
         __ERC721_init_unchained("Souldrop", "SDP");
         __ERC721Enumerable_init_unchained();
-        transferOwnership(owner);
+        _transferOwnership(owner);
 
         _baseTokenURI = baseTokenURI;
 
@@ -49,7 +49,7 @@ contract Souldrop is ERC721EnumerableUpgradeable, OwnableUpgradeable {
         }
     }
 
-    function _safeMint(address to) internal onlyOwner {
+    function _safeMint(address to) internal {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
