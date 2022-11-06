@@ -25,7 +25,7 @@ importers:
       eslint: 8.25.0
       eslint-config-standard-with-typescript: 23.0.0
       eslint-plugin-import: 2.26.0
-      eslint-plugin-n: 15.4.0
+      eslint-plugin-n: 15.5.0
       eslint-plugin-promise: 6.1.1
       hardhat: 2.12.2
       hardhat-gas-reporter: 1.0.9
@@ -60,9 +60,9 @@ importers:
       '@types/node': 18.11.9
       '@typescript-eslint/eslint-plugin': 5.42.0_mv5zc5oswpaoclhpccin6wdonu
       eslint: 8.25.0
-      eslint-config-standard-with-typescript: 23.0.0_shula7o3klcjspgwnksyrngyvu
+      eslint-config-standard-with-typescript: 23.0.0_obetktdq2ag3zkamcndhzbvdwm
       eslint-plugin-import: 2.26.0_vlmgemubtw4i7xy2y4j3jwo3sy
-      eslint-plugin-n: 15.4.0_eslint@8.25.0
+      eslint-plugin-n: 15.5.0_eslint@8.25.0
       eslint-plugin-promise: 6.1.1_eslint@8.25.0
       hardhat: 2.12.2_mwhvu7sfp6vq5ryuwb6hlbjfka
       hardhat-gas-reporter: 1.0.9_hardhat@2.12.2
@@ -3091,7 +3091,7 @@ packages:
       source-map: 0.2.0
     dev: true
 
-  /eslint-config-standard-with-typescript/23.0.0_shula7o3klcjspgwnksyrngyvu:
+  /eslint-config-standard-with-typescript/23.0.0_obetktdq2ag3zkamcndhzbvdwm:
     resolution: {integrity: sha512-iaaWifImn37Z1OXbNW1es7KI+S7D408F9ys0bpaQf2temeBWlvb0Nc5qHkOgYaRb5QxTZT32GGeN1gtswASOXA==}
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^5.0.0
@@ -3104,16 +3104,16 @@ packages:
       '@typescript-eslint/eslint-plugin': 5.42.0_mv5zc5oswpaoclhpccin6wdonu
       '@typescript-eslint/parser': 5.34.0_z4bbprzjrhnsfa24uvmcbu7f5q
       eslint: 8.25.0
-      eslint-config-standard: 17.0.0_75gy2kywwz4umx4o7xvnn4lcvi
+      eslint-config-standard: 17.0.0_dtu3dkqf5fs4xs6dd23zszo2ye
       eslint-plugin-import: 2.26.0_vlmgemubtw4i7xy2y4j3jwo3sy
-      eslint-plugin-n: 15.4.0_eslint@8.25.0
+      eslint-plugin-n: 15.5.0_eslint@8.25.0
       eslint-plugin-promise: 6.1.1_eslint@8.25.0
       typescript: 4.8.4
     transitivePeerDependencies:
       - supports-color
     dev: true
 
-  /eslint-config-standard/17.0.0_75gy2kywwz4umx4o7xvnn4lcvi:
+  /eslint-config-standard/17.0.0_dtu3dkqf5fs4xs6dd23zszo2ye:
     resolution: {integrity: sha512-/2ks1GKyqSOkH7JFvXJicu0iMpoojkwB+f5Du/1SC0PtBL+s8v30k9njRZ21pm2drKYm2342jFnGWzttxPmZVg==}
     peerDependencies:
       eslint: ^8.0.1
@@ -3123,7 +3123,7 @@ packages:
     dependencies:
       eslint: 8.25.0
       eslint-plugin-import: 2.26.0_vlmgemubtw4i7xy2y4j3jwo3sy
-      eslint-plugin-n: 15.4.0_eslint@8.25.0
+      eslint-plugin-n: 15.5.0_eslint@8.25.0
       eslint-plugin-promise: 6.1.1_eslint@8.25.0
     dev: true
 
@@ -3207,8 +3207,8 @@ packages:
       - supports-color
     dev: true
 
-  /eslint-plugin-n/15.4.0_eslint@8.25.0:
-    resolution: {integrity: sha512-MkoKy9/lfd52TAXK4fkABgCp0aglk82Q3viy2UOWIEpTVE/Cem5P/UAxMBA4vSw7Gy+2egPqImE9euitLGp5aw==}
+  /eslint-plugin-n/15.5.0_eslint@8.25.0:
+    resolution: {integrity: sha512-VCqQiZDpdm1Q9grnvy+XsENZoXDgTLqPHRQwgl9qFNNgTKR4YEnQOMN0pFB/9TbmrQ88jdeTnqTcNwRvjqMOtg==}
     engines: {node: '>=12.22.0'}
     peerDependencies:
       eslint: '>=7.0.0'
