@@ -35,17 +35,13 @@ async function main(): Promise<void> {
     address: minimalProxyDeployer.address,
   })
 
-  const cardFactory = await ethers.getContractFactory('SoulmateCard')
-  const card = await cardFactory.deploy(
-    'SoulmateCard',
-    'CARD',
-    'https://soularis-demo.s3.ap-northeast-1.amazonaws.com/card/',
-  )
-  await card.deployed()
-  console.log('Card contract deployed to:', card.address)
+  const souldropFactory = await ethers.getContractFactory('Souldrop')
+  const souldrop = await souldropFactory.deploy()
+  await souldrop.deployed()
+  console.log('Souldrop contract deployed to:', souldrop.address)
   await tenderly.verify({
-    name: 'SoulmateCard',
-    address: card.address,
+    name: 'Souldrop',
+    address: souldrop.address,
   })
 }
 

@@ -150,6 +150,7 @@ describe('ERC5727Test', function () {
       expect(await ERC5727ExampleContract.supportsInterface('0x379f4e66')).to.equal(true)
       expect(await ERC5727ExampleContract.supportsInterface('0x3475cd68')).to.equal(true)
       expect(await ERC5727ExampleContract.supportsInterface('0x3b741b9e')).to.equal(true)
+      expect(await ERC5727ExampleContract.supportsInterface('0x5b5e139f')).to.equal(true)
     })
   })
 
