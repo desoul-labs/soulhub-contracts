@@ -255,7 +255,7 @@ abstract contract ERC5727 is
         string memory baseURI = _baseURI();
         return
             bytes(baseURI).length > 0
-                ? string(abi.encodePacked(baseURI, "slot/", slot.toString()))
+                ? string(abi.encodePacked(baseURI, "slots/", slot.toString()))
                 : "";
     }
 
@@ -267,7 +267,7 @@ abstract contract ERC5727 is
         if (baseURI.length > 0) {
             return
                 string(
-                    abi.encodePacked(baseURI, Strings.toHexString(tokenId, 32))
+                    abi.encodePacked(baseURI, "tokens/", tokenId.toString())
                 );
         }
         return "";

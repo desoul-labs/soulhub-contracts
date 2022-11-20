@@ -267,10 +267,7 @@ abstract contract ERC5727Upgradeable is
         returns (string memory)
     {
         string memory baseURI = _baseURI();
-        return
-            bytes(baseURI).length > 0
-                ? string(abi.encodePacked(baseURI, "contract"))
-                : "";
+        return bytes(baseURI).length > 0 ? baseURI : "";
     }
 
     function slotURI(
@@ -279,7 +276,7 @@ abstract contract ERC5727Upgradeable is
         string memory baseURI = _baseURI();
         return
             bytes(baseURI).length > 0
-                ? string(abi.encodePacked(baseURI, "slot/", slot.toString()))
+                ? string(abi.encodePacked(baseURI, "slots/", slot.toString()))
                 : "";
     }
 
@@ -291,10 +288,7 @@ abstract contract ERC5727Upgradeable is
         if (baseURI.length > 0) {
             return
                 string(
-                    abi.encodePacked(
-                        baseURI,
-                        StringsUpgradeable.toHexString(tokenId, 32)
-                    )
+                    abi.encodePacked(baseURI, "tokens/", tokenId.toString())
                 );
         }
         return "";
