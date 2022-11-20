@@ -32,7 +32,9 @@ contract ERC5727Example is
         return _baseTokenURI;
     }
 
-    function supportsInterface(bytes4 interfaceId)
+    function supportsInterface(
+        bytes4 interfaceId
+    )
         public
         view
         virtual
@@ -49,12 +51,9 @@ contract ERC5727Example is
         return super.supportsInterface(interfaceId);
     }
 
-    function _beforeView(uint256 tokenId)
-        internal
-        view
-        virtual
-        override(ERC5727, ERC5727Shadow)
-    {
+    function _beforeView(
+        uint256 tokenId
+    ) internal view virtual override(ERC5727, ERC5727Shadow) {
         ERC5727Shadow._beforeView(tokenId);
     }
 
@@ -142,15 +141,15 @@ contract ERC5727Example is
         );
     }
 
-    function _afterTokenRevoke(uint256 tokenId)
-        internal
-        virtual
-        override(ERC5727, ERC5727Enumerable)
-    {
+    function _afterTokenRevoke(
+        uint256 tokenId
+    ) internal virtual override(ERC5727, ERC5727Enumerable) {
         ERC5727Enumerable._afterTokenRevoke(tokenId);
     }
 
-    function _beforeTokenDestroy(uint256 tokenId)
+    function _beforeTokenDestroy(
+        uint256 tokenId
+    )
         internal
         virtual
         override(ERC5727, ERC5727Enumerable, ERC5727SlotEnumerable)

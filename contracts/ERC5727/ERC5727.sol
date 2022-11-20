@@ -42,7 +42,9 @@ abstract contract ERC5727 is
         _symbol = symbol_;
     }
 
-    function supportsInterface(bytes4 interfaceId)
+    function supportsInterface(
+        bytes4 interfaceId
+    )
         public
         view
         virtual
@@ -57,12 +59,9 @@ abstract contract ERC5727 is
             super.supportsInterface(interfaceId);
     }
 
-    function _getTokenOrRevert(uint256 tokenId)
-        internal
-        view
-        virtual
-        returns (Token storage)
-    {
+    function _getTokenOrRevert(
+        uint256 tokenId
+    ) internal view virtual returns (Token storage) {
         Token storage token = _tokens[tokenId];
         require(token.soul != address(0), "ERC5727: Token does not exist");
         return token;
@@ -103,10 +102,10 @@ abstract contract ERC5727 is
         emit Charged(tokenId, value);
     }
 
-    function _chargeBatch(uint256[] memory tokenIds, uint256[] memory values)
-        internal
-        virtual
-    {
+    function _chargeBatch(
+        uint256[] memory tokenIds,
+        uint256[] memory values
+    ) internal virtual {
         require(
             tokenIds.length == values.length,
             "ERC5727: unmatched size of tokenIds and values"
@@ -125,10 +124,10 @@ abstract contract ERC5727 is
         emit Consumed(tokenId, value);
     }
 
-    function _consumeBatch(uint256[] memory tokenIds, uint256[] memory values)
-        internal
-        virtual
-    {
+    function _consumeBatch(
+        uint256[] memory tokenIds,
+        uint256[] memory values
+    ) internal virtual {
         require(
             tokenIds.length == values.length,
             "ERC5727: unmatched size of tokenIds and values"
@@ -201,56 +200,36 @@ abstract contract ERC5727 is
 
     function _afterTokenDestroy(uint256 tokenId) internal virtual {}
 
-    function soulOf(uint256 tokenId)
-        public
-        view
-        virtual
-        override
-        returns (address)
-    {
+    function soulOf(
+        uint256 tokenId
+    ) public view virtual override returns (address) {
         _beforeView(tokenId);
         return _getTokenOrRevert(tokenId).soul;
     }
 
-    function valueOf(uint256 tokenId)
-        public
-        view
-        virtual
-        override
-        returns (uint256)
-    {
+    function valueOf(
+        uint256 tokenId
+    ) public view virtual override returns (uint256) {
         _beforeView(tokenId);
         return _getTokenOrRevert(tokenId).value;
     }
 
-    function slotOf(uint256 tokenId)
-        public
-        view
-        virtual
-        override
-        returns (uint256)
-    {
+    function slotOf(
+        uint256 tokenId
+    ) public view virtual override returns (uint256) {
         _beforeView(tokenId);
         return _getTokenOrRevert(tokenId).slot;
     }
 
-    function issuerOf(uint256 tokenId)
-        public
-        view
-        virtual
-        override
-        returns (address)
-    {
+    function issuerOf(
+        uint256 tokenId
+    ) public view virtual override returns (address) {
         return _getTokenOrRevert(tokenId).issuer;
     }
 
-    function isValid(uint256 tokenId)
-        public
-        view
-        virtual
-        override
-        returns (bool)
-    {
+    function isValid(
+        uint256 tokenId
+    ) public view virtual override returns (bool) {
         _beforeView(tokenId);
         return _getTokenOrRevert(tokenId).valid;
     }
@@ -267,19 +246,12 @@ abstract contract ERC5727 is
         returns (string memory)
     {
         string memory baseURI = _baseURI();
-        return
-            bytes(baseURI).length > 0
-                ? string(abi.encodePacked(baseURI, "contract"))
-                : "";
+        return bytes(baseURI).length > 0 ? baseURI : "";
     }
 
-    function slotURI(uint256 slot)
-        public
-        view
-        virtual
-        override
-        returns (string memory)
-    {
+    function slotURI(
+        uint256 slot
+    ) public view virtual override returns (string memory) {
         string memory baseURI = _baseURI();
         return
             bytes(baseURI).length > 0
@@ -287,13 +259,9 @@ abstract contract ERC5727 is
                 : "";
     }
 
-    function tokenURI(uint256 tokenId)
-        public
-        view
-        virtual
-        override
-        returns (string memory)
-    {
+    function tokenURI(
+        uint256 tokenId
+    ) public view virtual override returns (string memory) {
         _getTokenOrRevert(tokenId);
         bytes memory baseURI = bytes(_baseURI());
         if (baseURI.length > 0) {

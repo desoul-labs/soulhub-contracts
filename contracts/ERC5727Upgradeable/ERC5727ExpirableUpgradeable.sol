@@ -21,35 +21,26 @@ abstract contract ERC5727ExpirableUpgradeable is
         __ERC5727Expirable_init_unchained();
     }
 
-    function expiryDate(uint256 tokenId)
-        public
-        view
-        virtual
-        override
-        returns (uint256)
-    {
+    function expiryDate(
+        uint256 tokenId
+    ) public view virtual override returns (uint256) {
         uint256 date = _expiryDate[tokenId];
         require(date != 0, "ERC5727Expirable: No expiry date set");
         return date;
     }
 
-    function isExpired(uint256 tokenId)
-        public
-        view
-        virtual
-        override
-        returns (bool)
-    {
+    function isExpired(
+        uint256 tokenId
+    ) public view virtual override returns (bool) {
         uint256 date = _expiryDate[tokenId];
         require(date != 0, "ERC5727Expirable: No expiry date set");
         return date < block.timestamp;
     }
 
-    function _setExpiryDate(uint256 tokenId, uint256 date)
-        internal
-        virtual
-        onlyOwner
-    {
+    function _setExpiryDate(
+        uint256 tokenId,
+        uint256 date
+    ) internal virtual onlyOwner {
         require(
             date > block.timestamp,
             "ERC5727Expirable: Expiry date cannot be in the past"
@@ -74,9 +65,10 @@ abstract contract ERC5727ExpirableUpgradeable is
         }
     }
 
-    function _setBatchExpiryDates(uint256[] memory tokenIds, uint256 date)
-        internal
-    {
+    function _setBatchExpiryDates(
+        uint256[] memory tokenIds,
+        uint256 date
+    ) internal {
         for (uint256 i = 0; i < tokenIds.length; i++) {
             _setExpiryDate(tokenIds[i], date);
         }
@@ -93,7 +85,9 @@ abstract contract ERC5727ExpirableUpgradeable is
         _setBatchExpiryDates(tokenIds, dates);
     }
 
-    function supportsInterface(bytes4 interfaceId)
+    function supportsInterface(
+        bytes4 interfaceId
+    )
         public
         view
         virtual

@@ -28,10 +28,10 @@ interface IERC5727Enumerable is IERC5727 {
      * @param index The index of the token queried for
      * @return The token is queried for
      */
-    function tokenOfSoulByIndex(address soul, uint256 index)
-        external
-        view
-        returns (uint256);
+    function tokenOfSoulByIndex(
+        address soul,
+        uint256 index
+    ) external view returns (uint256);
 
     /**
      * @notice Get the tokenId with `index` of all the tokens.

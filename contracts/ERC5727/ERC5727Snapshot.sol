@@ -31,12 +31,10 @@ abstract contract ERC5727Snapshot is ERC5727Enumerable, IERC5727Snapshot {
         return _currentSnapshotId.current();
     }
 
-    function balanceOfAt(address account, uint256 snapshotId)
-        public
-        view
-        virtual
-        returns (uint256)
-    {
+    function balanceOfAt(
+        address account,
+        uint256 snapshotId
+    ) public view virtual returns (uint256) {
         (bool snapshotted, uint256 value) = _valueAt(
             snapshotId,
             _accountBalanceSnapshots[account]
@@ -45,11 +43,10 @@ abstract contract ERC5727Snapshot is ERC5727Enumerable, IERC5727Snapshot {
         return snapshotted ? value : balanceOf(account);
     }
 
-    function _valueAt(uint256 snapshotId, Snapshots storage snapshots)
-        private
-        view
-        returns (bool, uint256)
-    {
+    function _valueAt(
+        uint256 snapshotId,
+        Snapshots storage snapshots
+    ) private view returns (bool, uint256) {
         require(snapshotId > 0, "ERC20Snapshot: id is 0");
         require(
             snapshotId <= _getCurrentSnapshotId(),
@@ -69,9 +66,10 @@ abstract contract ERC5727Snapshot is ERC5727Enumerable, IERC5727Snapshot {
         _updateSnapshot(_accountBalanceSnapshots[account], balanceOf(account));
     }
 
-    function _updateSnapshot(Snapshots storage snapshots, uint256 currentValue)
-        private
-    {
+    function _updateSnapshot(
+        Snapshots storage snapshots,
+        uint256 currentValue
+    ) private {
         uint256 currentId = _getCurrentSnapshotId();
         if (_lastSnapshotId(snapshots.ids) < currentId) {
             snapshots.ids.push(currentId);
@@ -79,11 +77,9 @@ abstract contract ERC5727Snapshot is ERC5727Enumerable, IERC5727Snapshot {
         }
     }
 
-    function _lastSnapshotId(uint256[] storage ids)
-        private
-        view
-        returns (uint256)
-    {
+    function _lastSnapshotId(
+        uint256[] storage ids
+    ) private view returns (uint256) {
         if (ids.length == 0) {
             return 0;
         } else {

@@ -22,6 +22,7 @@
     "deploy:mumbai": "hardhat run scripts/deploy.ts --network mumbai",
     "deploy:polygon": "hardhat run scripts/deploy.ts --network polygon",
     "deploy:optimism-test": "hardhat run scripts/deploy.ts --network optimism-test",
+    "deploy:chapel": "hardhat run scripts/deploy.ts --network chapel",
     "deploy:hardhat": "hardhat run scripts/deploy.ts --network hardhat",
     "lint-staged": "lint-staged --allow-empty",
     "prepare": "husky install",
@@ -42,8 +43,8 @@
     ]
   },
   "dependencies": {
-    "@openzeppelin/contracts": "4.8.0",
-    "@openzeppelin/contracts-upgradeable": "4.8.0"
+    "@openzeppelin/contracts": "4.7.3",
+    "@openzeppelin/contracts-upgradeable": "4.7.3"
   },
   "devDependencies": {
     "@ethersproject/abi": "5.7.0",

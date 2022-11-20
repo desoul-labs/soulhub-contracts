@@ -37,12 +37,9 @@ abstract contract ERC5727RegistrantUpgradeable is
         return id;
     }
 
-    function register(address _registry)
-        public
-        override
-        onlyOwner
-        returns (uint256)
-    {
+    function register(
+        address _registry
+    ) public override onlyOwner returns (uint256) {
         require(
             !_registered.contains(_registry),
             "ERC5727Registrant: already registered"
@@ -66,12 +63,9 @@ abstract contract ERC5727RegistrantUpgradeable is
         return id;
     }
 
-    function deregister(address _registry)
-        public
-        override
-        onlyOwner
-        returns (uint256)
-    {
+    function deregister(
+        address _registry
+    ) public override onlyOwner returns (uint256) {
         require(
             _registered.contains(_registry),
             "ERC5727Registrant: not registered"
@@ -111,13 +105,9 @@ abstract contract ERC5727RegistrantUpgradeable is
         return _registry.supportsInterface(type(IERC5727Registry).interfaceId);
     }
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual override returns (bool) {
         return
             interfaceId == type(IERC5727RegistrantUpgradeable).interfaceId ||
             super.supportsInterface(interfaceId);

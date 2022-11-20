@@ -29,24 +29,19 @@ abstract contract ERC5727SlotEnumerable is ERC5727, IERC5727SlotEnumerable {
         return _allSlots.length() != 0 && _allSlots.contains(slot);
     }
 
-    function tokenSupplyInSlot(uint256 slot)
-        public
-        view
-        override
-        returns (uint256)
-    {
+    function tokenSupplyInSlot(
+        uint256 slot
+    ) public view override returns (uint256) {
         if (!_slotExists(slot)) {
             return 0;
         }
         return _tokensInSlot[slot].length();
     }
 
-    function tokenInSlotByIndex(uint256 slot, uint256 index)
-        public
-        view
-        override
-        returns (uint256)
-    {
+    function tokenInSlotByIndex(
+        uint256 slot,
+        uint256 index
+    ) public view override returns (uint256) {
         require(
             index < ERC5727SlotEnumerable.tokenSupplyInSlot(slot),
             "ERC5727SlotEnumerable: slot token index out of bounds"
@@ -54,13 +49,9 @@ abstract contract ERC5727SlotEnumerable is ERC5727, IERC5727SlotEnumerable {
         return _tokensInSlot[slot].at(index);
     }
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override(IERC165, ERC5727)
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual override(IERC165, ERC5727) returns (bool) {
         return
             interfaceId == type(IERC5727SlotEnumerable).interfaceId ||
             super.supportsInterface(interfaceId);

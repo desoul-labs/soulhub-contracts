@@ -12,9 +12,10 @@ abstract contract ERC5727Registrant is ERC5727, IERC5727Registrant {
 
     EnumerableSet.AddressSet internal _registered;
 
-    constructor(string memory name, string memory symbol)
-        ERC5727(name, symbol)
-    {}
+    constructor(
+        string memory name,
+        string memory symbol
+    ) ERC5727(name, symbol) {}
 
     function _register(address _registry) internal returns (uint256) {
         require(_isRegistry(_registry), "ERC5727Registrant: not a registry");
@@ -27,12 +28,9 @@ abstract contract ERC5727Registrant is ERC5727, IERC5727Registrant {
         return id;
     }
 
-    function register(address _registry)
-        public
-        override
-        onlyOwner
-        returns (uint256)
-    {
+    function register(
+        address _registry
+    ) public override onlyOwner returns (uint256) {
         require(
             !_registered.contains(_registry),
             "ERC5727Registrant: already registered"
@@ -56,12 +54,9 @@ abstract contract ERC5727Registrant is ERC5727, IERC5727Registrant {
         return id;
     }
 
-    function deregister(address _registry)
-        public
-        override
-        onlyOwner
-        returns (uint256)
-    {
+    function deregister(
+        address _registry
+    ) public override onlyOwner returns (uint256) {
         require(
             _registered.contains(_registry),
             "ERC5727Registrant: not registered"
@@ -82,13 +77,9 @@ abstract contract ERC5727Registrant is ERC5727, IERC5727Registrant {
         return _registry.supportsInterface(type(IERC5727Registry).interfaceId);
     }
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override(ERC5727)
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual override(ERC5727) returns (bool) {
         return
             interfaceId == type(IERC5727Registrant).interfaceId ||
             super.supportsInterface(interfaceId);

@@ -7,35 +7,26 @@ import "./interfaces/IERC5727Expirable.sol";
 abstract contract ERC5727Expirable is IERC5727Expirable, ERC5727 {
     mapping(uint256 => uint256) private _expiryDate;
 
-    function expiryDate(uint256 tokenId)
-        public
-        view
-        virtual
-        override
-        returns (uint256)
-    {
+    function expiryDate(
+        uint256 tokenId
+    ) public view virtual override returns (uint256) {
         uint256 date = _expiryDate[tokenId];
         require(date != 0, "ERC5727Expirable: No expiry date set");
         return date;
     }
 
-    function isExpired(uint256 tokenId)
-        public
-        view
-        virtual
-        override
-        returns (bool)
-    {
+    function isExpired(
+        uint256 tokenId
+    ) public view virtual override returns (bool) {
         uint256 date = _expiryDate[tokenId];
         require(date != 0, "ERC5727Expirable: No expiry date set");
         return date < block.timestamp;
     }
 
-    function _setExpiryDate(uint256 tokenId, uint256 date)
-        internal
-        virtual
-        onlyOwner
-    {
+    function _setExpiryDate(
+        uint256 tokenId,
+        uint256 date
+    ) internal virtual onlyOwner {
         require(
             date > block.timestamp,
             "ERC5727Expirable: Expiry date cannot be in the past"
@@ -60,9 +51,10 @@ abstract contract ERC5727Expirable is IERC5727Expirable, ERC5727 {
         }
     }
 
-    function _setBatchExpiryDates(uint256[] memory tokenIds, uint256 date)
-        internal
-    {
+    function _setBatchExpiryDates(
+        uint256[] memory tokenIds,
+        uint256 date
+    ) internal {
         for (uint256 i = 0; i < tokenIds.length; i++) {
             _setExpiryDate(tokenIds[i], date);
         }
@@ -79,13 +71,9 @@ abstract contract ERC5727Expirable is IERC5727Expirable, ERC5727 {
         _setBatchExpiryDates(tokenIds, dates);
     }
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override(IERC165, ERC5727)
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual override(IERC165, ERC5727) returns (bool) {
         return
             interfaceId == type(IERC5727Expirable).interfaceId ||
             super.supportsInterface(interfaceId);

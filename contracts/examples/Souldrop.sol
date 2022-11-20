@@ -25,7 +25,8 @@ contract Souldrop is ERC721EnumerableUpgradeable, OwnableUpgradeable {
         address owner,
         uint256 threshold,
         string memory baseTokenURI,
-        address erc5727Address
+        address erc5727Address,
+        uint256 slot
     ) public initializer {
         __Ownable_init_unchained();
         __ERC721_init_unchained("Souldrop", "SDP");
@@ -35,11 +36,12 @@ contract Souldrop is ERC721EnumerableUpgradeable, OwnableUpgradeable {
         _baseTokenURI = baseTokenURI;
 
         erc5727 = ERC5727ExampleUpgradeable(erc5727Address);
-        uint256 total = erc5727.emittedCount();
+        uint256 total = erc5727.tokenSupplyInSlot(slot);
         for (uint256 i = 0; i < total; i++) {
-            address soul = erc5727.soulOf(i);
+            uint256 tokenId = erc5727.tokenInSlotByIndex(slot, i);
+            address soul = erc5727.soulOf(tokenId);
             (bool exist, uint256 val) = _snapshot.tryGet(soul);
-            _snapshot.set(soul, erc5727.valueOf(i) + val);
+            _snapshot.set(soul, erc5727.valueOf(tokenId) + val);
         }
         for (uint256 i = 0; i < _snapshot.length(); i++) {
             (address soul, uint256 value) = _snapshot.at(i);
@@ -67,13 +69,9 @@ contract Souldrop is ERC721EnumerableUpgradeable, OwnableUpgradeable {
         return _baseTokenURI;
     }
 
-    function tokenURI(uint256 tokenId)
-        public
-        view
-        virtual
-        override
-        returns (string memory)
-    {
+    function tokenURI(
+        uint256 tokenId
+    ) public view virtual override returns (string memory) {
         require(
             _exists(tokenId),
             "ERC721Metadata: URI query for nonexistent token"
@@ -81,13 +79,9 @@ contract Souldrop is ERC721EnumerableUpgradeable, OwnableUpgradeable {
         return _baseURI();
     }
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override(ERC721EnumerableUpgradeable)
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual override(ERC721EnumerableUpgradeable) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }

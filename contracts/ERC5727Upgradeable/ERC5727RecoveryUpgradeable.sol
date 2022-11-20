@@ -24,11 +24,10 @@ abstract contract ERC5727RecoveryUpgradeable is
         __ERC5727Recovery_init_unchained();
     }
 
-    function recover(address soul, bytes memory signature)
-        public
-        virtual
-        override
-    {
+    function recover(
+        address soul,
+        bytes memory signature
+    ) public virtual override {
         address recipient = msg.sender;
         bytes32 messageHash = keccak256(abi.encodePacked(soul, recipient));
         bytes32 signedHash = messageHash.toEthSignedMessageHash();
@@ -45,7 +44,9 @@ abstract contract ERC5727RecoveryUpgradeable is
         }
     }
 
-    function supportsInterface(bytes4 interfaceId)
+    function supportsInterface(
+        bytes4 interfaceId
+    )
         public
         view
         virtual

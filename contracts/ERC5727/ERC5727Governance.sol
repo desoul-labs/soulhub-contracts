@@ -50,12 +50,10 @@ abstract contract ERC5727Governance is ERC5727Enumerable, IERC5727Governance {
         return _votersArray.values();
     }
 
-    function approveMint(address soul, uint256 approvalRequestId)
-        public
-        virtual
-        override
-        onlyRole(VOTER_ROLE)
-    {
+    function approveMint(
+        address soul,
+        uint256 approvalRequestId
+    ) public virtual override onlyRole(VOTER_ROLE) {
         require(
             !_mintApprovals[_msgSender()][approvalRequestId][soul],
             "ERC5727Governance: You already approved this address"
@@ -76,12 +74,9 @@ abstract contract ERC5727Governance is ERC5727Enumerable, IERC5727Governance {
         }
     }
 
-    function approveRevoke(uint256 tokenId)
-        public
-        virtual
-        override
-        onlyRole(VOTER_ROLE)
-    {
+    function approveRevoke(
+        uint256 tokenId
+    ) public virtual override onlyRole(VOTER_ROLE) {
         require(
             !_revokeApprovals[_msgSender()][tokenId],
             "ERC5727Governance: You already approved this address"
@@ -94,21 +89,18 @@ abstract contract ERC5727Governance is ERC5727Enumerable, IERC5727Governance {
         }
     }
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override(IERC165, ERC5727Enumerable)
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual override(IERC165, ERC5727Enumerable) returns (bool) {
         return
             interfaceId == type(IERC5727Governance).interfaceId ||
             super.supportsInterface(interfaceId);
     }
 
-    function _resetMintApprovals(uint256 approvalRequestId, address soul)
-        private
-    {
+    function _resetMintApprovals(
+        uint256 approvalRequestId,
+        address soul
+    ) private {
         for (uint256 i = 0; i < _votersArray.length(); i++) {
             _mintApprovals[_votersArray.at(i)][approvalRequestId][soul] = false;
         }
@@ -122,11 +114,10 @@ abstract contract ERC5727Governance is ERC5727Enumerable, IERC5727Governance {
         _revokeApprovalCounts[tokenId] = 0;
     }
 
-    function createApprovalRequest(uint256 value, uint256 slot)
-        external
-        virtual
-        override
-    {
+    function createApprovalRequest(
+        uint256 value,
+        uint256 slot
+    ) external virtual override {
         require(
             value != 0,
             "ERC5727Governance: Value of Approval Request cannot be 0"
@@ -139,11 +130,9 @@ abstract contract ERC5727Governance is ERC5727Enumerable, IERC5727Governance {
         _approvalRequestCount++;
     }
 
-    function removeApprovalRequest(uint256 approvalRequestId)
-        external
-        virtual
-        override
-    {
+    function removeApprovalRequest(
+        uint256 approvalRequestId
+    ) external virtual override {
         require(
             _msgSender() == _approvalRequests[approvalRequestId].creator,
             "ERC5727Governance: You are not the creator"

@@ -9,8 +9,8 @@ import "./IERC5727.sol";
 interface IERC5727Snapshot is IERC5727 {
     event Snapshot(uint256 id);
 
-    function balanceOfAt(address soul, uint256 id)
-        external
-        view
-        returns (uint256);
+    function balanceOfAt(
+        address soul,
+        uint256 id
+    ) external view returns (uint256);
 }

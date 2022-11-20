@@ -47,24 +47,19 @@ abstract contract ERC5727SlotEnumerableUpgradeable is
         return _allSlots.length() != 0 && _allSlots.contains(slot);
     }
 
-    function tokenSupplyInSlot(uint256 slot)
-        public
-        view
-        override
-        returns (uint256)
-    {
+    function tokenSupplyInSlot(
+        uint256 slot
+    ) public view override returns (uint256) {
         if (!_slotExists(slot)) {
             return 0;
         }
         return _tokensInSlot[slot].length();
     }
 
-    function tokenInSlotByIndex(uint256 slot, uint256 index)
-        public
-        view
-        override
-        returns (uint256)
-    {
+    function tokenInSlotByIndex(
+        uint256 slot,
+        uint256 index
+    ) public view override returns (uint256) {
         require(
             index < ERC5727SlotEnumerableUpgradeable.tokenSupplyInSlot(slot),
             "ERC5727SlotEnumerable: slot token index out of bounds"
@@ -72,7 +67,9 @@ abstract contract ERC5727SlotEnumerableUpgradeable is
         return _tokensInSlot[slot].at(index);
     }
 
-    function supportsInterface(bytes4 interfaceId)
+    function supportsInterface(
+        bytes4 interfaceId
+    )
         public
         view
         virtual

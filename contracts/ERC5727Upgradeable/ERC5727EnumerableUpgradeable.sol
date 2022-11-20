@@ -32,7 +32,9 @@ abstract contract ERC5727EnumerableUpgradeable is
         __ERC5727Enumerable_init_unchained();
     }
 
-    function supportsInterface(bytes4 interfaceId)
+    function supportsInterface(
+        bytes4 interfaceId
+    )
         public
         view
         virtual
@@ -128,11 +130,9 @@ abstract contract ERC5727EnumerableUpgradeable is
         CountersUpgradeable.increment(_emittedCount);
     }
 
-    function _tokensOfSoul(address soul)
-        internal
-        view
-        returns (uint256[] memory tokenIds)
-    {
+    function _tokensOfSoul(
+        address soul
+    ) internal view returns (uint256[] memory tokenIds) {
         tokenIds = EnumerableSetUpgradeable.values(_indexedTokenIds[soul]);
         require(tokenIds.length != 0, "ERC5727: the soul has no token");
     }
@@ -145,33 +145,22 @@ abstract contract ERC5727EnumerableUpgradeable is
         return CountersUpgradeable.current(_soulsCount);
     }
 
-    function balanceOf(address soul)
-        public
-        view
-        virtual
-        override
-        returns (uint256)
-    {
+    function balanceOf(
+        address soul
+    ) public view virtual override returns (uint256) {
         return EnumerableSetUpgradeable.length(_indexedTokenIds[soul]);
     }
 
-    function hasValid(address soul)
-        public
-        view
-        virtual
-        override
-        returns (bool)
-    {
+    function hasValid(
+        address soul
+    ) public view virtual override returns (bool) {
         return _numberOfValidTokens[soul] > 0;
     }
 
-    function tokenOfSoulByIndex(address soul, uint256 index)
-        public
-        view
-        virtual
-        override
-        returns (uint256)
-    {
+    function tokenOfSoulByIndex(
+        address soul,
+        uint256 index
+    ) public view virtual override returns (uint256) {
         EnumerableSetUpgradeable.UintSet storage ids = _indexedTokenIds[soul];
         require(
             index < EnumerableSetUpgradeable.length(ids),
@@ -180,13 +169,9 @@ abstract contract ERC5727EnumerableUpgradeable is
         return EnumerableSetUpgradeable.at(ids, index);
     }
 
-    function tokenByIndex(uint256 index)
-        public
-        view
-        virtual
-        override
-        returns (uint256)
-    {
+    function tokenByIndex(
+        uint256 index
+    ) public view virtual override returns (uint256) {
         return index;
     }
 }
