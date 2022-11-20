@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        network: [goerli, sepolia, mumbai]
+        network: [goerli, sepolia, mumbai, optimism-goerli, chapel]
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2.2.4
