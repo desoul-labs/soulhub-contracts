@@ -17,13 +17,9 @@ abstract contract ERC5727Enumerable is ERC5727, IERC5727Enumerable {
     Counters.Counter private _emittedCount;
     Counters.Counter private _soulsCount;
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override(IERC165, ERC5727)
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual override(IERC165, ERC5727) returns (bool) {
         return
             interfaceId == type(IERC5727Enumerable).interfaceId ||
             super.supportsInterface(interfaceId);
@@ -124,11 +120,9 @@ abstract contract ERC5727Enumerable is ERC5727, IERC5727Enumerable {
         _emittedCount.increment();
     }
 
-    function _tokensOfSoul(address soul)
-        internal
-        view
-        returns (uint256[] memory tokenIds)
-    {
+    function _tokensOfSoul(
+        address soul
+    ) internal view returns (uint256[] memory tokenIds) {
         tokenIds = _indexedTokenIds[soul].values();
         require(tokenIds.length != 0, "ERC5727: the soul has no token");
     }
@@ -141,33 +135,22 @@ abstract contract ERC5727Enumerable is ERC5727, IERC5727Enumerable {
         return _soulsCount.current();
     }
 
-    function balanceOf(address soul)
-        public
-        view
-        virtual
-        override
-        returns (uint256)
-    {
+    function balanceOf(
+        address soul
+    ) public view virtual override returns (uint256) {
         return _indexedTokenIds[soul].length();
     }
 
-    function hasValid(address soul)
-        public
-        view
-        virtual
-        override
-        returns (bool)
-    {
+    function hasValid(
+        address soul
+    ) public view virtual override returns (bool) {
         return _numberOfValidTokens[soul] > 0;
     }
 
-    function tokenOfSoulByIndex(address soul, uint256 index)
-        public
-        view
-        virtual
-        override
-        returns (uint256)
-    {
+    function tokenOfSoulByIndex(
+        address soul,
+        uint256 index
+    ) public view virtual override returns (uint256) {
         EnumerableSet.UintSet storage ids = _indexedTokenIds[soul];
         require(
             index < EnumerableSet.length(ids),
@@ -176,13 +159,9 @@ abstract contract ERC5727Enumerable is ERC5727, IERC5727Enumerable {
         return ids.at(index);
     }
 
-    function tokenByIndex(uint256 index)
-        public
-        view
-        virtual
-        override
-        returns (uint256)
-    {
+    function tokenByIndex(
+        uint256 index
+    ) public view virtual override returns (uint256) {
         return index;
     }
 }

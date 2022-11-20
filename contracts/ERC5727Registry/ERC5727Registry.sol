@@ -94,23 +94,15 @@ abstract contract ERC5727Registry is
         return id;
     }
 
-    function isRegistered(address addr)
-        external
-        view
-        virtual
-        override
-        returns (bool)
-    {
+    function isRegistered(
+        address addr
+    ) external view virtual override returns (bool) {
         return _indexedEntries.contains(addr);
     }
 
-    function addressOf(uint256 id)
-        public
-        view
-        virtual
-        override
-        returns (address)
-    {
+    function addressOf(
+        uint256 id
+    ) public view virtual override returns (address) {
         (bool exists, address addr) = _entries.tryGet(id);
         require(exists, "ERC5727Registry: entry not found");
         return addr;
@@ -145,15 +137,15 @@ abstract contract ERC5727Registry is
         super._beforeTokenTransfer(from, to, tokenId);
     }
 
-    function _burn(uint256 tokenId)
-        internal
-        virtual
-        override(ERC721, ERC721URIStorage)
-    {
+    function _burn(
+        uint256 tokenId
+    ) internal virtual override(ERC721, ERC721URIStorage) {
         super._burn(tokenId);
     }
 
-    function tokenURI(uint256 tokenId)
+    function tokenURI(
+        uint256 tokenId
+    )
         public
         view
         virtual
@@ -163,7 +155,9 @@ abstract contract ERC5727Registry is
         return ERC721URIStorage.tokenURI(tokenId);
     }
 
-    function supportsInterface(bytes4 interfaceId)
+    function supportsInterface(
+        bytes4 interfaceId
+    )
         public
         view
         virtual

@@ -36,7 +36,9 @@ contract SoulmateCardUpgradeable is
         return _baseTokenURI;
     }
 
-    function supportsInterface(bytes4 interfaceId)
+    function supportsInterface(
+        bytes4 interfaceId
+    )
         public
         view
         virtual

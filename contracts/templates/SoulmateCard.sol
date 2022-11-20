@@ -19,13 +19,9 @@ contract SoulmateCard is ERC5727Enumerable {
         return _baseTokenURI;
     }
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override(ERC5727Enumerable)
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual override(ERC5727Enumerable) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 

@@ -21,10 +21,9 @@ contract ERC5727ExampleUpgradeable is
 {
     string private _baseTokenURI;
 
-    function __ERC5727Example_init_unchained(string memory baseTokenURI)
-        internal
-        onlyInitializing
-    {
+    function __ERC5727Example_init_unchained(
+        string memory baseTokenURI
+    ) internal onlyInitializing {
         _baseTokenURI = baseTokenURI;
     }
 
@@ -49,7 +48,9 @@ contract ERC5727ExampleUpgradeable is
         return _baseTokenURI;
     }
 
-    function supportsInterface(bytes4 interfaceId)
+    function supportsInterface(
+        bytes4 interfaceId
+    )
         public
         view
         virtual
@@ -67,7 +68,9 @@ contract ERC5727ExampleUpgradeable is
         return super.supportsInterface(interfaceId);
     }
 
-    function _beforeView(uint256 tokenId)
+    function _beforeView(
+        uint256 tokenId
+    )
         internal
         view
         virtual
@@ -82,7 +85,7 @@ contract ERC5727ExampleUpgradeable is
         uint256 slot,
         uint256 expiryDate,
         bool shadowed
-    ) public virtual onlyOwner {
+    ) public payable virtual onlyOwner {
         uint256 tokenId = _mint(soul, value, slot);
         if (shadowed) {
             _shadow(tokenId);
@@ -168,7 +171,9 @@ contract ERC5727ExampleUpgradeable is
         );
     }
 
-    function _afterTokenRevoke(uint256 tokenId)
+    function _afterTokenRevoke(
+        uint256 tokenId
+    )
         internal
         virtual
         override(ERC5727Upgradeable, ERC5727EnumerableUpgradeable)
@@ -176,7 +181,9 @@ contract ERC5727ExampleUpgradeable is
         ERC5727EnumerableUpgradeable._afterTokenRevoke(tokenId);
     }
 
-    function _beforeTokenDestroy(uint256 tokenId)
+    function _beforeTokenDestroy(
+        uint256 tokenId
+    )
         internal
         virtual
         override(
@@ -189,7 +196,9 @@ contract ERC5727ExampleUpgradeable is
         ERC5727SlotEnumerableUpgradeable._beforeTokenDestroy(tokenId);
     }
 
-    function transferOwnership(address newOwner)
+    function transferOwnership(
+        address newOwner
+    )
         public
         virtual
         override(ERC5727RegistrantUpgradeable, OwnableUpgradeable)

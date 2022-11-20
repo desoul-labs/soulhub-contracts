@@ -92,10 +92,10 @@ interface IERC3525 is IERC165, IERC721 {
      * @param _operator The address of an operator
      * @return The current approval value of `_tokenId` that `_operator` is allowed to manage
      */
-    function allowance(uint256 _tokenId, address _operator)
-        external
-        view
-        returns (uint256);
+    function allowance(
+        uint256 _tokenId,
+        address _operator
+    ) external view returns (uint256);
 
     /**
      * @notice Transfer value from a specified token to another specified token with the same slot.

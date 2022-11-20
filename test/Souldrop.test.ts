@@ -32,6 +32,7 @@ describe('Souldrop', function () {
       10,
       'https://api.soularis.io/souldrop',
       erc5727.address,
+      1,
     )
 
     expect(await souldrop.owner()).to.equal(owner.address)

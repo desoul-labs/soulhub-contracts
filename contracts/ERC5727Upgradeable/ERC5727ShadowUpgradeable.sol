@@ -54,37 +54,28 @@ abstract contract ERC5727ShadowUpgradeable is
         return _shadowed[tokenId];
     }
 
-    function isShadowed(uint256 tokenId)
-        public
-        view
-        virtual
-        override
-        onlyManager(tokenId)
-        returns (bool)
-    {
+    function isShadowed(
+        uint256 tokenId
+    ) public view virtual override onlyManager(tokenId) returns (bool) {
         _getTokenOrRevert(tokenId);
         return _shadowed[tokenId];
     }
 
-    function shadow(uint256 tokenId)
-        public
-        virtual
-        override
-        onlyManager(tokenId)
-    {
+    function shadow(
+        uint256 tokenId
+    ) public virtual override onlyManager(tokenId) {
         _shadowed[tokenId] = true;
     }
 
-    function reveal(uint256 tokenId)
-        public
-        virtual
-        override
-        onlyManager(tokenId)
-    {
+    function reveal(
+        uint256 tokenId
+    ) public virtual override onlyManager(tokenId) {
         _shadowed[tokenId] = false;
     }
 
-    function supportsInterface(bytes4 interfaceId)
+    function supportsInterface(
+        bytes4 interfaceId
+    )
         public
         view
         virtual

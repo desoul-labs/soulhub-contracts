@@ -9,16 +9,14 @@ import "../examples/ERC5727RegistryExample.sol";
 contract ERC5727RegistrantExample is ERC5727Registrant {
     using EnumerableSet for EnumerableSet.AddressSet;
 
-    constructor(string memory name, string memory symbol)
-        ERC5727Registrant(name, symbol)
-    {}
+    constructor(
+        string memory name,
+        string memory symbol
+    ) ERC5727Registrant(name, symbol) {}
 
-    function transferOwnership(address newOwner)
-        public
-        virtual
-        override
-        onlyOwner
-    {
+    function transferOwnership(
+        address newOwner
+    ) public virtual override onlyOwner {
         require(
             newOwner != address(0),
             "Ownable: new owner is the zero address"

@@ -37,10 +37,9 @@ abstract contract ERC5727GovernanceUpgradeable is
 
     bytes32 public constant VOTER_ROLE = keccak256("VOTER_ROLE");
 
-    function __ERC5727Governance_init_unchained(address[] memory voters_)
-        internal
-        onlyInitializing
-    {
+    function __ERC5727Governance_init_unchained(
+        address[] memory voters_
+    ) internal onlyInitializing {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         for (uint256 i = 0; i < voters_.length; i++) {
             EnumerableSetUpgradeable.add(_votersArray, voters_[i]);
@@ -66,12 +65,10 @@ abstract contract ERC5727GovernanceUpgradeable is
         return EnumerableSetUpgradeable.values(_votersArray);
     }
 
-    function approveMint(address soul, uint256 approvalRequestId)
-        public
-        virtual
-        override
-        onlyRole(VOTER_ROLE)
-    {
+    function approveMint(
+        address soul,
+        uint256 approvalRequestId
+    ) public virtual override onlyRole(VOTER_ROLE) {
         require(
             !_mintApprovals[_msgSender()][approvalRequestId][soul],
             "ERC5727Governance: You already approved this address"
@@ -92,12 +89,9 @@ abstract contract ERC5727GovernanceUpgradeable is
         }
     }
 
-    function approveRevoke(uint256 tokenId)
-        public
-        virtual
-        override
-        onlyRole(VOTER_ROLE)
-    {
+    function approveRevoke(
+        uint256 tokenId
+    ) public virtual override onlyRole(VOTER_ROLE) {
         require(
             !_revokeApprovals[_msgSender()][tokenId],
             "ERC5727Governance: You already approved this address"
@@ -113,7 +107,9 @@ abstract contract ERC5727GovernanceUpgradeable is
         }
     }
 
-    function supportsInterface(bytes4 interfaceId)
+    function supportsInterface(
+        bytes4 interfaceId
+    )
         public
         view
         virtual
@@ -125,9 +121,10 @@ abstract contract ERC5727GovernanceUpgradeable is
             super.supportsInterface(interfaceId);
     }
 
-    function _resetMintApprovals(uint256 approvalRequestId, address soul)
-        private
-    {
+    function _resetMintApprovals(
+        uint256 approvalRequestId,
+        address soul
+    ) private {
         for (
             uint256 i = 0;
             i < EnumerableSetUpgradeable.length(_votersArray);
@@ -153,11 +150,10 @@ abstract contract ERC5727GovernanceUpgradeable is
         _revokeApprovalCounts[tokenId] = 0;
     }
 
-    function createApprovalRequest(uint256 value, uint256 slot)
-        external
-        virtual
-        override
-    {
+    function createApprovalRequest(
+        uint256 value,
+        uint256 slot
+    ) external virtual override {
         require(
             value != 0,
             "ERC5727Governance: Value of Approval Request cannot be 0"
@@ -170,11 +166,9 @@ abstract contract ERC5727GovernanceUpgradeable is
         _approvalRequestCount++;
     }
 
-    function removeApprovalRequest(uint256 approvalRequestId)
-        external
-        virtual
-        override
-    {
+    function removeApprovalRequest(
+        uint256 approvalRequestId
+    ) external virtual override {
         require(
             _msgSender() == _approvalRequests[approvalRequestId].creator,
             "ERC5727Governance: You are not the creator"

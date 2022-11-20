@@ -29,13 +29,9 @@ abstract contract ERC5727Delegate is ERC5727Enumerable, IERC5727Delegate {
 
     mapping(address => EnumerableSet.UintSet) private _delegatedTokens;
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override(IERC165, ERC5727Enumerable)
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual override(IERC165, ERC5727Enumerable) returns (bool) {
         return
             interfaceId == type(IERC5727Delegate).interfaceId ||
             super.supportsInterface(interfaceId);
@@ -75,9 +71,10 @@ abstract contract ERC5727Delegate is ERC5727Enumerable, IERC5727Delegate {
         _delegatedTokens[operator].add(tokenId);
     }
 
-    function _mintAsDelegateOrCreator(uint256 delegateRequestId, bool isCreator)
-        private
-    {
+    function _mintAsDelegateOrCreator(
+        uint256 delegateRequestId,
+        bool isCreator
+    ) private {
         require(
             isCreator || _mintAllowed[_msgSender()][delegateRequestId],
             "ERC5727Delegate: Only contract creator or allowed operator can mint"
@@ -92,9 +89,10 @@ abstract contract ERC5727Delegate is ERC5727Enumerable, IERC5727Delegate {
         );
     }
 
-    function _revokeAsDelegateOrCreator(uint256 tokenId, bool isCreator)
-        private
-    {
+    function _revokeAsDelegateOrCreator(
+        uint256 tokenId,
+        bool isCreator
+    ) private {
         require(
             isCreator || _revokeAllowed[_msgSender()][tokenId],
             "ERC5727Delegate: Only contract creator or allowed operator can revoke"
@@ -105,11 +103,10 @@ abstract contract ERC5727Delegate is ERC5727Enumerable, IERC5727Delegate {
         _revoke(tokenId);
     }
 
-    function mintDelegate(address operator, uint256 delegateRequestId)
-        public
-        virtual
-        override
-    {
+    function mintDelegate(
+        address operator,
+        uint256 delegateRequestId
+    ) public virtual override {
         _mintDelegateAsDelegateOrCreator(
             operator,
             delegateRequestId,
@@ -135,11 +132,10 @@ abstract contract ERC5727Delegate is ERC5727Enumerable, IERC5727Delegate {
         }
     }
 
-    function revokeDelegate(address operator, uint256 tokenId)
-        public
-        virtual
-        override
-    {
+    function revokeDelegate(
+        address operator,
+        uint256 tokenId
+    ) public virtual override {
         _revokeDelegateAsDelegateOrCreator(operator, tokenId, _isCreator());
     }
 
@@ -165,11 +161,9 @@ abstract contract ERC5727Delegate is ERC5727Enumerable, IERC5727Delegate {
         _mintAsDelegateOrCreator(delegateRequestId, _isCreator());
     }
 
-    function delegateMintBatch(uint256[] memory delegateRequestIds)
-        public
-        virtual
-        override
-    {
+    function delegateMintBatch(
+        uint256[] memory delegateRequestIds
+    ) public virtual override {
         bool isCreator = _isCreator();
         for (uint256 i = 0; i < delegateRequestIds.length; i++) {
             _mintAsDelegateOrCreator(delegateRequestIds[i], isCreator);
@@ -180,11 +174,9 @@ abstract contract ERC5727Delegate is ERC5727Enumerable, IERC5727Delegate {
         _revokeAsDelegateOrCreator(tokenId, _isCreator());
     }
 
-    function delegateRevokeBatch(uint256[] memory tokenIds)
-        public
-        virtual
-        override
-    {
+    function delegateRevokeBatch(
+        uint256[] memory tokenIds
+    ) public virtual override {
         bool isCreator = _isCreator();
         for (uint256 i = 0; i < tokenIds.length; i++) {
             _revokeAsDelegateOrCreator(tokenIds[i], isCreator);
@@ -208,39 +200,28 @@ abstract contract ERC5727Delegate is ERC5727Enumerable, IERC5727Delegate {
         _delegateRequestCount++;
     }
 
-    function removeDelegateRequest(uint256 delegateRequestId)
-        external
-        virtual
-        override
-    {
+    function removeDelegateRequest(
+        uint256 delegateRequestId
+    ) external virtual override {
         require(_isCreator(), "ERC5727Delegate: You are not the creator");
         delete _delegateRequests[delegateRequestId];
     }
 
-    function delegatedRequestsOf(address operator)
-        public
-        view
-        virtual
-        returns (uint256[] memory)
-    {
+    function delegatedRequestsOf(
+        address operator
+    ) public view virtual returns (uint256[] memory) {
         return _delegatedRequests[operator].values();
     }
 
-    function delegatedTokensOf(address operator)
-        public
-        view
-        virtual
-        returns (uint256[] memory)
-    {
+    function delegatedTokensOf(
+        address operator
+    ) public view virtual returns (uint256[] memory) {
         return _delegatedTokens[operator].values();
     }
 
-    function soulOfDelegateRequest(uint256 delegateRequestId)
-        public
-        view
-        virtual
-        returns (address)
-    {
+    function soulOfDelegateRequest(
+        uint256 delegateRequestId
+    ) public view virtual returns (address) {
         require(
             delegateRequestId < _delegateRequestCount,
             "ERC5727Delegate: Delegate request does not exist"
@@ -248,12 +229,9 @@ abstract contract ERC5727Delegate is ERC5727Enumerable, IERC5727Delegate {
         return _delegateRequests[delegateRequestId].soul;
     }
 
-    function valueOfDelegateRequest(uint256 delegateRequestId)
-        public
-        view
-        virtual
-        returns (uint256)
-    {
+    function valueOfDelegateRequest(
+        uint256 delegateRequestId
+    ) public view virtual returns (uint256) {
         require(
             delegateRequestId < _delegateRequestCount,
             "ERC5727Delegate: Delegate request does not exist"
@@ -261,12 +239,9 @@ abstract contract ERC5727Delegate is ERC5727Enumerable, IERC5727Delegate {
         return _delegateRequests[delegateRequestId].value;
     }
 
-    function slotOfDelegateRequest(uint256 delegateRequestId)
-        public
-        view
-        virtual
-        returns (uint256)
-    {
+    function slotOfDelegateRequest(
+        uint256 delegateRequestId
+    ) public view virtual returns (uint256) {
         require(
             delegateRequestId < _delegateRequestCount,
             "ERC5727Delegate: Delegate request does not exist"

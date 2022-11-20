@@ -41,8 +41,8 @@ interface IERC5727SlotEnumerableUpgradeable is
      * @param index The index of the token queried for
      * @return The token is queried for
      */
-    function tokenInSlotByIndex(uint256 slot, uint256 index)
-        external
-        view
-        returns (uint256);
+    function tokenInSlotByIndex(
+        uint256 slot,
+        uint256 index
+    ) external view returns (uint256);
 }

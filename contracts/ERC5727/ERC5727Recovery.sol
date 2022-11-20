@@ -10,11 +10,10 @@ import "./ERC5727Enumerable.sol";
 abstract contract ERC5727Recovery is ERC5727Enumerable, IERC5727Recovery {
     using ECDSA for bytes32;
 
-    function recover(address soul, bytes memory signature)
-        public
-        virtual
-        override
-    {
+    function recover(
+        address soul,
+        bytes memory signature
+    ) public virtual override {
         address recipient = _msgSender();
         bytes32 messageHash = keccak256(abi.encodePacked(soul, recipient));
         bytes32 signedHash = messageHash.toEthSignedMessageHash();
@@ -31,13 +30,9 @@ abstract contract ERC5727Recovery is ERC5727Enumerable, IERC5727Recovery {
         }
     }
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override(IERC165, ERC5727Enumerable)
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual override(IERC165, ERC5727Enumerable) returns (bool) {
         return
             interfaceId == type(IERC5727Recovery).interfaceId ||
             super.supportsInterface(interfaceId);
