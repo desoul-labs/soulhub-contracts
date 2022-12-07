@@ -103,7 +103,7 @@ contract ERC5727ExampleUpgradeable is
         uint256[] calldata slots,
         uint256[] calldata expiryDates,
         bool[] calldata shadowed
-    ) external virtual onlyOwner {
+    ) external payable virtual onlyOwner {
         uint256[] memory tokenIds = _mintBatch(souls, values, slots);
         for (uint256 i = 0; i < tokenIds.length; i++) {
             if (shadowed[i]) _shadow(tokenIds[i]);

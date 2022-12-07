@@ -6,15 +6,14 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Features
 
-* add address prediction ([edd9765](https://github.com/Phaneroz-Labs/soularis-contracts/commit/edd976548fec7e3f3e2db4a073ab38ee369dc0d4))
-* add api keys for multichain verification ([6918aca](https://github.com/Phaneroz-Labs/soularis-contracts/commit/6918aca031df1e056cc2ac3d5124f959ae3f2730))
-* add getter and update batch methods ([3ca8355](https://github.com/Phaneroz-Labs/soularis-contracts/commit/3ca8355bd5175624471456cd1863e281fc5295d8))
-* add proxy contracts ([#62](https://github.com/Phaneroz-Labs/soularis-contracts/issues/62)) ([9749ef8](https://github.com/Phaneroz-Labs/soularis-contracts/commit/9749ef80ff5207fe3f13c1d5e96e3b3d2355f6c7))
-* add souldrop contract ([e56794b](https://github.com/Phaneroz-Labs/soularis-contracts/commit/e56794b035fcd1cd963edc7d92cd37d80258afca))
-* support IERC721Metadata and IERC3525Metadata ([d8d27c4](https://github.com/Phaneroz-Labs/soularis-contracts/commit/d8d27c4c226fb4cfd7b27524c12a4ffda0cc5493))
-* upgradable contracts ([#61](https://github.com/Phaneroz-Labs/soularis-contracts/issues/61)) ([a73699d](https://github.com/Phaneroz-Labs/soularis-contracts/commit/a73699d6886293cbf61f918fc942cc33e5ffed7e))
-* verify contracts on deploy ([8bb2355](https://github.com/Phaneroz-Labs/soularis-contracts/commit/8bb23551da67181f347d9511ec512f54a71a6ed5))
-
+- add address prediction ([edd9765](https://github.com/Phaneroz-Labs/soularis-contracts/commit/edd976548fec7e3f3e2db4a073ab38ee369dc0d4))
+- add api keys for multichain verification ([6918aca](https://github.com/Phaneroz-Labs/soularis-contracts/commit/6918aca031df1e056cc2ac3d5124f959ae3f2730))
+- add getter and update batch methods ([3ca8355](https://github.com/Phaneroz-Labs/soularis-contracts/commit/3ca8355bd5175624471456cd1863e281fc5295d8))
+- add proxy contracts ([#62](https://github.com/Phaneroz-Labs/soularis-contracts/issues/62)) ([9749ef8](https://github.com/Phaneroz-Labs/soularis-contracts/commit/9749ef80ff5207fe3f13c1d5e96e3b3d2355f6c7))
+- add souldrop contract ([e56794b](https://github.com/Phaneroz-Labs/soularis-contracts/commit/e56794b035fcd1cd963edc7d92cd37d80258afca))
+- support IERC721Metadata and IERC3525Metadata ([d8d27c4](https://github.com/Phaneroz-Labs/soularis-contracts/commit/d8d27c4c226fb4cfd7b27524c12a4ffda0cc5493))
+- upgradable contracts ([#61](https://github.com/Phaneroz-Labs/soularis-contracts/issues/61)) ([a73699d](https://github.com/Phaneroz-Labs/soularis-contracts/commit/a73699d6886293cbf61f918fc942cc33e5ffed7e))
+- verify contracts on deploy ([8bb2355](https://github.com/Phaneroz-Labs/soularis-contracts/commit/8bb23551da67181f347d9511ec512f54a71a6ed5))
 
 ### Bug Fixes
 

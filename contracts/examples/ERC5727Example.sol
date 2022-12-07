@@ -63,7 +63,7 @@ contract ERC5727Example is
         uint256 slot,
         uint256 expiryDate,
         bool shadowed
-    ) external virtual onlyOwner {
+    ) external payable virtual onlyOwner {
         uint256 tokenId = _mint(soul, value, slot);
         if (shadowed) {
             _shadow(tokenId);
@@ -81,7 +81,7 @@ contract ERC5727Example is
         uint256[] calldata slots,
         uint256[] calldata expiryDates,
         bool[] calldata shadowed
-    ) external virtual onlyOwner {
+    ) external payable virtual onlyOwner {
         uint256[] memory tokenIds = _mintBatch(souls, values, slots);
         for (uint256 i = 0; i < tokenIds.length; i++) {
             if (shadowed[i]) _shadow(tokenIds[i]);
