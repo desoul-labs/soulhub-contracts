@@ -1,14 +1,14 @@
 {
-  "name": "@phaneroz-labs/soularis-contracts",
-  "version": "0.0.7",
+  "name": "@desoul-labs/soularis-contracts",
+  "version": "0.0.8",
   "description": "Soularis Contracts",
-  "homepage": "https://github.com/Phaneroz-Labs/soularis-contracts#readme",
+  "homepage": "https://github.com/desoul-labs/soularis-contracts#readme",
   "bugs": {
-    "url": "https://github.com/Phaneroz-Labs/soularis-contracts/issues"
+    "url": "https://github.com/desoul-labs/soularis-contracts/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+git@github.com:Phaneroz-Labs/soularis-contracts.git"
+    "url": "git+git@github.com:desoul-labs/soularis-contracts.git"
   },
   "author": "Austin Zhu",
   "files": [
@@ -16,6 +16,6 @@
     "README.md"
   ],
   "publishConfig": {
-    "@phaneroz-labs:registry": "https://npm.pkg.github.com"
+    "@desoul-labs:registry": "https://npm.pkg.github.com"
   }
 }

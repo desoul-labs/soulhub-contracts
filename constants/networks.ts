@@ -49,7 +49,7 @@ export const networks: NetworksUserConfig = {
     url: 'https://rpc.ankr.com/optimism',
     accounts: [process.env.PRIVATE_KEY ?? ''],
   },
-  'optimism-test': {
+  optimismGoerli: {
     url: 'https://rpc.ankr.com/optimism_testnet',
     accounts: [process.env.PRIVATE_KEY ?? ''],
   },
