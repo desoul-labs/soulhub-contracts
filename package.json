@@ -21,7 +21,7 @@
     "deploy:mainnet": "hardhat run scripts/deploy.ts --network mainnet",
     "deploy:mumbai": "hardhat run scripts/deploy.ts --network mumbai",
     "deploy:polygon": "hardhat run scripts/deploy.ts --network polygon",
-    "deploy:optimism-goerli": "hardhat run scripts/deploy.ts --network optimism-test",
+    "deploy:optimism-goerli": "hardhat run scripts/deploy.ts --network optimismGoerli",
     "deploy:chapel": "hardhat run scripts/deploy.ts --network chapel",
     "deploy:hardhat": "hardhat run scripts/deploy.ts --network hardhat",
     "lint-staged": "lint-staged --allow-empty",
