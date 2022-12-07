@@ -104,10 +104,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        1,
-        1,
-        2664539263,
-        false,
+        [1, 1, 1, 1],
+        [1, 1, 1, 1],
+        [2664539263, 2664539263, 2664539263, 2664539263],
+        [false, false, false, false],
       )
 
       expect(await ERC5727ExampleContract.balanceOf(tokenOwnerSoul1.address)).equal(3)
@@ -166,10 +166,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        1,
-        1,
-        2664539263,
-        false,
+        [1, 1, 1, 1],
+        [1, 1, 1, 1],
+        [2664539263, 2664539263, 2664539263, 2664539263],
+        [false, false, false, false],
       )
 
       expect(await ERC5727ExampleContract.slotOf(0)).equal(1)
@@ -296,10 +296,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        1,
-        1,
-        2664539263,
-        false,
+        [1, 1, 1, 1],
+        [1, 1, 1, 1],
+        [2664539263, 2664539263, 2664539263, 2664539263],
+        [false, false, false, false],
       )
       expect(await ERC5727ExampleContract.emittedCount()).equal(4)
       expect(await ERC5727ExampleContract.soulsCount()).equal(2)
@@ -318,10 +318,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        1,
-        1,
-        2664539263,
-        false,
+        [1, 1, 1, 1],
+        [1, 1, 1, 1],
+        [2664539263, 2664539263, 2664539263, 2664539263],
+        [false, false, false, false],
       )
       await ERC5727ExampleContract.revoke(0)
       await ERC5727ExampleContract.revoke(3)
@@ -340,10 +340,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        1,
-        1,
-        2664539263,
-        false,
+        [1, 1, 1, 1],
+        [1, 1, 1, 1],
+        [2664539263, 2664539263, 2664539263, 2664539263],
+        [false, false, false, false],
       )
       expect(await ERC5727ExampleContract.tokenOfSoulByIndex(tokenOwnerSoul1.address, 0)).equal(0)
       expect(await ERC5727ExampleContract.tokenOfSoulByIndex(tokenOwnerSoul2.address, 0)).equal(3)
@@ -360,10 +360,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        1,
-        1,
-        2664539263,
-        false,
+        [1, 1, 1, 1],
+        [1, 1, 1, 1],
+        [2664539263, 2664539263, 2664539263, 2664539263],
+        [false, false, false, false],
       )
       await expect(ERC5727ExampleContract.tokenOfSoulByIndex(tokenOwnerSoul1.address, 3)).be
         .reverted
@@ -384,10 +384,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        1,
-        1,
-        2664539263,
-        false,
+        [1, 1, 1, 1],
+        [1, 1, 1, 1],
+        [2664539263, 2664539263, 2664539263, 2664539263],
+        [false, false, false, false],
       )
       expect(await ERC5727ExampleContract.expiryDate(0)).equal(2664539263)
       await ERC5727ExampleContract.createDelegateRequest(tokenOwnerSoul1.address, 1, 1)
@@ -406,10 +406,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        1,
-        1,
-        2664539263,
-        false,
+        [1, 1, 1, 1],
+        [1, 1, 1, 1],
+        [2664539263, 2664539263, 2664539263, 2664539263],
+        [false, false, false, false],
       )
       expect(await ERC5727ExampleContract.isExpired(0)).equal(false)
       await ERC5727ExampleContract.createDelegateRequest(tokenOwnerSoul1.address, 1, 1)
@@ -428,10 +428,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        1,
-        1,
-        2664539263,
-        false,
+        [1, 1, 1, 1],
+        [1, 1, 1, 1],
+        [2664539263, 2664539263, 2664539263, 2664539263],
+        [false, false, false, false],
       )
       await expect(ERC5727ExampleContract.setExpiryDate(0, 100000)).be.reverted
       await expect(ERC5727ExampleContract.setExpiryDate(0, 2664539262)).be.reverted
@@ -514,10 +514,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        1,
-        1,
-        2664539263,
-        false,
+        [1, 1, 1, 1],
+        [1, 1, 1, 1],
+        [2664539263, 2664539263, 2664539263, 2664539263],
+        [false, false, false, false],
       )
       await expect(ERC5727ExampleContract.connect(tokenOwnerSoul2).shadow(0)).be.reverted
       await ERC5727ExampleContract.connect(tokenOwnerSoul2).shadow(3)
@@ -538,10 +538,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        1,
-        1,
-        2664539263,
-        true,
+        [1, 1, 1, 1],
+        [1, 1, 1, 1],
+        [2664539263, 2664539263, 2664539263, 2664539263],
+        [true, true, true, true],
       )
       await expect(ERC5727ExampleContract.connect(tokenOwnerSoul2).soulOf(0)).be.reverted
       await ERC5727ExampleContract.valueOf(3)
@@ -566,10 +566,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        1,
-        1,
-        2664539263,
-        false,
+        [1, 1, 1, 1],
+        [1, 1, 1, 1],
+        [2664539263, 2664539263, 2664539263, 2664539263],
+        [false, false, false, false],
       )
 
       const signature = await tokenOwnerSoul1.signMessage(
@@ -603,10 +603,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        1,
-        1,
-        2664539263,
-        false,
+        [1, 1, 1, 1],
+        [1, 1, 1, 1],
+        [2664539263, 2664539263, 2664539263, 2664539263],
+        [false, false, false, false],
       )
 
       const signature = await tokenOwnerSoul1.signMessage(
@@ -653,17 +653,17 @@ describe('ERC5727Test', function () {
       )
       await ERC5727ExampleContract.mintBatch(
         [tokenOwnerSoul1.address, tokenOwnerSoul2.address],
-        1,
-        1,
-        2664539263,
-        false,
+        [1, 1],
+        [1, 1],
+        [2664539263, 2664539263],
+        [false, false],
       )
       await ERC5727ExampleContract.mintBatch(
         [tokenOwnerSoul1.address, tokenOwnerSoul1.address, tokenOwnerSoul2.address],
-        1,
-        2,
-        2664539263,
-        false,
+        [1, 1, 1],
+        [2, 2, 2],
+        [2664539263, 2664539263, 2664539263],
+        [false, false, false],
       )
       expect(await ERC5727ExampleContract.tokenSupplyInSlot(1)).to.equal(2)
       expect(await ERC5727ExampleContract.slotCount()).to.equal(2)
@@ -677,12 +677,4 @@ describe('ERC5727Test', function () {
       await expect(ERC5727ExampleContract.slotByIndex(2)).to.be.reverted
     })
   })
-
-  /*
-  describe('ERC5727Model', function () {
-    it('', async function (){
-      const { ERC5727ExampleFactory, ERC5727ExampleContract, owner, tokenOwnerSoul1, tokenOwnerSoul2, voterSoul1, voterSoul2, delegateSoul1, delegateSoul2 } = await loadFixture(deployTokenFixture)
-    })
-  })
-  */
 })

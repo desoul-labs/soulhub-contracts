@@ -14,17 +14,17 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Bug Fixes
 
-* add modifier to valueOf ([d5a8795](https://github.com/Phaneroz-Labs/soularis-contracts/commit/d5a87956d6309683eb0862df9a4081c887e4600c))
-* change default contract uri path ([10b1ecc](https://github.com/Phaneroz-Labs/soularis-contracts/commit/10b1ecc12ea356ce406825595d15ce7b98d6f6a9))
-* change default contract uri path ([42f7fe8](https://github.com/Phaneroz-Labs/soularis-contracts/commit/42f7fe8dbdf079279ba9fa7fe345cc6ece9244bd))
-* **deps:** update dependency @nomiclabs/hardhat-ethers to v2.2.1 ([d6045cf](https://github.com/Phaneroz-Labs/soularis-contracts/commit/d6045cf54396086e968b02398ac8b6a56a68822d))
-* **deps:** update dependency ethers to v5.7.2 ([4f4306a](https://github.com/Phaneroz-Labs/soularis-contracts/commit/4f4306abce6b5bf7b43be3290e486563a6a7b643))
-* init souldrop with owner ([d1cbb4b](https://github.com/Phaneroz-Labs/soularis-contracts/commit/d1cbb4b085ea9bdbf210e903b32ac8a79f5204ec))
-* modify uri ([556c07f](https://github.com/Phaneroz-Labs/soularis-contracts/commit/556c07f19fc2a3fe942ad39bd992395424813a82))
-* ownable init & refactor registry ([#66](https://github.com/Phaneroz-Labs/soularis-contracts/issues/66)) ([7d15015](https://github.com/Phaneroz-Labs/soularis-contracts/commit/7d15015e47c3f9a4d6fbfed595d964fbfebe2241))
-* remove some templates ([00e79ce](https://github.com/Phaneroz-Labs/soularis-contracts/commit/00e79cecb10fc0fcd3d9d1e250749558e91c2c84))
-* update interface discovery for registrant ([91cb22a](https://github.com/Phaneroz-Labs/soularis-contracts/commit/91cb22a8ab07d7d248644f5cfc1ae60c06c8f54f))
-* update souldrop contract and uri ([f3ad6a5](https://github.com/Phaneroz-Labs/soularis-contracts/commit/f3ad6a5a40372216d32a01672fe92c56ace5c405))
+- add modifier to valueOf ([d5a8795](https://github.com/Phaneroz-Labs/soularis-contracts/commit/d5a87956d6309683eb0862df9a4081c887e4600c))
+- change default contract uri path ([10b1ecc](https://github.com/Phaneroz-Labs/soularis-contracts/commit/10b1ecc12ea356ce406825595d15ce7b98d6f6a9))
+- change default contract uri path ([42f7fe8](https://github.com/Phaneroz-Labs/soularis-contracts/commit/42f7fe8dbdf079279ba9fa7fe345cc6ece9244bd))
+- **deps:** update dependency @nomiclabs/hardhat-ethers to v2.2.1 ([d6045cf](https://github.com/Phaneroz-Labs/soularis-contracts/commit/d6045cf54396086e968b02398ac8b6a56a68822d))
+- **deps:** update dependency ethers to v5.7.2 ([4f4306a](https://github.com/Phaneroz-Labs/soularis-contracts/commit/4f4306abce6b5bf7b43be3290e486563a6a7b643))
+- init souldrop with owner ([d1cbb4b](https://github.com/Phaneroz-Labs/soularis-contracts/commit/d1cbb4b085ea9bdbf210e903b32ac8a79f5204ec))
+- modify uri ([556c07f](https://github.com/Phaneroz-Labs/soularis-contracts/commit/556c07f19fc2a3fe942ad39bd992395424813a82))
+- ownable init & refactor registry ([#66](https://github.com/Phaneroz-Labs/soularis-contracts/issues/66)) ([7d15015](https://github.com/Phaneroz-Labs/soularis-contracts/commit/7d15015e47c3f9a4d6fbfed595d964fbfebe2241))
+- remove some templates ([00e79ce](https://github.com/Phaneroz-Labs/soularis-contracts/commit/00e79cecb10fc0fcd3d9d1e250749558e91c2c84))
+- update interface discovery for registrant ([91cb22a](https://github.com/Phaneroz-Labs/soularis-contracts/commit/91cb22a8ab07d7d248644f5cfc1ae60c06c8f54f))
+- update souldrop contract and uri ([f3ad6a5](https://github.com/Phaneroz-Labs/soularis-contracts/commit/f3ad6a5a40372216d32a01672fe92c56ace5c405))
 
 ### [0.0.6](https://github.com/Phaneroz-Labs/soularis-contracts/compare/v0.0.3...v0.0.6) (2022-11-20)
 
@@ -38,16 +38,16 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Bug Fixes
 
-* add modifier to valueOf ([d5a8795](https://github.com/Phaneroz-Labs/soularis-contracts/commit/d5a87956d6309683eb0862df9a4081c887e4600c))
-* change default contract uri path ([10b1ecc](https://github.com/Phaneroz-Labs/soularis-contracts/commit/10b1ecc12ea356ce406825595d15ce7b98d6f6a9))
-* change default contract uri path ([42f7fe8](https://github.com/Phaneroz-Labs/soularis-contracts/commit/42f7fe8dbdf079279ba9fa7fe345cc6ece9244bd))
-* **deps:** update dependency @nomiclabs/hardhat-ethers to v2.2.1 ([d6045cf](https://github.com/Phaneroz-Labs/soularis-contracts/commit/d6045cf54396086e968b02398ac8b6a56a68822d))
-* **deps:** update dependency ethers to v5.7.2 ([4f4306a](https://github.com/Phaneroz-Labs/soularis-contracts/commit/4f4306abce6b5bf7b43be3290e486563a6a7b643))
-* init souldrop with owner ([d1cbb4b](https://github.com/Phaneroz-Labs/soularis-contracts/commit/d1cbb4b085ea9bdbf210e903b32ac8a79f5204ec))
-* ownable init & refactor registry ([#66](https://github.com/Phaneroz-Labs/soularis-contracts/issues/66)) ([7d15015](https://github.com/Phaneroz-Labs/soularis-contracts/commit/7d15015e47c3f9a4d6fbfed595d964fbfebe2241))
-* remove some templates ([00e79ce](https://github.com/Phaneroz-Labs/soularis-contracts/commit/00e79cecb10fc0fcd3d9d1e250749558e91c2c84))
-* update interface discovery for registrant ([91cb22a](https://github.com/Phaneroz-Labs/soularis-contracts/commit/91cb22a8ab07d7d248644f5cfc1ae60c06c8f54f))
-* update souldrop contract and uri ([f3ad6a5](https://github.com/Phaneroz-Labs/soularis-contracts/commit/f3ad6a5a40372216d32a01672fe92c56ace5c405))
+- add modifier to valueOf ([d5a8795](https://github.com/Phaneroz-Labs/soularis-contracts/commit/d5a87956d6309683eb0862df9a4081c887e4600c))
+- change default contract uri path ([10b1ecc](https://github.com/Phaneroz-Labs/soularis-contracts/commit/10b1ecc12ea356ce406825595d15ce7b98d6f6a9))
+- change default contract uri path ([42f7fe8](https://github.com/Phaneroz-Labs/soularis-contracts/commit/42f7fe8dbdf079279ba9fa7fe345cc6ece9244bd))
+- **deps:** update dependency @nomiclabs/hardhat-ethers to v2.2.1 ([d6045cf](https://github.com/Phaneroz-Labs/soularis-contracts/commit/d6045cf54396086e968b02398ac8b6a56a68822d))
+- **deps:** update dependency ethers to v5.7.2 ([4f4306a](https://github.com/Phaneroz-Labs/soularis-contracts/commit/4f4306abce6b5bf7b43be3290e486563a6a7b643))
+- init souldrop with owner ([d1cbb4b](https://github.com/Phaneroz-Labs/soularis-contracts/commit/d1cbb4b085ea9bdbf210e903b32ac8a79f5204ec))
+- ownable init & refactor registry ([#66](https://github.com/Phaneroz-Labs/soularis-contracts/issues/66)) ([7d15015](https://github.com/Phaneroz-Labs/soularis-contracts/commit/7d15015e47c3f9a4d6fbfed595d964fbfebe2241))
+- remove some templates ([00e79ce](https://github.com/Phaneroz-Labs/soularis-contracts/commit/00e79cecb10fc0fcd3d9d1e250749558e91c2c84))
+- update interface discovery for registrant ([91cb22a](https://github.com/Phaneroz-Labs/soularis-contracts/commit/91cb22a8ab07d7d248644f5cfc1ae60c06c8f54f))
+- update souldrop contract and uri ([f3ad6a5](https://github.com/Phaneroz-Labs/soularis-contracts/commit/f3ad6a5a40372216d32a01672fe92c56ace5c405))
 
 ### [0.0.5](https://github.com/Phaneroz-Labs/soularis-contracts/compare/v0.0.3...v0.0.5) (2022-11-05)
 

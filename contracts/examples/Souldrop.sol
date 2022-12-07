@@ -9,7 +9,10 @@ import "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableMapUpgradeab
 
 import "./ERC5727ExampleUpgradeable.sol";
 
-contract Souldrop is ERC721EnumerableUpgradeable, OwnableUpgradeable {
+contract SouldropUpgradeable is
+    ERC721EnumerableUpgradeable,
+    OwnableUpgradeable
+{
     using CountersUpgradeable for CountersUpgradeable.Counter;
     using EnumerableMapUpgradeable for EnumerableMapUpgradeable.AddressToUintMap;
 
@@ -60,9 +63,10 @@ contract Souldrop is ERC721EnumerableUpgradeable, OwnableUpgradeable {
     function _beforeTokenTransfer(
         address from,
         address to,
-        uint256 tokenId
+        uint256 tokenId,
+        uint256 batchSize
     ) internal override(ERC721EnumerableUpgradeable) {
-        super._beforeTokenTransfer(from, to, tokenId);
+        super._beforeTokenTransfer(from, to, tokenId, batchSize);
     }
 
     function _baseURI() internal view virtual override returns (string memory) {

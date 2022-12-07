@@ -63,7 +63,7 @@ contract ERC5727Example is
         uint256 slot,
         uint256 expiryDate,
         bool shadowed
-    ) public virtual onlyOwner {
+    ) external virtual onlyOwner {
         uint256 tokenId = _mint(soul, value, slot);
         if (shadowed) {
             _shadow(tokenId);
@@ -71,25 +71,27 @@ contract ERC5727Example is
         _setExpiryDate(tokenId, expiryDate);
     }
 
-    function revoke(uint256 tokenId) public virtual onlyOwner {
+    function revoke(uint256 tokenId) external virtual onlyOwner {
         _revoke(tokenId);
     }
 
     function mintBatch(
-        address[] memory souls,
-        uint256 value,
-        uint256 slot,
-        uint256 expiryDate,
-        bool shadowed
-    ) public virtual onlyOwner {
-        uint256[] memory tokenIds = _mintBatch(souls, value, slot);
+        address[] calldata souls,
+        uint256[] calldata values,
+        uint256[] calldata slots,
+        uint256[] calldata expiryDates,
+        bool[] calldata shadowed
+    ) external virtual onlyOwner {
+        uint256[] memory tokenIds = _mintBatch(souls, values, slots);
         for (uint256 i = 0; i < tokenIds.length; i++) {
-            if (shadowed) _shadow(tokenIds[i]);
-            _setExpiryDate(tokenIds[i], expiryDate);
+            if (shadowed[i]) _shadow(tokenIds[i]);
+            _setExpiryDate(tokenIds[i], expiryDates[i]);
         }
     }
 
-    function revokeBatch(uint256[] memory tokenIds) public virtual onlyOwner {
+    function revokeBatch(
+        uint256[] calldata tokenIds
+    ) external virtual onlyOwner {
         _revokeBatch(tokenIds);
     }
 
@@ -158,7 +160,15 @@ contract ERC5727Example is
         ERC5727SlotEnumerable._beforeTokenDestroy(tokenId);
     }
 
-    function valueOf_(uint256 tokenId) public virtual returns (uint256) {
+    function valueOf_(uint256 tokenId) external virtual returns (uint256) {
+        _beforeView(tokenId);
         return valueOf(tokenId);
+    }
+
+    function tokenOf(
+        uint256 tokenId
+    ) external view virtual returns (Token memory) {
+        _beforeView(tokenId);
+        return _getTokenOrRevert(tokenId);
     }
 }

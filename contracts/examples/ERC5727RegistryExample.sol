@@ -51,7 +51,8 @@ contract ERC5727RegistryExample is ERC5727Registry {
     function _beforeTokenTransfer(
         address from,
         address to,
-        uint256 tokenId
+        uint256 tokenId,
+        uint256 batchSize
     ) internal override {
         require(
             _isERC5727Contract(_msgSender()),
@@ -64,7 +65,7 @@ contract ERC5727RegistryExample is ERC5727Registry {
                 "ERC5727Registry: Only registrant owner can transfer"
             );
         }
-        super._beforeTokenTransfer(from, to, tokenId);
+        super._beforeTokenTransfer(from, to, tokenId, batchSize);
     }
 
     function transferFrom(

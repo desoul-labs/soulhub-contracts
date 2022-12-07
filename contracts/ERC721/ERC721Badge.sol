@@ -31,7 +31,8 @@ contract ERC721Badge is ERC721Enumerable, Ownable {
     function _beforeTokenTransfer(
         address from,
         address to,
-        uint256 tokenId
+        uint256 tokenId,
+        uint256 batchSize
     ) internal pure override {
         require(from == address(0), "ERC721Badge: transfer is banned");
     }
