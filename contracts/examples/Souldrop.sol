@@ -9,10 +9,7 @@ import "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableMapUpgradeab
 
 import "./ERC5727ExampleUpgradeable.sol";
 
-contract SouldropUpgradeable is
-    ERC721EnumerableUpgradeable,
-    OwnableUpgradeable
-{
+contract Souldrop is ERC721EnumerableUpgradeable, OwnableUpgradeable {
     using CountersUpgradeable for CountersUpgradeable.Counter;
     using EnumerableMapUpgradeable for EnumerableMapUpgradeable.AddressToUintMap;
 
