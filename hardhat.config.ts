@@ -43,8 +43,8 @@ const config: HardhatUserConfig = {
       mumbai: process.env.POLYGONSCAN_API_KEY ?? '',
       bsc: process.env.BSCSCAN_API_KEY ?? '',
       chapel: process.env.BSCSCAN_API_KEY ?? '',
-      optimism: process.env.OPTIMISTICSCAN_API_KEY ?? '',
-      optimismGoerli: process.env.OPTIMISTICSCAN_API_KEY ?? '',
+      optimistic: process.env.OPTIMISTICSCAN_API_KEY ?? '',
+      optimisticGoerli: process.env.OPTIMISTICSCAN_API_KEY ?? '',
     },
   },
   dodoc: {
