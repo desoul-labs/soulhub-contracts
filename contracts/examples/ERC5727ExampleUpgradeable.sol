@@ -260,4 +260,16 @@ contract ERC5727ExampleUpgradeable is
         _beforeView(tokenId);
         return _getTokenOrRevert(tokenId);
     }
+
+    function slotURI(
+        uint256 slot
+    )
+        public
+        view
+        virtual
+        override(ERC5727Upgradeable, ERC5727SlotEnumerableUpgradeable)
+        returns (string memory)
+    {
+        return ERC5727SlotEnumerableUpgradeable.slotURI(slot);
+    }
 }

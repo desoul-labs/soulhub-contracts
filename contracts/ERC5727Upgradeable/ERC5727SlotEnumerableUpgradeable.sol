@@ -158,4 +158,14 @@ abstract contract ERC5727SlotEnumerableUpgradeable is
             _allSlots.remove(slot);
         }
     }
+
+    function slotURI(
+        uint256 slot
+    ) public view virtual override returns (string memory) {
+        require(
+            _slotExists(slot),
+            "ERC5727SlotEnumerable: slot does not exist"
+        );
+        return super.slotURI(slot);
+    }
 }

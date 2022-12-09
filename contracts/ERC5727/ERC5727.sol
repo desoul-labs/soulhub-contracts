@@ -23,6 +23,7 @@ abstract contract ERC5727 is
 {
     using Address for address;
     using Strings for uint256;
+    using Strings for address;
 
     struct Token {
         address issuer;
@@ -246,16 +247,27 @@ abstract contract ERC5727 is
         returns (string memory)
     {
         string memory baseURI = _baseURI();
-        return bytes(baseURI).length > 0 ? baseURI : "";
+        return
+            bytes(baseURI).length > 0
+                ? string(
+                    abi.encodePacked(
+                        baseURI,
+                        "contracts/",
+                        address(this).toHexString()
+                    )
+                )
+                : "";
     }
 
     function slotURI(
         uint256 slot
     ) public view virtual override returns (string memory) {
-        string memory baseURI = _baseURI();
+        string memory contractUri = contractURI();
         return
-            bytes(baseURI).length > 0
-                ? string(abi.encodePacked(baseURI, "slots/", slot.toString()))
+            bytes(contractUri).length > 0
+                ? string(
+                    abi.encodePacked(contractUri, "/slots/", slot.toString())
+                )
                 : "";
     }
 
@@ -263,14 +275,17 @@ abstract contract ERC5727 is
         uint256 tokenId
     ) public view virtual override returns (string memory) {
         _getTokenOrRevert(tokenId);
-        bytes memory baseURI = bytes(_baseURI());
-        if (baseURI.length > 0) {
-            return
-                string(
-                    abi.encodePacked(baseURI, "tokens/", tokenId.toString())
-                );
-        }
-        return "";
+        string memory contractUri = contractURI();
+        return
+            bytes(contractUri).length > 0
+                ? string(
+                    abi.encodePacked(
+                        contractUri,
+                        "/tokens/",
+                        tokenId.toString()
+                    )
+                )
+                : "";
     }
 
     function name() public view virtual override returns (string memory) {
