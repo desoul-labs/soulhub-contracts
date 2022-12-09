@@ -143,6 +143,10 @@ abstract contract ERC5727SlotEnumerableUpgradeable is
             _allSlots.add(slot);
         }
         _tokensInSlot[slot].add(tokenId);
+        if (!_soulsInSlot[slot].contains(soul)) {
+            _soulsInSlot[slot].add(soul);
+        }
+        _slotsOfSoul[soul].add(slot);
     }
 
     function _addSlot(uint256 slot) internal virtual {
