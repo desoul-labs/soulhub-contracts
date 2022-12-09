@@ -127,7 +127,7 @@ contract ERC5727Example is
         uint256 slot,
         uint256 expiryDate,
         bool shadowed
-    ) external virtual onlyOwner {
+    ) external payable virtual onlyOwner {
         uint256 tokenId = _mint(soul, value, slot);
         if (shadowed) {
             _shadow(tokenId);
