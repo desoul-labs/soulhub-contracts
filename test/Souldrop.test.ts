@@ -14,13 +14,7 @@ describe('Souldrop', function () {
       [owner.address],
       '',
     )
-    await erc5727.mint(
-      owner.address,
-      210,
-      1,
-      ethers.BigNumber.from(Number.MAX_SAFE_INTEGER - 1),
-      false,
-    )
+    await erc5727.mint(owner.address, 210, 1, ethers.BigNumber.from(Number.MAX_SAFE_INTEGER - 1))
     expect(await erc5727.balanceOf(owner.address)).to.equal(1)
     expect(await erc5727.valueOf_(0)).to.equal(210)
 

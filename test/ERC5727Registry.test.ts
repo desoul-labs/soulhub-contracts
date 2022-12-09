@@ -63,8 +63,6 @@ describe('ERC5727 Registration', function () {
     expect(await registrant.owner()).to.equal(owner.address)
     expect(await registry.ownerOf(0)).to.equal(owner.address)
 
-    console.log(await registrant.owner())
-
     await registry.approve(newOwner.address, 0)
 
     await registrant.transferOwnership(newOwner.address)

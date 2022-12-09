@@ -1,11 +1,13 @@
 # IERC5727Registrant
 
+interfaceId = 0x0349722d
+
 ## Methods
 
 ### deregister
 
 ```solidity
-function deregister(address registry) external nonpayable
+function deregister(address registry) external nonpayable returns (uint256)
 ```
 
 #### Parameters
@@ -13,6 +15,12 @@ function deregister(address registry) external nonpayable
 | Name     | Type    | Description |
 | -------- | ------- | ----------- |
 | registry | address | undefined   |
+
+#### Returns
+
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 ### isRegistered
 
@@ -35,7 +43,7 @@ function isRegistered(address registry) external view returns (bool)
 ### register
 
 ```solidity
-function register(address registry) external nonpayable
+function register(address registry) external nonpayable returns (uint256)
 ```
 
 #### Parameters
@@ -43,6 +51,12 @@ function register(address registry) external nonpayable
 | Name     | Type    | Description |
 | -------- | ------- | ----------- |
 | registry | address | undefined   |
+
+#### Returns
+
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 ## Events
 

@@ -2,7 +2,7 @@
 
 > ERC5727 Soulbound Token Enumerable Interface
 
-_This extension allows querying the tokens of a soul._
+_This extension allows querying the tokens of a soul. interfaceId = 0x211ec300_
 
 ## Methods
 

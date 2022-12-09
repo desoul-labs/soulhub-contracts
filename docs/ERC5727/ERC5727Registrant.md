@@ -31,7 +31,7 @@ Get the URI of the contract.
 ### deregister
 
 ```solidity
-function deregister(address _registry) external nonpayable
+function deregister(address _registry) external nonpayable returns (uint256)
 ```
 
 #### Parameters
@@ -39,6 +39,12 @@ function deregister(address _registry) external nonpayable
 | Name       | Type    | Description |
 | ---------- | ------- | ----------- |
 | \_registry | address | undefined   |
+
+#### Returns
+
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 ### getRoleAdmin
 
@@ -230,7 +236,7 @@ _Returns the address of the current owner._
 ### register
 
 ```solidity
-function register(address _registry) external nonpayable
+function register(address _registry) external nonpayable returns (uint256)
 ```
 
 #### Parameters
@@ -239,17 +245,11 @@ function register(address _registry) external nonpayable
 | ---------- | ------- | ----------- |
 | \_registry | address | undefined   |
 
-### registryTransferOwnership
+#### Returns
 
-```solidity
-function registryTransferOwnership(address newOwner) external nonpayable
-```
-
-#### Parameters
-
-| Name     | Type    | Description |
-| -------- | ------- | ----------- |
-| newOwner | address | undefined   |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 ### renounceOwnership
 

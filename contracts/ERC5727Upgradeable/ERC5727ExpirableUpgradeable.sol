@@ -37,10 +37,7 @@ abstract contract ERC5727ExpirableUpgradeable is
         return date < block.timestamp;
     }
 
-    function _setExpiryDate(
-        uint256 tokenId,
-        uint256 date
-    ) internal virtual onlyOwner {
+    function _setExpiryDate(uint256 tokenId, uint256 date) internal virtual {
         require(
             date > block.timestamp,
             "ERC5727Expirable: Expiry date cannot be in the past"

@@ -136,6 +136,42 @@ _MUST revert if the caller is not delegated._
 | -------- | --------- | --------------------- |
 | tokenIds | uint256[] | The tokens to revoke. |
 
+### delegatedRequestsOf
+
+```solidity
+function delegatedRequestsOf(address operator) external view returns (uint256[])
+```
+
+#### Parameters
+
+| Name     | Type    | Description |
+| -------- | ------- | ----------- |
+| operator | address | undefined   |
+
+#### Returns
+
+| Name | Type      | Description |
+| ---- | --------- | ----------- |
+| \_0  | uint256[] | undefined   |
+
+### delegatedTokensOf
+
+```solidity
+function delegatedTokensOf(address operator) external view returns (uint256[])
+```
+
+#### Parameters
+
+| Name     | Type    | Description |
+| -------- | ------- | ----------- |
+| operator | address | undefined   |
+
+#### Returns
+
+| Name | Type      | Description |
+| ---- | --------- | ----------- |
+| \_0  | uint256[] | undefined   |
+
 ### emittedCount
 
 ```solidity
@@ -483,6 +519,24 @@ _MUST revert if the `tokenId` does not exist_
 | ---- | ------- | --------------------- |
 | \_0  | uint256 | The slot of `tokenId` |
 
+### slotOfDelegateRequest
+
+```solidity
+function slotOfDelegateRequest(uint256 delegateRequestId) external view returns (uint256)
+```
+
+#### Parameters
+
+| Name              | Type    | Description |
+| ----------------- | ------- | ----------- |
+| delegateRequestId | uint256 | undefined   |
+
+#### Returns
+
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
+
 ### slotURI
 
 ```solidity
@@ -526,6 +580,24 @@ _MUST revert if the `tokenId` does not exist_
 | Name | Type    | Description                                |
 | ---- | ------- | ------------------------------------------ |
 | \_0  | address | The address of the owner soul of `tokenId` |
+
+### soulOfDelegateRequest
+
+```solidity
+function soulOfDelegateRequest(uint256 delegateRequestId) external view returns (address)
+```
+
+#### Parameters
+
+| Name              | Type    | Description |
+| ----------------- | ------- | ----------- |
+| delegateRequestId | uint256 | undefined   |
+
+#### Returns
+
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | address | undefined   |
 
 ### soulsCount
 
@@ -675,6 +747,24 @@ _MUST revert if the `tokenId` does not exist_
 | Name | Type    | Description            |
 | ---- | ------- | ---------------------- |
 | \_0  | uint256 | The value of `tokenId` |
+
+### valueOfDelegateRequest
+
+```solidity
+function valueOfDelegateRequest(uint256 delegateRequestId) external view returns (uint256)
+```
+
+#### Parameters
+
+| Name              | Type    | Description |
+| ----------------- | ------- | ----------- |
+| delegateRequestId | uint256 | undefined   |
+
+#### Returns
+
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 ## Events
 

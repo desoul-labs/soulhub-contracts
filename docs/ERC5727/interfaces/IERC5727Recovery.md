@@ -2,7 +2,7 @@
 
 > ERC5727 Soulbound Token Recovery Interface
 
-_This extension allows recovering soulbound tokens from an address provided its signature._
+_This extension allows recovering soulbound tokens from an address provided its signature. interfaceId = 0x379f4e66_
 
 ## Methods
 

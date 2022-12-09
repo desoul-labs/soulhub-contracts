@@ -13,6 +13,10 @@ on:
 env:
   ALCHEMY_API_URL: ${{ secrets.ALCHEMY_API_URL }}
   PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+  ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
+  POLYGONSCAN_API_KEY: ${{ secrets.POLYGONSCAN_API_KEY }}
+  BSCSCAN_API_KEY: ${{ secrets.BSCSCAN_API_KEY }}
+  OPTIMISTICSCAN_API_KEY: ${{ secrets.OPTIMISTICSCAN_API_KEY }}
   STAGE: dev
 
 jobs:
@@ -39,8 +43,6 @@ jobs:
           curl https://raw.githubusercontent.com/Tenderly/tenderly-cli/master/scripts/install-linux.sh | sh
           tenderly login --authentication-method access-key --access-key $TENDERLY_ACCESS_KEY
       - name: Deploy
-        env:
-          IPFS_AUTHORIZATION: ${{ secrets.IPFS_AUTHORIZATION }}
         run: |
           pnpm install
           pnpm run deploy:${{ matrix.network }}

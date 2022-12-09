@@ -36,12 +36,6 @@ abstract contract ERC5727Enumerable is ERC5727, IERC5727Enumerable {
         if (_indexedTokenIds[soul].length() == 0) {
             _soulsCount.increment();
         }
-        //unused variables
-        issuer;
-        tokenId;
-        value;
-        slot;
-        valid;
     }
 
     function _afterTokenMint(
@@ -56,11 +50,6 @@ abstract contract ERC5727Enumerable is ERC5727, IERC5727Enumerable {
         if (valid) {
             _numberOfValidTokens[soul] += 1;
         }
-        //unused variables
-        issuer;
-        value;
-        slot;
-        valid;
     }
 
     function _mint(
@@ -88,12 +77,12 @@ abstract contract ERC5727Enumerable is ERC5727, IERC5727Enumerable {
 
     function _mintBatch(
         address[] memory souls,
-        uint256[] memory values,
-        uint256[] memory slots
+        uint256 value,
+        uint256 slot
     ) internal virtual returns (uint256[] memory tokenIds) {
         tokenIds = new uint256[](souls.length);
         for (uint256 i = 0; i < souls.length; i++) {
-            tokenIds[i] = _mint(souls[i], values[i], slots[i]);
+            tokenIds[i] = _mint(souls[i], value, slot);
         }
     }
 
