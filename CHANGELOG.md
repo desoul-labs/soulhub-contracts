@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.11](https://github.com/Phaneroz-Labs/soularis-contracts/compare/v0.0.3...v0.0.11) (2022-12-09)
+
+
+### Features
+
+* add address prediction ([edd9765](https://github.com/Phaneroz-Labs/soularis-contracts/commit/edd976548fec7e3f3e2db4a073ab38ee369dc0d4))
+* add proxy contracts ([#62](https://github.com/Phaneroz-Labs/soularis-contracts/issues/62)) ([9749ef8](https://github.com/Phaneroz-Labs/soularis-contracts/commit/9749ef80ff5207fe3f13c1d5e96e3b3d2355f6c7))
+* add souldrop contract ([e56794b](https://github.com/Phaneroz-Labs/soularis-contracts/commit/e56794b035fcd1cd963edc7d92cd37d80258afca))
+* support IERC721Metadata and IERC3525Metadata ([d8d27c4](https://github.com/Phaneroz-Labs/soularis-contracts/commit/d8d27c4c226fb4cfd7b27524c12a4ffda0cc5493))
+* upgradable contracts ([#61](https://github.com/Phaneroz-Labs/soularis-contracts/issues/61)) ([a73699d](https://github.com/Phaneroz-Labs/soularis-contracts/commit/a73699d6886293cbf61f918fc942cc33e5ffed7e))
+
+
+### Bug Fixes
+
+* add modifier to valueOf ([d5a8795](https://github.com/Phaneroz-Labs/soularis-contracts/commit/d5a87956d6309683eb0862df9a4081c887e4600c))
+* change default contract uri path ([10b1ecc](https://github.com/Phaneroz-Labs/soularis-contracts/commit/10b1ecc12ea356ce406825595d15ce7b98d6f6a9))
+* change default contract uri path ([42f7fe8](https://github.com/Phaneroz-Labs/soularis-contracts/commit/42f7fe8dbdf079279ba9fa7fe345cc6ece9244bd))
+* **deps:** update dependency @nomiclabs/hardhat-ethers to v2.2.1 ([d6045cf](https://github.com/Phaneroz-Labs/soularis-contracts/commit/d6045cf54396086e968b02398ac8b6a56a68822d))
+* **deps:** update dependency ethers to v5.7.2 ([4f4306a](https://github.com/Phaneroz-Labs/soularis-contracts/commit/4f4306abce6b5bf7b43be3290e486563a6a7b643))
+* ownable init & refactor registry ([#66](https://github.com/Phaneroz-Labs/soularis-contracts/issues/66)) ([7d15015](https://github.com/Phaneroz-Labs/soularis-contracts/commit/7d15015e47c3f9a4d6fbfed595d964fbfebe2241))
+* remove some templates ([00e79ce](https://github.com/Phaneroz-Labs/soularis-contracts/commit/00e79cecb10fc0fcd3d9d1e250749558e91c2c84))
+* suppress verify error ([3efe48b](https://github.com/Phaneroz-Labs/soularis-contracts/commit/3efe48be4e78e46894be7f6ce143df0c6b6cf0e4))
+* update contract uri format ([acd9bcf](https://github.com/Phaneroz-Labs/soularis-contracts/commit/acd9bcfd511687cb22d8bbd928c0d51d0e9987e6))
+* update interface discovery for registrant ([91cb22a](https://github.com/Phaneroz-Labs/soularis-contracts/commit/91cb22a8ab07d7d248644f5cfc1ae60c06c8f54f))
+* update uri format ([bf0b15b](https://github.com/Phaneroz-Labs/soularis-contracts/commit/bf0b15b918484f9f2b594fbdc4d5588c0664d42d))
+
 ### [0.0.10](https://github.com/Phaneroz-Labs/soularis-contracts/compare/v0.0.3...v0.0.10) (2022-12-09)
 
 ### Features
