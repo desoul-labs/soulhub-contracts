@@ -14,7 +14,7 @@ const config: HardhatUserConfig = {
     settings: {
       optimizer: {
         enabled: true,
-        runs: 1000,
+        runs: 750,
       },
     },
   },
@@ -40,10 +40,10 @@ const config: HardhatUserConfig = {
       goerli: process.env.ETHERSCAN_API_KEY ?? '',
       sepolia: process.env.ETHERSCAN_API_KEY ?? '',
       polygon: process.env.POLYGONSCAN_API_KEY ?? '',
-      mumbai: process.env.POLYGONSCAN_API_KEY ?? '',
+      polygonMumbai: process.env.POLYGONSCAN_API_KEY ?? '',
       bsc: process.env.BSCSCAN_API_KEY ?? '',
-      chapel: process.env.BSCSCAN_API_KEY ?? '',
-      optimistic: process.env.OPTIMISTICSCAN_API_KEY ?? '',
+      bscTestnet: process.env.BSCSCAN_API_KEY ?? '',
+      optimisticEthereum: process.env.OPTIMISTICSCAN_API_KEY ?? '',
       optimisticGoerli: process.env.OPTIMISTICSCAN_API_KEY ?? '',
     },
   },

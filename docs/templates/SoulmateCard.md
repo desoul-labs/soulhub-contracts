@@ -36,19 +36,6 @@ _MUST revert if the `soul` does not have any token._
 | ---- | ------- | ---------------------------------- |
 | \_0  | uint256 | The number of tokens of the `soul` |
 
-### charge
-
-```solidity
-function charge(uint256 tokenId, uint256 value) external nonpayable
-```
-
-#### Parameters
-
-| Name    | Type    | Description |
-| ------- | ------- | ----------- |
-| tokenId | uint256 | undefined   |
-| value   | uint256 | undefined   |
-
 ### contractURI
 
 ```solidity
@@ -76,28 +63,6 @@ Get the total number of tokens emitted.
 | Name | Type    | Description                        |
 | ---- | ------- | ---------------------------------- |
 | \_0  | uint256 | The total number of tokens emitted |
-
-### expiryDate
-
-```solidity
-function expiryDate(uint256 tokenId) external view returns (uint256)
-```
-
-Get the expire date of a token.
-
-_MUST revert if the `tokenId` token does not exist._
-
-#### Parameters
-
-| Name    | Type    | Description                                    |
-| ------- | ------- | ---------------------------------------------- |
-| tokenId | uint256 | The token for which the expiry date is queried |
-
-#### Returns
-
-| Name | Type    | Description                  |
-| ---- | ------- | ---------------------------- |
-| \_0  | uint256 | The expiry date of the token |
 
 ### getRoleAdmin
 
@@ -216,28 +181,6 @@ Get if the `soul` owns any valid tokens.
 | ---- | ---- | ----------------------------------- |
 | \_0  | bool | if the `soul` owns any valid tokens |
 
-### isExpired
-
-```solidity
-function isExpired(uint256 tokenId) external view returns (bool)
-```
-
-Get if a token is expired.
-
-_MUST revert if the `tokenId` token does not exist._
-
-#### Parameters
-
-| Name    | Type    | Description                                       |
-| ------- | ------- | ------------------------------------------------- |
-| tokenId | uint256 | The token for which the expired status is queried |
-
-#### Returns
-
-| Name | Type | Description             |
-| ---- | ---- | ----------------------- |
-| \_0  | bool | If the token is expired |
-
 ### isValid
 
 ```solidity
@@ -282,32 +225,19 @@ _MUST revert if the `tokenId` does not exist_
 | ---- | ------- | -------------------------------------- |
 | \_0  | address | The address of the issuer of `tokenId` |
 
-### mintFungible
+### mint
 
 ```solidity
-function mintFungible(address owner, uint256 value) external nonpayable
+function mint(address soul, uint256 value, uint256 slot) external nonpayable returns (uint256)
 ```
 
 #### Parameters
 
 | Name  | Type    | Description |
 | ----- | ------- | ----------- |
-| owner | address | undefined   |
+| soul  | address | undefined   |
 | value | uint256 | undefined   |
-
-### mintNonFungible
-
-```solidity
-function mintNonFungible(address owner, uint256 slot, uint256 date) external nonpayable returns (uint256)
-```
-
-#### Parameters
-
-| Name  | Type    | Description |
-| ----- | ------- | ----------- |
-| owner | address | undefined   |
 | slot  | uint256 | undefined   |
-| date  | uint256 | undefined   |
 
 #### Returns
 
@@ -366,18 +296,6 @@ _Revokes `role` from the calling account. Roles are often managed via {grantRole
 | role    | bytes32 | undefined   |
 | account | address | undefined   |
 
-### revoke
-
-```solidity
-function revoke(uint256 tokenId) external nonpayable
-```
-
-#### Parameters
-
-| Name    | Type    | Description |
-| ------- | ------- | ----------- |
-| tokenId | uint256 | undefined   |
-
 ### revokeRole
 
 ```solidity
@@ -392,40 +310,6 @@ _Revokes `role` from `account`. If `account` had been granted `role`, emits a {R
 | ------- | ------- | ----------- |
 | role    | bytes32 | undefined   |
 | account | address | undefined   |
-
-### setBatchExpiryDates
-
-```solidity
-function setBatchExpiryDates(uint256[] tokenIds, uint256[] dates) external nonpayable
-```
-
-Set the expiry date of multiple tokens.
-
-_MUST revert if the `tokenIds` tokens does not exist. MUST revert if the `dates` is in the past. MUST revert if the length of `tokenIds` and `dates` do not match._
-
-#### Parameters
-
-| Name     | Type      | Description                           |
-| -------- | --------- | ------------------------------------- |
-| tokenIds | uint256[] | The tokens whose expiry dates are set |
-| dates    | uint256[] | The expire dates to set               |
-
-### setExpiryDate
-
-```solidity
-function setExpiryDate(uint256 tokenId, uint256 date) external nonpayable
-```
-
-Set the expiry date of a token.
-
-_MUST revert if the `tokenId` token does not exist. MUST revert if the `date` is in the past._
-
-#### Parameters
-
-| Name    | Type    | Description                        |
-| ------- | ------- | ---------------------------------- |
-| tokenId | uint256 | The token whose expiry date is set |
-| date    | uint256 | The expire date to set             |
 
 ### slotOf
 

@@ -8,7 +8,7 @@ async function main(): Promise<void> {
   const erc5727Factory = await ethers.getContractFactory('ERC5727ExampleUpgradeable')
   const erc5727 = await erc5727Factory.deploy()
   await erc5727.deployed()
-  await sleep(1000)
+  await sleep(5000)
   console.log('ERC5727Example contract deployed to:', erc5727.address)
   // await tenderly.verify({
   //   name: 'ERC5727Example',
@@ -32,7 +32,7 @@ async function main(): Promise<void> {
   //   name: 'ERC5727RegistryExample',
   //   address: registry.address,
   // })
-  await sleep(1000)
+  await sleep(5000)
   await run('verify:verify', {
     address: registry.address,
     constructorArguments: [
@@ -53,7 +53,7 @@ async function main(): Promise<void> {
   //   name: 'MinimalProxyFactory',
   //   address: minimalProxyDeployer.address,
   // })
-  await sleep(1000)
+  await sleep(5000)
   await run('verify:verify', {
     address: minimalProxyDeployer.address,
     constructorArguments: ['0x0000000000000000000000000000000000000000'],
@@ -67,7 +67,7 @@ async function main(): Promise<void> {
   //   name: 'Souldrop',
   //   address: souldrop.address,
   // })
-  await sleep(1000)
+  await sleep(5000)
   await run('verify:verify', {
     address: souldrop.address,
     constructorArguments: [],

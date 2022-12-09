@@ -104,10 +104,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        [1, 1, 1, 1],
-        [1, 1, 1, 1],
-        [2664539263, 2664539263, 2664539263, 2664539263],
-        [false, false, false, false],
+        1,
+        1,
+        2664539263,
+        false,
       )
 
       expect(await ERC5727ExampleContract.balanceOf(tokenOwnerSoul1.address)).equal(3)
@@ -139,6 +139,63 @@ describe('ERC5727Test', function () {
       await expect(ERC5727ExampleContract.revoke(100)).be.reverted
     })
 
+    it('Slot can only be created by owner', async function () {
+      const { ERC5727ExampleContract, owner, voterSoul1 } = await loadFixture(deployTokenFixture)
+      await ERC5727ExampleContract.connect(owner).createSlot(3, [1], [2664539263], [10000], [false])
+      await ERC5727ExampleContract.connect(owner).createSlot(3, [1], [2664539263], [10000], [false])
+      await expect(
+        ERC5727ExampleContract.connect(voterSoul1).createSlot(
+          3,
+          [1],
+          [2664539263],
+          [10000],
+          [false],
+        ),
+      ).be.reverted
+      expect(await ERC5727ExampleContract.slotCount()).equal(2)
+    })
+
+    it('Souls can collect tokens in slot', async function () {
+      const { ERC5727ExampleContract, owner, tokenOwnerSoul1, voterSoul1, voterSoul2 } =
+        await loadFixture(deployTokenFixture)
+      await ERC5727ExampleContract.connect(owner).createSlot(
+        3,
+        [1, 1],
+        [2664539263, 2664539263],
+        [10000, 80000],
+        [false, false],
+      )
+      // if soul does not pay enough, it will revert
+      await expect(ERC5727ExampleContract.connect(tokenOwnerSoul1).collect(0)).be.reverted
+      // if the slot is not valid, it will revert
+      await expect(ERC5727ExampleContract.connect(tokenOwnerSoul1).collect(1)).be.reverted
+
+      await ERC5727ExampleContract.connect(tokenOwnerSoul1).collect(0, {
+        value: 10000 + 80000,
+      })
+      expect(await ERC5727ExampleContract.balanceOf(tokenOwnerSoul1.address)).equal(2)
+
+      // cannot collect twice
+      await expect(
+        ERC5727ExampleContract.connect(tokenOwnerSoul1).collect(0, {
+          value: 10000 + 80000,
+        }),
+      ).to.reverted
+
+      await ERC5727ExampleContract.connect(owner).collect(0, {
+        value: 10000 + 80000,
+      })
+      await ERC5727ExampleContract.connect(voterSoul1).collect(0, {
+        value: 10000 + 80000,
+      })
+      // revert if max supply is reached
+      await expect(
+        ERC5727ExampleContract.connect(voterSoul2).collect(0, {
+          value: 10000 + 80000,
+        }),
+      ).to.reverted
+    })
+
     it('Support Interface', async function () {
       const { ERC5727ExampleContract } = await loadFixture(deployTokenFixture)
       expect(await ERC5727ExampleContract.supportsInterface('0x35f61d8a')).to.equal(true)
@@ -149,7 +206,7 @@ describe('ERC5727Test', function () {
       expect(await ERC5727ExampleContract.supportsInterface('0xba3e1a9d')).to.equal(true)
       expect(await ERC5727ExampleContract.supportsInterface('0x379f4e66')).to.equal(true)
       expect(await ERC5727ExampleContract.supportsInterface('0x3475cd68')).to.equal(true)
-      expect(await ERC5727ExampleContract.supportsInterface('0x3b741b9e')).to.equal(true)
+      expect(await ERC5727ExampleContract.supportsInterface('0x3935b6ba')).to.equal(true)
       expect(await ERC5727ExampleContract.supportsInterface('0x5b5e139f')).to.equal(true)
     })
   })
@@ -166,10 +223,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        [1, 1, 1, 1],
-        [1, 1, 1, 1],
-        [2664539263, 2664539263, 2664539263, 2664539263],
-        [false, false, false, false],
+        1,
+        1,
+        2664539263,
+        false,
       )
 
       expect(await ERC5727ExampleContract.slotOf(0)).equal(1)
@@ -296,10 +353,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        [1, 1, 1, 1],
-        [1, 1, 1, 1],
-        [2664539263, 2664539263, 2664539263, 2664539263],
-        [false, false, false, false],
+        1,
+        1,
+        2664539263,
+        false,
       )
       expect(await ERC5727ExampleContract.emittedCount()).equal(4)
       expect(await ERC5727ExampleContract.soulsCount()).equal(2)
@@ -318,10 +375,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        [1, 1, 1, 1],
-        [1, 1, 1, 1],
-        [2664539263, 2664539263, 2664539263, 2664539263],
-        [false, false, false, false],
+        1,
+        1,
+        2664539263,
+        false,
       )
       await ERC5727ExampleContract.revoke(0)
       await ERC5727ExampleContract.revoke(3)
@@ -340,10 +397,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        [1, 1, 1, 1],
-        [1, 1, 1, 1],
-        [2664539263, 2664539263, 2664539263, 2664539263],
-        [false, false, false, false],
+        1,
+        1,
+        2664539263,
+        false,
       )
       expect(await ERC5727ExampleContract.tokenOfSoulByIndex(tokenOwnerSoul1.address, 0)).equal(0)
       expect(await ERC5727ExampleContract.tokenOfSoulByIndex(tokenOwnerSoul2.address, 0)).equal(3)
@@ -360,10 +417,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        [1, 1, 1, 1],
-        [1, 1, 1, 1],
-        [2664539263, 2664539263, 2664539263, 2664539263],
-        [false, false, false, false],
+        1,
+        1,
+        2664539263,
+        false,
       )
       await expect(ERC5727ExampleContract.tokenOfSoulByIndex(tokenOwnerSoul1.address, 3)).be
         .reverted
@@ -384,10 +441,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        [1, 1, 1, 1],
-        [1, 1, 1, 1],
-        [2664539263, 2664539263, 2664539263, 2664539263],
-        [false, false, false, false],
+        1,
+        1,
+        2664539263,
+        false,
       )
       expect(await ERC5727ExampleContract.expiryDate(0)).equal(2664539263)
       await ERC5727ExampleContract.createDelegateRequest(tokenOwnerSoul1.address, 1, 1)
@@ -406,10 +463,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        [1, 1, 1, 1],
-        [1, 1, 1, 1],
-        [2664539263, 2664539263, 2664539263, 2664539263],
-        [false, false, false, false],
+        1,
+        1,
+        2664539263,
+        false,
       )
       expect(await ERC5727ExampleContract.isExpired(0)).equal(false)
       await ERC5727ExampleContract.createDelegateRequest(tokenOwnerSoul1.address, 1, 1)
@@ -428,10 +485,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        [1, 1, 1, 1],
-        [1, 1, 1, 1],
-        [2664539263, 2664539263, 2664539263, 2664539263],
-        [false, false, false, false],
+        1,
+        1,
+        2664539263,
+        false,
       )
       await expect(ERC5727ExampleContract.setExpiryDate(0, 100000)).be.reverted
       await expect(ERC5727ExampleContract.setExpiryDate(0, 2664539262)).be.reverted
@@ -514,10 +571,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        [1, 1, 1, 1],
-        [1, 1, 1, 1],
-        [2664539263, 2664539263, 2664539263, 2664539263],
-        [false, false, false, false],
+        1,
+        1,
+        2664539263,
+        false,
       )
       await expect(ERC5727ExampleContract.connect(tokenOwnerSoul2).shadow(0)).be.reverted
       await ERC5727ExampleContract.connect(tokenOwnerSoul2).shadow(3)
@@ -538,10 +595,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        [1, 1, 1, 1],
-        [1, 1, 1, 1],
-        [2664539263, 2664539263, 2664539263, 2664539263],
-        [true, true, true, true],
+        1,
+        1,
+        2664539263,
+        true,
       )
       await expect(ERC5727ExampleContract.connect(tokenOwnerSoul2).soulOf(0)).be.reverted
       await ERC5727ExampleContract.valueOf(3)
@@ -566,10 +623,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        [1, 1, 1, 1],
-        [1, 1, 1, 1],
-        [2664539263, 2664539263, 2664539263, 2664539263],
-        [false, false, false, false],
+        1,
+        1,
+        2664539263,
+        false,
       )
 
       const signature = await tokenOwnerSoul1.signMessage(
@@ -603,10 +660,10 @@ describe('ERC5727Test', function () {
           tokenOwnerSoul1.address,
           tokenOwnerSoul2.address,
         ],
-        [1, 1, 1, 1],
-        [1, 1, 1, 1],
-        [2664539263, 2664539263, 2664539263, 2664539263],
-        [false, false, false, false],
+        1,
+        1,
+        2664539263,
+        false,
       )
 
       const signature = await tokenOwnerSoul1.signMessage(
@@ -653,22 +710,36 @@ describe('ERC5727Test', function () {
       )
       await ERC5727ExampleContract.mintBatch(
         [tokenOwnerSoul1.address, tokenOwnerSoul2.address],
-        [1, 1],
-        [1, 1],
-        [2664539263, 2664539263],
-        [false, false],
+        1,
+        1,
+        2664539263,
+        false,
       )
       await ERC5727ExampleContract.mintBatch(
         [tokenOwnerSoul1.address, tokenOwnerSoul1.address, tokenOwnerSoul2.address],
-        [1, 1, 1],
-        [2, 2, 2],
-        [2664539263, 2664539263, 2664539263],
-        [false, false, false],
+        1,
+        2,
+        2664539263,
+        false,
       )
       expect(await ERC5727ExampleContract.tokenSupplyInSlot(1)).to.equal(2)
       expect(await ERC5727ExampleContract.slotCount()).to.equal(2)
       expect(await ERC5727ExampleContract.slotByIndex(1)).to.equal(2)
       expect(await ERC5727ExampleContract.tokenInSlotByIndex(2, 2)).to.equal(4)
+      expect(await ERC5727ExampleContract.soulsInSlot(1)).to.equal(2)
+      expect(await ERC5727ExampleContract.soulsInSlot(2)).to.equal(2)
+      expect(await ERC5727ExampleContract.soulInSlotByIndex(1, 0)).to.equal(tokenOwnerSoul1.address)
+      expect(await ERC5727ExampleContract.soulInSlotByIndex(1, 1)).to.equal(tokenOwnerSoul2.address)
+      expect(await ERC5727ExampleContract.soulInSlotByIndex(2, 0)).to.equal(tokenOwnerSoul1.address)
+      expect(await ERC5727ExampleContract.soulInSlotByIndex(2, 1)).to.equal(tokenOwnerSoul2.address)
+      expect(await ERC5727ExampleContract.slotCountOfSoul(tokenOwnerSoul1.address)).to.equal(2)
+      expect(await ERC5727ExampleContract.slotCountOfSoul(tokenOwnerSoul2.address)).to.equal(2)
+      expect(await ERC5727ExampleContract.slotOfSoulByIndex(tokenOwnerSoul1.address, 0)).to.equal(1)
+      expect(await ERC5727ExampleContract.slotOfSoulByIndex(tokenOwnerSoul1.address, 1)).to.equal(2)
+      expect(await ERC5727ExampleContract.slotOfSoulByIndex(tokenOwnerSoul2.address, 0)).to.equal(1)
+      expect(await ERC5727ExampleContract.slotOfSoulByIndex(tokenOwnerSoul2.address, 1)).to.equal(2)
+      expect(await ERC5727ExampleContract.isSoulInSlot(tokenOwnerSoul1.address, 1)).to.equal(true)
+      expect(await ERC5727ExampleContract.isSoulInSlot(tokenOwnerSoul1.address, 2)).to.equal(true)
     })
 
     it('Revert when index overflows', async function () {

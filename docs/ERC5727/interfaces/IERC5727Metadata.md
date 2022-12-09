@@ -2,7 +2,7 @@
 
 > ERC5727 Soulbound Token Metadata Interface
 
-_This extension allows querying the metadata of soulbound tokens._
+_This extension allows querying the metadata of soulbound tokens. interfaceId = 0xba3e1a9d_
 
 ## Methods
 

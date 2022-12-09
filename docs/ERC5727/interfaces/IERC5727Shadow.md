@@ -2,7 +2,7 @@
 
 > ERC5727 Soulbound Token Shadow Interface
 
-_This extension allows restricting the visibility of specific soulbound tokens._
+_This extension allows restricting the visibility of specific soulbound tokens. interfaceId = 0x3475cd68_
 
 ## Methods
 

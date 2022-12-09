@@ -2,7 +2,7 @@
 
 > ERC5727 Soulbound Token Slot Enumerable Interface
 
-_This extension allows querying information about slots._
+_This extension allows querying information about slots. interfaceId = 0x3b741b9e_
 
 ## Methods
 
@@ -61,6 +61,29 @@ Get if the `soul` owns any valid tokens.
 | Name | Type | Description                         |
 | ---- | ---- | ----------------------------------- |
 | \_0  | bool | if the `soul` owns any valid tokens |
+
+### isSoulInSlot
+
+```solidity
+function isSoulInSlot(address soul, uint256 slot) external view returns (bool)
+```
+
+Check if a soul is in a slot.
+
+_MUST revert if the slot does not exist._
+
+#### Parameters
+
+| Name | Type    | Description                                         |
+| ---- | ------- | --------------------------------------------------- |
+| soul | address | The soul whose existence in the slot is queried for |
+| slot | uint256 | The slot whose existence of the soul is queried for |
+
+#### Returns
+
+| Name | Type | Description                                          |
+| ---- | ---- | ---------------------------------------------------- |
+| \_0  | bool | True if the `soul` is in the `slot`, false otherwise |
 
 ### isValid
 
@@ -142,6 +165,26 @@ Get the total number of slots.
 | ---- | ------- | -------------------------- |
 | \_0  | uint256 | The total number of slots. |
 
+### slotCountOfSoul
+
+```solidity
+function slotCountOfSoul(address soul) external view returns (uint256)
+```
+
+Get the number of slots of a soul.
+
+#### Parameters
+
+| Name | Type    | Description                                   |
+| ---- | ------- | --------------------------------------------- |
+| soul | address | The soul whose number of slots is queried for |
+
+#### Returns
+
+| Name | Type    | Description                       |
+| ---- | ------- | --------------------------------- |
+| \_0  | uint256 | The number of slots of the `soul` |
+
 ### slotOf
 
 ```solidity
@@ -163,6 +206,52 @@ _MUST revert if the `tokenId` does not exist_
 | Name | Type    | Description           |
 | ---- | ------- | --------------------- |
 | \_0  | uint256 | The slot of `tokenId` |
+
+### slotOfSoulByIndex
+
+```solidity
+function slotOfSoulByIndex(address soul, uint256 index) external view returns (uint256)
+```
+
+Get the slot with `index` of the `soul`.
+
+_MUST revert if the `index` exceed the number of slots of the `soul`._
+
+#### Parameters
+
+| Name  | Type    | Description                         |
+| ----- | ------- | ----------------------------------- |
+| soul  | address | The soul whose slot is queried for. |
+| index | uint256 | The index of the slot queried for   |
+
+#### Returns
+
+| Name | Type    | Description             |
+| ---- | ------- | ----------------------- |
+| \_0  | uint256 | The slot is queried for |
+
+### soulInSlotByIndex
+
+```solidity
+function soulInSlotByIndex(uint256 slot, uint256 index) external view returns (address)
+```
+
+Get the soul with `index` of the `slot`.
+
+_MUST revert if the `index` exceed the number of souls in the `slot`._
+
+#### Parameters
+
+| Name  | Type    | Description                         |
+| ----- | ------- | ----------------------------------- |
+| slot  | uint256 | The slot whose soul is queried for. |
+| index | uint256 | The index of the soul queried for   |
+
+#### Returns
+
+| Name | Type    | Description             |
+| ---- | ------- | ----------------------- |
+| \_0  | address | The soul is queried for |
 
 ### soulOf
 
@@ -199,6 +288,28 @@ Get the total number of souls.
 | Name | Type    | Description               |
 | ---- | ------- | ------------------------- |
 | \_0  | uint256 | The total number of souls |
+
+### soulsInSlot
+
+```solidity
+function soulsInSlot(uint256 slot) external view returns (uint256)
+```
+
+Get the number of souls in a slot.
+
+_MUST revert if the slot does not exist._
+
+#### Parameters
+
+| Name | Type    | Description                                   |
+| ---- | ------- | --------------------------------------------- |
+| slot | uint256 | The slot whose number of souls is queried for |
+
+#### Returns
+
+| Name | Type    | Description                       |
+| ---- | ------- | --------------------------------- |
+| \_0  | uint256 | The number of souls in the `slot` |
 
 ### supportsInterface
 

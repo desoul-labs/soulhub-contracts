@@ -2,7 +2,7 @@
 
 > ERC5727 Soulbound Token Consensus Interface
 
-_This extension allows minting and revocation of tokens by community voting._
+_This extension allows minting and revocation of tokens by community voting. interfaceId = 0x3ba738d1_
 
 ## Methods
 
