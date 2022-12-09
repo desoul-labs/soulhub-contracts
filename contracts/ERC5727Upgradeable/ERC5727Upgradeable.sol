@@ -270,13 +270,7 @@ abstract contract ERC5727Upgradeable is
         string memory baseURI = _baseURI();
         return
             bytes(baseURI).length > 0
-                ? string(
-                    abi.encodePacked(
-                        baseURI,
-                        "contracts/",
-                        address(this).toHexString()
-                    )
-                )
+                ? string(abi.encodePacked(baseURI, address(this).toHexString()))
                 : "";
     }
 

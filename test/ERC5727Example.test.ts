@@ -32,7 +32,7 @@ describe('ERC5727Test', function () {
       'Soularis',
       'SOUL',
       [voterSoul1.address, voterSoul2.address],
-      'https://api.soularis.io/',
+      'https://api.soularis.io/contracts/',
     )
     await ERC5727ExampleContract.deployed()
     return {
