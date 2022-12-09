@@ -30,5 +30,6 @@ module.exports = {
       'error',
       { anonymous: 'always', named: 'never', asyncArrow: 'always' },
     ],
+    '@typescript-eslint/restrict-template-expressions': 'off',
   },
 }
