@@ -21,7 +21,7 @@ describe('ERC5727 Registration', function () {
       'Registry',
       'REG',
       '/soularis/test',
-      'https://api.soularis.io/registries/',
+      'https://api.soularis.io/contracts/',
     )
     const registrant = await ERC5727RegistrantFactory.deploy('Registrant', 'REG')
 
@@ -34,7 +34,7 @@ describe('ERC5727 Registration', function () {
   it('Should register ERC5727 collection to the registry', async function () {
     const { registry, registrant, owner } = await loadFixture(deployRegistryFixture)
     expect(await registry.registryURI()).to.equal(
-      `https://api.soularis.io/registries/${registry.address.toLowerCase()}`,
+      `https://api.soularis.io/contracts/${registry.address.toLowerCase()}`,
     )
 
     await registrant.register(registry.address)
