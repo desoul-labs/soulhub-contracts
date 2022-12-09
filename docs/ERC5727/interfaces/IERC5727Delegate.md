@@ -2,7 +2,7 @@
 
 > ERC5727 Soulbound Token Delegate Interface
 
-_This extension allows delegation of (batch) minting and revocation of tokens to operator(s)._
+_This extension allows delegation of (batch) minting and revocation of tokens to operator(s). interfaceId = 0x3da384b4_
 
 ## Methods
 

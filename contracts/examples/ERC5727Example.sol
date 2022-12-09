@@ -19,6 +19,19 @@ contract ERC5727Example is
 {
     string private _baseTokenURI;
 
+    struct Slot {
+        uint256 maxSupply;
+        uint256 tokenCounts;
+        uint256[] tokenFees;
+        uint256[] tokenValues;
+        uint256[] tokenExpiryDates;
+        bool[] tokenShadowed;
+    }
+
+    mapping(uint256 => Slot) private _slots;
+
+    event SlotAdded(uint256 indexed slot, uint256 maxSupply);
+
     constructor(
         string memory name,
         string memory symbol,
@@ -57,13 +70,64 @@ contract ERC5727Example is
         ERC5727Shadow._beforeView(tokenId);
     }
 
+    function createSlot(
+        uint256 maxSupply,
+        uint256[] calldata values,
+        uint256[] calldata expiryDates,
+        uint256[] calldata fees,
+        bool[] calldata shadowed
+    ) external virtual onlyOwner {
+        uint256 nextSlot = slotCount();
+        _slots[nextSlot] = Slot({
+            maxSupply: maxSupply,
+            tokenCounts: values.length,
+            tokenFees: fees,
+            tokenValues: values,
+            tokenExpiryDates: expiryDates,
+            tokenShadowed: shadowed
+        });
+        _addSlot(nextSlot);
+
+        emit SlotAdded(nextSlot, maxSupply);
+    }
+
+    function collect(uint256 slotId) external payable virtual {
+        require(slotId < slotCount(), "ERC5727Example: invalid slot");
+        require(
+            !isSoulInSlot(_msgSender(), slotId),
+            "ERC5727Example: soul already collected"
+        );
+
+        Slot storage slot = _slots[slotId];
+        require(
+            tokenSupplyInSlot(slotId) < slot.maxSupply * slot.tokenCounts,
+            "ERC5727Example: slot is full"
+        );
+
+        uint256 feeSum = 0;
+        for (uint256 i = 0; i < slot.tokenCounts; i++) {
+            feeSum += slot.tokenFees[i];
+        }
+        require(msg.value >= feeSum, "ERC5727Example: insufficient fee");
+
+        for (uint256 i = 0; i < slot.tokenCounts; i++) {
+            payable(owner()).transfer(slot.tokenFees[i]);
+
+            uint256 tokenId = _mint(_msgSender(), slot.tokenValues[i], slotId);
+            if (slot.tokenShadowed[i]) {
+                _shadow(tokenId);
+            }
+            _setExpiryDate(tokenId, slot.tokenExpiryDates[i]);
+        }
+    }
+
     function mint(
         address soul,
         uint256 value,
         uint256 slot,
         uint256 expiryDate,
         bool shadowed
-    ) external payable virtual onlyOwner {
+    ) external virtual onlyOwner {
         uint256 tokenId = _mint(soul, value, slot);
         if (shadowed) {
             _shadow(tokenId);
@@ -77,15 +141,15 @@ contract ERC5727Example is
 
     function mintBatch(
         address[] calldata souls,
-        uint256[] calldata values,
-        uint256[] calldata slots,
-        uint256[] calldata expiryDates,
-        bool[] calldata shadowed
-    ) external payable virtual onlyOwner {
-        uint256[] memory tokenIds = _mintBatch(souls, values, slots);
+        uint256 value,
+        uint256 slot,
+        uint256 expiryDate,
+        bool shadowed
+    ) external virtual onlyOwner {
+        uint256[] memory tokenIds = _mintBatch(souls, value, slot);
         for (uint256 i = 0; i < tokenIds.length; i++) {
-            if (shadowed[i]) _shadow(tokenIds[i]);
-            _setExpiryDate(tokenIds[i], expiryDates[i]);
+            if (shadowed) _shadow(tokenIds[i]);
+            _setExpiryDate(tokenIds[i], expiryDate);
         }
     }
 

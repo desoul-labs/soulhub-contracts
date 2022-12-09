@@ -98,12 +98,12 @@ abstract contract ERC5727EnumerableUpgradeable is
 
     function _mintBatch(
         address[] memory souls,
-        uint256[] memory values,
-        uint256[] memory slots
+        uint256 value,
+        uint256 slot
     ) internal virtual returns (uint256[] memory tokenIds) {
         tokenIds = new uint256[](souls.length);
         for (uint256 i = 0; i < souls.length; i++) {
-            tokenIds[i] = _mint(souls[i], values[i], slots[i]);
+            tokenIds[i] = _mint(souls[i], value, slot);
         }
     }
 

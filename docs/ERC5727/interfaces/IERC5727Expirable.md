@@ -2,7 +2,7 @@
 
 > ERC5727 Soulbound Token Expirable Interface
 
-_This extension allows soulbound tokens to be expired._
+_This extension allows soulbound tokens to be expired. interfaceId = 0x2a8cf5aa_
 
 ## Methods
 
