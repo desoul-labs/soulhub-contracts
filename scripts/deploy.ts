@@ -8,7 +8,7 @@ async function main(): Promise<void> {
   const erc5727Factory = await ethers.getContractFactory('ERC5727ExampleUpgradeable')
   const erc5727 = await erc5727Factory.deploy()
   await erc5727.deployed()
-  await sleep(5000)
+  await sleep(10000)
   console.log('ERC5727Example contract deployed to:', erc5727.address)
   // await tenderly.verify({
   //   name: 'ERC5727Example',
@@ -17,6 +17,8 @@ async function main(): Promise<void> {
   await run('verify:verify', {
     address: erc5727.address,
     constructorArguments: [],
+  }).catch((error) => {
+    console.info(error)
   })
 
   const registryFactory = await ethers.getContractFactory('ERC5727RegistryExample')
@@ -32,7 +34,7 @@ async function main(): Promise<void> {
   //   name: 'ERC5727RegistryExample',
   //   address: registry.address,
   // })
-  await sleep(5000)
+  await sleep(10000)
   await run('verify:verify', {
     address: registry.address,
     constructorArguments: [
@@ -41,6 +43,8 @@ async function main(): Promise<void> {
       '/soularis/example',
       'https://soularis-demo.s3.ap-northeast-1.amazonaws.com/registry/',
     ],
+  }).catch((error) => {
+    console.info(error)
   })
 
   const minimalProxyDeployerFactory = await ethers.getContractFactory('MinimalProxyDeployer')
@@ -53,10 +57,12 @@ async function main(): Promise<void> {
   //   name: 'MinimalProxyFactory',
   //   address: minimalProxyDeployer.address,
   // })
-  await sleep(5000)
+  await sleep(10000)
   await run('verify:verify', {
     address: minimalProxyDeployer.address,
     constructorArguments: ['0x0000000000000000000000000000000000000000'],
+  }).catch((error) => {
+    console.info(error)
   })
 
   const souldropFactory = await ethers.getContractFactory('Souldrop')
@@ -67,10 +73,12 @@ async function main(): Promise<void> {
   //   name: 'Souldrop',
   //   address: souldrop.address,
   // })
-  await sleep(5000)
+  await sleep(10000)
   await run('verify:verify', {
     address: souldrop.address,
     constructorArguments: [],
+  }).catch((error) => {
+    console.info(error)
   })
 }
 
