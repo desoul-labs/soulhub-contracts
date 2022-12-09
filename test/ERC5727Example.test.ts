@@ -32,7 +32,7 @@ describe('ERC5727Test', function () {
       'Soularis',
       'SOUL',
       [voterSoul1.address, voterSoul2.address],
-      'https://soularis-demo.s3.ap-northeast-1.amazonaws.com/perk/',
+      'https://api.soularis.io/',
     )
     await ERC5727ExampleContract.deployed()
     return {
@@ -239,6 +239,20 @@ describe('ERC5727Test', function () {
       const { ERC5727ExampleContract } = await loadFixture(deployTokenFixture)
       expect(await ERC5727ExampleContract.name()).equal('Soularis')
       expect(await ERC5727ExampleContract.symbol()).equal('SOUL')
+    })
+
+    it('The URIs are correct', async function () {
+      const { ERC5727ExampleContract, tokenOwnerSoul1 } = await loadFixture(deployTokenFixture)
+      await ERC5727ExampleContract.mint(tokenOwnerSoul1.address, 1, 1, 2664539263, false)
+      expect(await ERC5727ExampleContract.contractURI()).equal(
+        `https://api.soularis.io/contracts/${ERC5727ExampleContract.address.toLowerCase()}`,
+      )
+      expect(await ERC5727ExampleContract.tokenURI(0)).equal(
+        `https://api.soularis.io/contracts/${ERC5727ExampleContract.address.toLowerCase()}/tokens/0`,
+      )
+      expect(await ERC5727ExampleContract.slotURI(1)).equal(
+        `https://api.soularis.io/contracts/${ERC5727ExampleContract.address.toLowerCase()}/slots/1`,
+      )
     })
   })
 

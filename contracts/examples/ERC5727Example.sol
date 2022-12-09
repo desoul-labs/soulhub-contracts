@@ -235,4 +235,16 @@ contract ERC5727Example is
         _beforeView(tokenId);
         return _getTokenOrRevert(tokenId);
     }
+
+    function slotURI(
+        uint256 slot
+    )
+        public
+        view
+        virtual
+        override(ERC5727, ERC5727SlotEnumerable)
+        returns (string memory)
+    {
+        return ERC5727SlotEnumerable.slotURI(slot);
+    }
 }

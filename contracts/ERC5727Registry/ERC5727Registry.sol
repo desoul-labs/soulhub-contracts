@@ -29,6 +29,7 @@ abstract contract ERC5727Registry is
     using ERC165Checker for address;
     using EnumerableMap for EnumerableMap.AddressToUintMap;
     using EnumerableMap for EnumerableMap.UintToAddressMap;
+    using Strings for address;
 
     string private _name;
     string private _namespace;
@@ -119,7 +120,10 @@ abstract contract ERC5727Registry is
     }
 
     function registryURI() external view returns (string memory) {
-        return _uri;
+        return
+            bytes(_uri).length > 0
+                ? string(abi.encodePacked(_uri, address(this).toHexString()))
+                : "";
     }
 
     function _isERC5727Contract(address addr) internal view returns (bool) {
