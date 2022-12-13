@@ -18,7 +18,7 @@ importers:
       '@openzeppelin/contracts-upgradeable': 4.8.0
       '@openzeppelin/hardhat-upgrades': 1.21.0
       '@primitivefi/hardhat-dodoc': 0.2.3
-      '@tenderly/hardhat-tenderly': 1.3.2
+      '@tenderly/hardhat-tenderly': 1.3.3
       '@typechain/hardhat': 6.1.5
       '@types/node': 18.11.14
       '@typescript-eslint/eslint-plugin': 5.46.1
@@ -55,7 +55,7 @@ importers:
       '@nomiclabs/hardhat-solhint': 2.0.1_hardhat@2.12.4
       '@openzeppelin/hardhat-upgrades': 1.21.0_wpjb2kdig2dneiifn3k46zns2e
       '@primitivefi/hardhat-dodoc': 0.2.3_k6ipuz4r3mr57kc7swy3xst3wq
-      '@tenderly/hardhat-tenderly': 1.3.2_gdtwn3by3naableaig4yn5tk3q
+      '@tenderly/hardhat-tenderly': 1.3.3_gdtwn3by3naableaig4yn5tk3q
       '@typechain/hardhat': 6.1.5_w5qvcidahwqdkdc2rzrbmling4
       '@types/node': 18.11.14
       '@typescript-eslint/eslint-plugin': 5.46.1_nmnbazfjbrz4xhi3jjifu4qaiq
@@ -1156,8 +1156,8 @@ packages:
       antlr4ts: 0.5.0-alpha.4
     dev: true
 
-  /@tenderly/hardhat-tenderly/1.3.2_gdtwn3by3naableaig4yn5tk3q:
-    resolution: {integrity: sha512-0kE0gv8RIu0N5JXKCCfYcydsMgGgj8z3qCvbeD/ynBKwOBvbFB+NZFRyTHNopbeaUKO7Q3bGFau8vS1B0EWS0g==}
+  /@tenderly/hardhat-tenderly/1.3.3_gdtwn3by3naableaig4yn5tk3q:
+    resolution: {integrity: sha512-+hisJhM3i2zhHm3Y61ZmgDBvqtsCnQugYMzxejChwPmEdVHkJOrX8XdWj8AeTMmviLaz32hemOmoHg1adYfypg==}
     peerDependencies:
       hardhat: ^2.10.2
       tenderly: ^0.0.3
