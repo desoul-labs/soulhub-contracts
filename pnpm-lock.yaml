@@ -32,7 +32,7 @@ importers:
       husky: 8.0.2
       lint-staged: 13.1.0
       prettier: 2.8.1
-      prettier-plugin-solidity: 1.0.0
+      prettier-plugin-solidity: 1.1.0
       solhint: 3.3.7
       solhint-plugin-prettier: 0.0.5
       solidity-coverage: 0.8.2
@@ -69,9 +69,9 @@ importers:
       husky: 8.0.2
       lint-staged: 13.1.0
       prettier: 2.8.1
-      prettier-plugin-solidity: 1.0.0_prettier@2.8.1
+      prettier-plugin-solidity: 1.1.0_prettier@2.8.1
       solhint: 3.3.7
-      solhint-plugin-prettier: 0.0.5_jdplsnt6mjkbqaau5trubnm4my
+      solhint-plugin-prettier: 0.0.5_5qm2f75adda5gpe7mn77axh7fu
       solidity-coverage: 0.8.2_hardhat@2.12.4
       standard-version: 9.5.0
       ts-node: 10.9.1_jxffkbksrxcpjftzfp475m3gy4
@@ -5870,8 +5870,8 @@ packages:
       fast-diff: 1.2.0
     dev: true
 
-  /prettier-plugin-solidity/1.0.0_prettier@2.8.1:
-    resolution: {integrity: sha512-gRJCeZ7imbWtNYN2SudjJoPmka5r6jcd2cSTV6FC3pVCtY6LFZbeQQjpKufUEp88hXBAAnkOTOh7TA5xwj9M3A==}
+  /prettier-plugin-solidity/1.1.0_prettier@2.8.1:
+    resolution: {integrity: sha512-5gq0T49ifvXH/6x1STuKyWjTUgi6ICoV65yNtKlg/vZEvocFtSpByJOJICBfqPwNsnv4vhhWIqkLGSUJmWum2w==}
     engines: {node: '>=12'}
     peerDependencies:
       prettier: ^2.3.0
@@ -6557,7 +6557,7 @@ packages:
     transitivePeerDependencies:
       - debug
 
-  /solhint-plugin-prettier/0.0.5_jdplsnt6mjkbqaau5trubnm4my:
+  /solhint-plugin-prettier/0.0.5_5qm2f75adda5gpe7mn77axh7fu:
     resolution: {integrity: sha512-7jmWcnVshIrO2FFinIvDQmhQpfpS2rRRn3RejiYgnjIE68xO2bvrYvjqVNfrio4xH9ghOqn83tKuTzLjEbmGIA==}
     peerDependencies:
       prettier: ^1.15.0 || ^2.0.0
@@ -6565,7 +6565,7 @@ packages:
     dependencies:
       prettier: 2.8.1
       prettier-linter-helpers: 1.0.0
-      prettier-plugin-solidity: 1.0.0_prettier@2.8.1
+      prettier-plugin-solidity: 1.1.0_prettier@2.8.1
     dev: true
 
   /solhint/2.3.1:
