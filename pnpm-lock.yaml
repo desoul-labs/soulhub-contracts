@@ -16,7 +16,7 @@ importers:
       '@nomiclabs/hardhat-solhint': 2.0.1
       '@openzeppelin/contracts': 4.8.0
       '@openzeppelin/contracts-upgradeable': 4.8.0
-      '@openzeppelin/hardhat-upgrades': 1.21.0
+      '@openzeppelin/hardhat-upgrades': 1.22.0
       '@primitivefi/hardhat-dodoc': 0.2.3
       '@tenderly/hardhat-tenderly': 1.4.1
       '@typechain/hardhat': 6.1.5
@@ -53,7 +53,7 @@ importers:
       '@nomiclabs/hardhat-ethers': 2.2.1_yab2ug5tvye2kp6e24l5x3z7uy
       '@nomiclabs/hardhat-etherscan': 3.1.3_hardhat@2.12.4
       '@nomiclabs/hardhat-solhint': 2.0.1_hardhat@2.12.4
-      '@openzeppelin/hardhat-upgrades': 1.21.0_wpjb2kdig2dneiifn3k46zns2e
+      '@openzeppelin/hardhat-upgrades': 1.22.0_wpjb2kdig2dneiifn3k46zns2e
       '@primitivefi/hardhat-dodoc': 0.2.3_k6ipuz4r3mr57kc7swy3xst3wq
       '@tenderly/hardhat-tenderly': 1.4.1_5lhts5x4nshxu2pskzfe7o3ic4
       '@typechain/hardhat': 6.1.5_w5qvcidahwqdkdc2rzrbmling4
@@ -1016,8 +1016,8 @@ packages:
     resolution: {integrity: sha512-AGuwhRRL+NaKx73WKRNzeCxOCOCxpaqF+kp8TJ89QzAipSwZy/NoflkWaL9bywXFRhIzXt8j38sfF7KBKCPWLw==}
     dev: false
 
-  /@openzeppelin/hardhat-upgrades/1.21.0_wpjb2kdig2dneiifn3k46zns2e:
-    resolution: {integrity: sha512-Kwl7IN0Hlhj4HluMTTl0DrtU90OI/Q6rG3sAyd2pv3fababe9EuZqs9DydOlkWM45JwTzC+eBzX3TgHsqI13eA==}
+  /@openzeppelin/hardhat-upgrades/1.22.0_wpjb2kdig2dneiifn3k46zns2e:
+    resolution: {integrity: sha512-1qyZnDaxl0C8tne7ykNRa/fxw3FrNCY2M3fGuCiQW5DDkJoXhLgm3JVsXwl6X7q9mQSrik4vgBbI3ErmxmZTYg==}
     hasBin: true
     peerDependencies:
       '@nomiclabs/hardhat-ethers': ^2.0.0
