@@ -1,7 +1,6 @@
-// SPDX-License-Identifier: CC0-1.0
+// SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 /**
@@ -9,7 +8,7 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
  * @dev See https://eips.ethereum.org/EIPS/eip-3525
  * Note: the ERC-165 identifier for this interface is 0xc97ae3d5.
  */
-interface IERC3525 is IERC165, IERC721 {
+interface IERC3525 is IERC721 {
     /**
      * @dev MUST emit when value of a token is transferred to another token with the same slot,
      *  including zero value transfers (_value == 0) as well as transfers when tokens are created

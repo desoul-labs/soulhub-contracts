@@ -1,156 +1,186 @@
-//SPDX-License-Identifier: MIT
+//SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.0;
-
-import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 import "./ERC5727.sol";
 import "./interfaces/IERC5727Enumerable.sol";
+import "../ERC3525/ERC3525SlotEnumerable.sol";
 
-abstract contract ERC5727Enumerable is ERC5727, IERC5727Enumerable {
-    using Counters for Counters.Counter;
+abstract contract ERC5727Enumerable is
+    IERC5727Enumerable,
+    ERC5727,
+    ERC3525SlotEnumerable
+{
     using EnumerableSet for EnumerableSet.UintSet;
+    using EnumerableSet for EnumerableSet.AddressSet;
+    using EnumerableMap for EnumerableMap.AddressToUintMap;
 
-    mapping(address => EnumerableSet.UintSet) private _indexedTokenIds;
-    mapping(address => uint256) private _numberOfValidTokens;
+    mapping(address => EnumerableSet.UintSet) private _slotsOfOwner;
+    mapping(uint256 => EnumerableSet.AddressSet) private _ownersInSlot;
 
-    Counters.Counter private _emittedCount;
-    Counters.Counter private _soulsCount;
+    mapping(uint256 => EnumerableMap.AddressToUintMap)
+        private _ownerBalanceInSlot;
 
     function supportsInterface(
         bytes4 interfaceId
-    ) public view virtual override(IERC165, ERC5727) returns (bool) {
+    ) public view virtual override(IERC165, ERC3525, ERC5727) returns (bool) {
         return
             interfaceId == type(IERC5727Enumerable).interfaceId ||
             super.supportsInterface(interfaceId);
     }
 
-    function _beforeTokenMint(
-        address issuer,
-        address soul,
-        uint256 tokenId,
-        uint256 value,
-        uint256 slot,
-        bool valid
-    ) internal virtual override {
-        if (_indexedTokenIds[soul].length() == 0) {
-            _soulsCount.increment();
-        }
+    function ownerCount() external view override returns (uint256) {
+        return _allOwners.length();
     }
 
-    function _afterTokenMint(
-        address issuer,
-        address soul,
-        uint256 tokenId,
-        uint256 value,
-        uint256 slot,
-        bool valid
-    ) internal virtual override {
-        _indexedTokenIds[soul].add(tokenId);
-        if (valid) {
-            _numberOfValidTokens[soul] += 1;
-        }
-    }
-
-    function _mint(
-        address soul,
-        uint256 value,
-        uint256 slot
-    ) internal virtual returns (uint256 tokenId) {
-        tokenId = _emittedCount.current();
-        _mintUnsafe(soul, tokenId, value, slot, true);
-        emit Minted(soul, tokenId, value);
-        _emittedCount.increment();
-    }
-
-    function _mint(
-        address issuer,
-        address soul,
-        uint256 value,
-        uint256 slot
-    ) internal virtual returns (uint256 tokenId) {
-        tokenId = _emittedCount.current();
-        _mintUnsafe(issuer, soul, tokenId, value, slot, true);
-        emit Minted(soul, tokenId, value);
-        _emittedCount.increment();
-    }
-
-    function _mintBatch(
-        address[] memory souls,
-        uint256 value,
-        uint256 slot
-    ) internal virtual returns (uint256[] memory tokenIds) {
-        tokenIds = new uint256[](souls.length);
-        for (uint256 i = 0; i < souls.length; i++) {
-            tokenIds[i] = _mint(souls[i], value, slot);
-        }
-    }
-
-    function _afterTokenRevoke(uint256 tokenId) internal virtual override {
-        assert(_numberOfValidTokens[_getTokenOrRevert(tokenId).soul] > 0);
-        _numberOfValidTokens[_getTokenOrRevert(tokenId).soul] -= 1;
-    }
-
-    function _beforeTokenDestroy(uint256 tokenId) internal virtual override {
-        address soul = soulOf(tokenId);
-
-        if (_getTokenOrRevert(tokenId).valid) {
-            assert(_numberOfValidTokens[soul] > 0);
-            _numberOfValidTokens[soul] -= 1;
-        }
-        EnumerableSet.remove(_indexedTokenIds[soul], tokenId);
-        if (EnumerableSet.length(_indexedTokenIds[soul]) == 0) {
-            assert(_soulsCount.current() > 0);
-            _soulsCount.decrement();
-        }
-    }
-
-    function _increaseEmittedCount() internal {
-        _emittedCount.increment();
-    }
-
-    function _tokensOfSoul(
-        address soul
-    ) internal view returns (uint256[] memory tokenIds) {
-        tokenIds = _indexedTokenIds[soul].values();
-        require(tokenIds.length != 0, "ERC5727: the soul has no token");
-    }
-
-    function emittedCount() public view virtual override returns (uint256) {
-        return _emittedCount.current();
-    }
-
-    function soulsCount() public view virtual override returns (uint256) {
-        return _soulsCount.current();
-    }
-
-    function balanceOf(
-        address soul
-    ) public view virtual override returns (uint256) {
-        return _indexedTokenIds[soul].length();
-    }
-
-    function hasValid(
-        address soul
-    ) public view virtual override returns (bool) {
-        return _numberOfValidTokens[soul] > 0;
-    }
-
-    function tokenOfSoulByIndex(
-        address soul,
+    function ownerByIndex(
         uint256 index
-    ) public view virtual override returns (uint256) {
-        EnumerableSet.UintSet storage ids = _indexedTokenIds[soul];
-        require(
-            index < EnumerableSet.length(ids),
-            "ERC5727: Token does not exist"
+    ) external view override returns (address) {
+        if (index >= _allOwners.length())
+            revert IndexOutOfBounds(index, _allOwners.length());
+
+        return _allOwners.at(index);
+    }
+
+    function ownerCountInSlot(
+        uint256 slot
+    ) external view override returns (uint256) {
+        if (!_slotExists(slot)) revert NotFound(slot);
+
+        return _ownersInSlot[slot].length();
+    }
+
+    function ownerInSlotByIndex(
+        uint256 slot,
+        uint256 index
+    ) external view override returns (address) {
+        if (!_slotExists(slot)) revert NotFound(slot);
+        uint256 ownerCountBySlot = _ownersInSlot[slot].length();
+        if (index >= ownerCountBySlot)
+            revert IndexOutOfBounds(index, ownerCountBySlot);
+
+        return _ownersInSlot[slot].at(index);
+    }
+
+    function slotCountOfOwner(
+        address owner
+    ) external view override returns (uint256) {
+        if (owner == address(0)) revert NullValue();
+
+        return _slotsOfOwner[owner].length();
+    }
+
+    function slotOfOwnerByIndex(
+        address owner,
+        uint256 index
+    ) external view override returns (uint256) {
+        if (owner == address(0)) revert NullValue();
+        uint256 slotCountByOwner = _slotsOfOwner[owner].length();
+        if (index >= slotCountByOwner)
+            revert IndexOutOfBounds(index, slotCountByOwner);
+
+        return _slotsOfOwner[owner].at(index);
+    }
+
+    function ownerBalanceInSlot(
+        address owner,
+        uint256 slot
+    ) external view returns (uint256) {
+        if (owner == address(0)) revert NullValue();
+        if (!_slotExists(slot)) revert NotFound(slot);
+
+        return _ownerBalanceInSlot[slot].get(owner);
+    }
+
+    function _incrementOwnerBalanceInSlot(
+        address owner,
+        uint256 slot
+    ) internal virtual {
+        if (owner == address(0)) revert NullValue();
+
+        uint256 balanceInSlot = _ownerBalanceInSlot[slot].get(owner);
+        unchecked {
+            _ownerBalanceInSlot[slot].set(owner, balanceInSlot + 1);
+        }
+    }
+
+    function _decrementOwnerBalanceInSlot(
+        address owner,
+        uint256 slot
+    ) internal virtual {
+        if (owner == address(0)) revert NullValue();
+
+        uint256 balanceInSlot = _ownerBalanceInSlot[slot].get(owner);
+        unchecked {
+            _ownerBalanceInSlot[slot].set(owner, balanceInSlot - 1);
+        }
+    }
+
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 firstTokenId,
+        uint256 batchSize
+    ) internal virtual override(ERC721Enumerable, ERC5727) {
+        super._beforeTokenTransfer(from, to, firstTokenId, batchSize);
+    }
+
+    function _burn(
+        uint256 tokenId
+    ) internal virtual override(ERC3525, ERC5727) {
+        super._burn(tokenId);
+    }
+
+    function _beforeValueTransfer(
+        address from,
+        address to,
+        uint256 fromTokenId,
+        uint256 toTokenId,
+        uint256 slot,
+        uint256 value
+    ) internal virtual override(ERC3525SlotEnumerable, ERC5727) {
+        super._beforeValueTransfer(
+            from,
+            to,
+            fromTokenId,
+            toTokenId,
+            slot,
+            value
         );
-        return ids.at(index);
+
+        if (from == address(0) && fromTokenId == 0) {
+            _incrementOwnerBalanceInSlot(to, slot);
+
+            _slotsOfOwner[to].add(slot);
+        }
+
+        value;
     }
 
-    function tokenByIndex(
-        uint256 index
-    ) public view virtual override returns (uint256) {
-        return index;
+    function _afterValueTransfer(
+        address from,
+        address to,
+        uint256 fromTokenId,
+        uint256 toTokenId,
+        uint256 slot,
+        uint256 value
+    ) internal virtual override(ERC3525SlotEnumerable, ERC3525) {
+        super._afterValueTransfer(
+            from,
+            to,
+            fromTokenId,
+            toTokenId,
+            slot,
+            value
+        );
+
+        if (to == address(0) && toTokenId == 0) {
+            _decrementOwnerBalanceInSlot(from, slot);
+
+            if (_ownerBalanceInSlot[slot].get(from) == 0) {
+                _slotsOfOwner[from].remove(slot);
+            }
+        }
+
+        value;
     }
 }

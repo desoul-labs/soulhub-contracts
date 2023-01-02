@@ -1,93 +1,68 @@
-//SPDX-License-Identifier: CC0-1.0
+//SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import "../../ERC3525/interfaces/IERC3525.sol";
+import "../../ERC5192/interfaces/IERC5192.sol";
+import "../../ERC5484/interfaces/IERC5484.sol";
 
 /**
  * @title ERC5727 Soulbound Token Interface
  * @dev The core interface of the ERC5727 standard.
- *    interfaceId = 0x35f61d8a
  */
-interface IERC5727 is IERC165 {
-    /**
-     * @dev MUST emit when a token is minted.
-     * @param soul The address that the token is minted to
-     * @param tokenId The token minted
-     * @param value The value of the token minted
-     */
-    event Minted(address indexed soul, uint256 indexed tokenId, uint256 value);
-
+interface IERC5727 is IERC3525, IERC5192, IERC5484 {
     /**
      * @dev MUST emit when a token is revoked.
-     * @param soul The owner soul of the revoked token
-     * @param tokenId The revoked token
+     * @param from The address of the owner
+     * @param tokenId The token id
      */
-    event Revoked(address indexed soul, uint256 indexed tokenId);
+    event Revoked(address indexed from, uint256 indexed tokenId);
 
     /**
-     * @dev MUST emit when a token is charged.
-     * @param tokenId The token to charge
-     * @param value The value to charge
+     * @dev MUST emit when a token is verified.
+     * @param by The address that initiated the verification
+     * @param tokenId The token id
+     * @param result The result of the verification
      */
-    event Charged(uint256 indexed tokenId, uint256 value);
+    event Verified(address indexed by, uint256 indexed tokenId, bool result);
 
     /**
-     * @dev MUST emit when a token is consumed.
-     * @param tokenId The token to consume
-     * @param value The value to consume
+     * @dev MUST emit when the verifier of a token is changed.
+     * @param tokenId The token id
+     * @param verifier The address of the new verifier
      */
-    event Consumed(uint256 indexed tokenId, uint256 value);
+    event UpdateVerifier(uint256 indexed tokenId, address indexed verifier);
 
     /**
-     * @dev MUST emit when a token is destroyed.
-     * @param soul The owner soul of the destroyed token
-     * @param tokenId The token to destroy.
+     * @dev MUST emit when the verifier of a slot is changed.
+     * @param slot The slot id
+     * @param verifier The address of the new verifier
      */
-    event Destroyed(address indexed soul, uint256 indexed tokenId);
+    event UpdateSlotVerifier(uint256 indexed slot, address indexed verifier);
 
     /**
-     * @dev MUST emit when the slot of a token is set or changed.
-     * @param tokenId The token of which slot is set or changed
-     * @param oldSlot The previous slot of the token
-     * @param newSlot The updated slot of the token
-     */
-    event SlotChanged(
-        uint256 indexed tokenId,
-        uint256 indexed oldSlot,
-        uint256 indexed newSlot
-    );
-
-    /**
-     * @notice Get the value of a token.
+     * @notice Set the verifier of a token.
      * @dev MUST revert if the `tokenId` does not exist
-     * @param tokenId the token for which to query the balance
-     * @return The value of `tokenId`
+     * @param tokenId the token for which to set the verifier
+     * @param verifier the address of the verifier
      */
-    function valueOf(uint256 tokenId) external view returns (uint256);
+    function setVerifier(uint256 tokenId, address verifier) external;
 
     /**
-     * @notice Get the slot of a token.
-     * @dev MUST revert if the `tokenId` does not exist
-     * @param tokenId the token for which to query the slot
-     * @return The slot of `tokenId`
+     * @notice Set the verifier for all tokens in a slot.
+     * @dev MUST revert if the `slot` is not a valid slot.
+     * @param slot the slot for which to set the verifier
+     * @param verifier the address of the verifier
      */
-    function slotOf(uint256 tokenId) external view returns (uint256);
+    function setSlotVerifier(uint256 slot, address verifier) external;
 
     /**
-     * @notice Get the owner soul of a token.
+     * @notice Get the verifier of a token.
      * @dev MUST revert if the `tokenId` does not exist
-     * @param tokenId the token for which to query the owner soul
-     * @return The address of the owner soul of `tokenId`
+     * @param tokenId the token for which to query the verifier
+     * @return The address of the verifier of `tokenId`
      */
-    function soulOf(uint256 tokenId) external view returns (address);
-
-    /**
-     * @notice Get the validity of a token.
-     * @dev MUST revert if the `tokenId` does not exist
-     * @param tokenId the token for which to query the validity
-     * @return If the token is valid
-     */
-    function isValid(uint256 tokenId) external view returns (bool);
+    function verifierOf(uint256 tokenId) external view returns (address);
 
     /**
      * @notice Get the issuer of a token.
@@ -96,4 +71,50 @@ interface IERC5727 is IERC165 {
      * @return The address of the issuer of `tokenId`
      */
     function issuerOf(uint256 tokenId) external view returns (address);
+
+    /**
+     * @notice Issue a token in a specified slot with certain value and a verifier to an address.
+     * @dev MUST revert if the `to` address is the zero address.
+     *      MUST revert if the `verifier` address is the zero address.
+     * @param to The address to issue the token to
+     * @param tokenId The token id
+     * @param amount The amount of the token
+     * @param slot The slot to issue the token in
+     * @param burnAuth The burn authorization of the token
+     * @param data Additional data used to issue the token
+     */
+    function issue(
+        address to,
+        uint256 tokenId,
+        uint256 amount,
+        uint256 slot,
+        BurnAuth burnAuth,
+        bytes calldata data
+    ) external payable;
+
+    /**
+     * @notice Revoke a token from an address.
+     * @dev MUST revert if the `from` address is the zero address.
+     *      MUST revert if the `from` address is not the owner of the token.
+     * @param tokenId The token id
+     * @param amount The amount of the token
+     * @param data The additional data used to revoke the token
+     */
+    function revoke(
+        uint256 tokenId,
+        uint256 amount,
+        bytes calldata data
+    ) external payable;
+
+    /**
+     * @notice Verify a token from an address.
+     * @dev MUST revert if the `by` address is the zero address.
+     * @param tokenId The token id
+     * @param data The additional data used to verify the token
+     * @return A boolean indicating whether the token is verified
+     */
+    function verify(
+        uint256 tokenId,
+        bytes calldata data
+    ) external returns (bool);
 }

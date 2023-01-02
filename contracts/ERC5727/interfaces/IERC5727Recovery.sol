@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: CC0-1.0
+// SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.0;
 
 import "./IERC5727.sol";
@@ -6,14 +6,20 @@ import "./IERC5727.sol";
 /**
  * @title ERC5727 Soulbound Token Recovery Interface
  * @dev This extension allows recovering soulbound tokens from an address provided its signature.
- *    interfaceId = 0x379f4e66
  */
 interface IERC5727Recovery is IERC5727 {
     /**
-     * @notice Recover the tokens of `soul` with `signature`.
-     * @dev MUST revert if the signature is invalid.
-     * @param soul The soul whose tokens are recovered
-     * @param signature The signature signed by the `soul`
+     * @notice Emitted when the tokens of `owner` are recovered.
+     * @param oldOwner The owner whose tokens are recovered
+     * @param newOwner The new owner of the tokens
      */
-    function recover(address soul, bytes memory signature) external;
+    event Recovered(address indexed oldOwner, address indexed newOwner);
+
+    /**
+     * @notice Recover the tokens of `owner` with `signature`.
+     * @dev MUST revert if the signature is invalid.
+     * @param owner The owner whose tokens are recovered
+     * @param signature The signature signed by the `owner`
+     */
+    function recover(address owner, bytes memory signature) external;
 }

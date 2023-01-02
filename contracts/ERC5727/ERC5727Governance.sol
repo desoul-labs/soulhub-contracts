@@ -1,160 +1,115 @@
-// SPDX-License-Identifier: MIT
-
+// SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 import "./ERC5727.sol";
 import "./interfaces/IERC5727Governance.sol";
-import "./ERC5727Enumerable.sol";
 
-abstract contract ERC5727Governance is ERC5727Enumerable, IERC5727Governance {
+abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
     using EnumerableSet for EnumerableSet.AddressSet;
+    using EnumerableSet for EnumerableSet.UintSet;
 
     uint256 private _approvalRequestCount;
 
-    struct ApprovalRequest {
-        address creator;
+    struct IssueApproval {
+        address to;
+        address tokenId;
         uint256 value;
         uint256 slot;
+        BurnAuth burnAuth;
     }
 
-    mapping(uint256 => ApprovalRequest) private _approvalRequests;
+    struct RevokeApproval {
+        address tokenId;
+        uint256 value;
+    }
+
+    EnumerableSet.UintSet private _allApprovals;
+    mapping(uint256 => IssueApproval) private _issueApprovals;
+    mapping(uint256 => RevokeApproval) private _revokeApprovals;
+
+    mapping(uint256 => address) private _approvalCreators;
 
     EnumerableSet.AddressSet private _votersArray;
 
-    mapping(address => mapping(uint256 => mapping(address => bool)))
-        private _mintApprovals;
-
-    mapping(uint256 => mapping(address => uint256)) private _mintApprovalCounts;
-
-    mapping(address => mapping(uint256 => bool)) private _revokeApprovals;
-
-    mapping(uint256 => uint256) private _revokeApprovalCounts;
-
-    bytes32 public constant VOTER_ROLE = keccak256("VOTER_ROLE");
+    bytes32 public constant VOTER_ROLE = bytes32(uint256(0x02));
 
     constructor(
         string memory name_,
         string memory symbol_,
+        address admin_,
         address[] memory voters_
-    ) ERC5727(name_, symbol_) {
-        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
-        for (uint256 i = 0; i < voters_.length; i++) {
+    ) ERC5727(name_, symbol_, admin_) {
+        for (uint256 i = 0; i < voters_.length; ) {
             _votersArray.add(voters_[i]);
             _setupRole(VOTER_ROLE, voters_[i]);
+
+            unchecked {
+                i++;
+            }
         }
     }
 
-    function voters() public view virtual override returns (address[] memory) {
-        return _votersArray.values();
+    function voterCount() public view virtual override returns (uint256) {
+        return _votersArray.length();
     }
 
-    function approveMint(
-        address soul,
-        uint256 approvalRequestId
-    ) public virtual override onlyRole(VOTER_ROLE) {
-        require(
-            !_mintApprovals[_msgSender()][approvalRequestId][soul],
-            "ERC5727Governance: You already approved this address"
-        );
-        _mintApprovals[_msgSender()][approvalRequestId][soul] = true;
-        _mintApprovalCounts[approvalRequestId][soul] += 1;
-        if (
-            _mintApprovalCounts[approvalRequestId][soul] ==
-            _votersArray.length()
-        ) {
-            _resetMintApprovals(approvalRequestId, soul);
-            _mint(
-                _approvalRequests[approvalRequestId].creator,
-                soul,
-                _approvalRequests[approvalRequestId].value,
-                _approvalRequests[approvalRequestId].slot
-            );
-        }
-    }
+    function createRevokeApproval(
+        address from,
+        uint256 tokenId,
+        uint256 amount,
+        bytes calldata data
+    ) external virtual override {
+        from;
+        tokenId;
+        amount;
+        data;
 
-    function approveRevoke(
-        uint256 tokenId
-    ) public virtual override onlyRole(VOTER_ROLE) {
-        require(
-            !_revokeApprovals[_msgSender()][tokenId],
-            "ERC5727Governance: You already approved this address"
-        );
-        _revokeApprovals[_msgSender()][tokenId] = true;
-        _revokeApprovalCounts[tokenId] += 1;
-        if (_revokeApprovalCounts[tokenId] == _votersArray.length()) {
-            _resetRevokeApprovals(tokenId);
-            _revoke(tokenId);
-        }
+        revert NotSupported();
     }
 
     function supportsInterface(
         bytes4 interfaceId
-    ) public view virtual override(IERC165, ERC5727Enumerable) returns (bool) {
+    ) public view virtual override(IERC165, ERC5727) returns (bool) {
         return
             interfaceId == type(IERC5727Governance).interfaceId ||
             super.supportsInterface(interfaceId);
     }
 
-    function _resetMintApprovals(
-        uint256 approvalRequestId,
-        address soul
-    ) private {
-        for (uint256 i = 0; i < _votersArray.length(); i++) {
-            _mintApprovals[_votersArray.at(i)][approvalRequestId][soul] = false;
-        }
-        _mintApprovalCounts[approvalRequestId][soul] = 0;
+    function removeApproval(uint256 approvalId) external virtual override {
+        if (_msgSender() != _approvalCreators[approvalId])
+            revert Unauthorized(_msgSender());
+
+        _allApprovals.remove(approvalId);
+        delete _issueApprovals[approvalId];
+        delete _revokeApprovals[approvalId];
+        delete _approvalCreators[approvalId];
+
+        emit ApprovalUpdated(approvalId, address(0));
     }
 
-    function _resetRevokeApprovals(uint256 tokenId) private {
-        for (uint256 i = 0; i < _votersArray.length(); i++) {
-            _revokeApprovals[_votersArray.at(i)][tokenId] = false;
-        }
-        _revokeApprovalCounts[tokenId] = 0;
-    }
-
-    function createApprovalRequest(
-        uint256 value,
-        uint256 slot
-    ) external virtual override {
-        require(
-            value != 0,
-            "ERC5727Governance: Value of Approval Request cannot be 0"
-        );
-        _approvalRequests[_approvalRequestCount] = ApprovalRequest(
-            _msgSender(),
-            value,
-            slot
-        );
-        _approvalRequestCount++;
-    }
-
-    function removeApprovalRequest(
-        uint256 approvalRequestId
-    ) external virtual override {
-        require(
-            _msgSender() == _approvalRequests[approvalRequestId].creator,
-            "ERC5727Governance: You are not the creator"
-        );
-        delete _approvalRequests[approvalRequestId];
-    }
-
-    function addVoter(address newVoter) public onlyOwner {
+    function addVoter(address newVoter) public onlyAdmin {
+        if (newVoter == address(0)) revert NullValue();
         require(
             !hasRole(VOTER_ROLE, newVoter),
             "ERC5727Governance: newVoter is already a voter"
         );
         _votersArray.add(newVoter);
         _setupRole(VOTER_ROLE, newVoter);
+
+        emit VoterAdded(newVoter);
     }
 
-    function removeVoter(address voter) public onlyOwner {
+    function removeVoter(address voter) public onlyAdmin {
+        if (voter == address(0)) revert NullValue();
         require(
             _votersArray.contains(voter),
             "ERC5727Governance: Voter does not exist"
         );
         _revokeRole(VOTER_ROLE, voter);
         _votersArray.remove(voter);
+
+        emit VoterRemoved(voter);
     }
 }
