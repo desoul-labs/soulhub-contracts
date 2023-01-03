@@ -232,12 +232,14 @@ contract ERC5727 is AccessControlEnumerable, ERC3525, IERC5727 {
     function _verify(
         address by,
         uint256 tokenId
-    ) internal virtual returns (bool) {
-        bool result = _verifiers[tokenId] == _issuers[tokenId];
+    ) internal virtual returns (bool result) {
+        uint256 slot = _slots[tokenId];
+
+        result = _slotVerifiers[slot] != address(0)
+            ? _slotVerifiers[slot] == _issuers[tokenId]
+            : _verifiers[tokenId] == _issuers[tokenId];
 
         emit Verified(by, tokenId, result);
-
-        return result;
     }
 
     function _beforeTokenTransfer(
