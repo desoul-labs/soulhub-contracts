@@ -6,13 +6,14 @@ import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "./ERC5727.sol";
 import "./interfaces/IERC5727Governance.sol";
 
-abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
+contract ERC5727Governance is IERC5727Governance, ERC5727 {
     using EnumerableSet for EnumerableSet.AddressSet;
     using EnumerableSet for EnumerableSet.UintSet;
 
     uint256 private _approvalRequestCount;
 
     struct IssueApproval {
+        address creator;
         address to;
         address tokenId;
         uint256 value;
@@ -20,18 +21,9 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
         BurnAuth burnAuth;
     }
 
-    struct RevokeApproval {
-        address tokenId;
-        uint256 value;
-    }
+    mapping(uint256 => IssueApproval) private _approvals;
 
-    EnumerableSet.UintSet private _allApprovals;
-    mapping(uint256 => IssueApproval) private _issueApprovals;
-    mapping(uint256 => RevokeApproval) private _revokeApprovals;
-
-    mapping(uint256 => address) private _approvalCreators;
-
-    EnumerableSet.AddressSet private _votersArray;
+    EnumerableSet.AddressSet private _voters;
 
     bytes32 public constant VOTER_ROLE = bytes32(uint256(0x02));
 
@@ -42,7 +34,7 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
         address[] memory voters_
     ) ERC5727(name_, symbol_, admin_) {
         for (uint256 i = 0; i < voters_.length; ) {
-            _votersArray.add(voters_[i]);
+            _voters.add(voters_[i]);
             _setupRole(VOTER_ROLE, voters_[i]);
 
             unchecked {
@@ -51,8 +43,74 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
         }
     }
 
-    function voterCount() public view virtual override returns (uint256) {
-        return _votersArray.length();
+    function requestApproval(
+        address to,
+        uint256 tokenId,
+        uint256 amount,
+        uint256 slot,
+        BurnAuth burnAuth,
+        bytes calldata data
+    ) external virtual override {
+        revert("Not implemented");
+    }
+
+    function removeApprovalRequest(
+        uint256 approvalId
+    ) external virtual override {
+        if (_approvals[approvalId].creator == address(0))
+            revert NotFound(approvalId);
+        if (_msgSender() != _approvals[approvalId].creator)
+            revert Unauthorized(_msgSender());
+
+        delete _approvals[approvalId];
+
+        emit ApprovalUpdate(approvalId, address(0), ApprovalStatus.Removed);
+    }
+
+    function addVoter(address newVoter) public virtual onlyAdmin {
+        if (newVoter == address(0)) revert NullValue();
+        require(
+            !hasRole(VOTER_ROLE, newVoter),
+            "ERC5727Governance: newVoter is already a voter"
+        );
+        _voters.add(newVoter);
+        _setupRole(VOTER_ROLE, newVoter);
+    }
+
+    function removeVoter(address voter) public virtual onlyAdmin {
+        if (voter == address(0)) revert NullValue();
+        require(
+            _voters.contains(voter),
+            "ERC5727Governance: Voter does not exist"
+        );
+        _revokeRole(VOTER_ROLE, voter);
+        _voters.remove(voter);
+    }
+
+    function voterCount() public view virtual returns (uint256) {
+        return _voters.length();
+    }
+
+    function voterByIndex(uint256 index) public view virtual returns (address) {
+        revert("Not implemented");
+    }
+
+    function isVoter(address voter) public view virtual returns (bool) {
+        revert("Not implemented");
+    }
+
+    function voteApproval(
+        uint256 approvalId,
+        bool approve,
+        bytes calldata data
+    ) external virtual override {
+        revert("Not implemented");
+    }
+
+    function approvalURI(
+        uint256 approvalId
+    ) public view virtual override returns (string memory) {
+        revert("Not implemented");
     }
 
     function supportsInterface(
@@ -61,43 +119,5 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
         return
             interfaceId == type(IERC5727Governance).interfaceId ||
             super.supportsInterface(interfaceId);
-    }
-
-    function removeApprovalRequest(
-        uint256 approvalId
-    ) external virtual override {
-        if (_msgSender() != _approvalCreators[approvalId])
-            revert Unauthorized(_msgSender());
-
-        _allApprovals.remove(approvalId);
-        delete _issueApprovals[approvalId];
-        delete _revokeApprovals[approvalId];
-        delete _approvalCreators[approvalId];
-
-        emit ApprovalUpdate(approvalId, address(0), ApprovalStatus.Removed);
-    }
-
-    function addVoter(address newVoter) public onlyAdmin {
-        if (newVoter == address(0)) revert NullValue();
-        require(
-            !hasRole(VOTER_ROLE, newVoter),
-            "ERC5727Governance: newVoter is already a voter"
-        );
-        _votersArray.add(newVoter);
-        _setupRole(VOTER_ROLE, newVoter);
-
-        emit VoterAdded(newVoter);
-    }
-
-    function removeVoter(address voter) public onlyAdmin {
-        if (voter == address(0)) revert NullValue();
-        require(
-            _votersArray.contains(voter),
-            "ERC5727Governance: Voter does not exist"
-        );
-        _revokeRole(VOTER_ROLE, voter);
-        _votersArray.remove(voter);
-
-        emit VoterRemoved(voter);
     }
 }

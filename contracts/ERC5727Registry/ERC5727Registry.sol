@@ -22,8 +22,8 @@ abstract contract ERC5727Registry is
     ERC165,
     IERC5727Registry,
     IERC5727RegistryMetadata,
-    ERC721Enumerable,
-    ERC721URIStorage
+    ERC721URIStorage,
+    ERC721Enumerable
 {
     using Counters for Counters.Counter;
     using ERC165Checker for address;
