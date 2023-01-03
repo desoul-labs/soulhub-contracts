@@ -55,20 +55,6 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
         return _votersArray.length();
     }
 
-    function createRevokeApproval(
-        address from,
-        uint256 tokenId,
-        uint256 amount,
-        bytes calldata data
-    ) external virtual override {
-        from;
-        tokenId;
-        amount;
-        data;
-
-        revert NotSupported();
-    }
-
     function supportsInterface(
         bytes4 interfaceId
     ) public view virtual override(IERC165, ERC5727) returns (bool) {
@@ -77,7 +63,9 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
             super.supportsInterface(interfaceId);
     }
 
-    function removeApproval(uint256 approvalId) external virtual override {
+    function removeApprovalRequest(
+        uint256 approvalId
+    ) external virtual override {
         if (_msgSender() != _approvalCreators[approvalId])
             revert Unauthorized(_msgSender());
 
@@ -86,7 +74,7 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
         delete _revokeApprovals[approvalId];
         delete _approvalCreators[approvalId];
 
-        emit ApprovalUpdated(approvalId, address(0));
+        emit ApprovalUpdate(approvalId, address(0), ApprovalStatus.Removed);
     }
 
     function addVoter(address newVoter) public onlyAdmin {

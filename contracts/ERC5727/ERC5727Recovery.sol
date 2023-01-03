@@ -24,15 +24,24 @@ abstract contract ERC5727Recovery is IERC5727Recovery, ERC5727Enumerable {
         uint256 balance = balanceOf(from);
         for (uint256 i = 0; i < balance; ) {
             uint256 tokenId = tokenOfOwnerByIndex(from, i);
+            Token memory token = getToken(tokenId);
 
-            _unlocked[tokenId] = true;
-            _transfer(from, recipient, tokenId);
-            _unlocked[tokenId] = false;
+            _revoke(from, tokenId, token.value);
+            _issue(
+                token.issuer,
+                recipient,
+                tokenId,
+                token.value,
+                token.slot,
+                token.burnAuth
+            );
 
             unchecked {
                 i++;
             }
         }
+
+        emit Recovered(from, recipient);
     }
 
     function supportsInterface(

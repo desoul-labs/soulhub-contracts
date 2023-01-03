@@ -3,14 +3,13 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "../../ERC3525/interfaces/IERC3525.sol";
-import "../../ERC5192/interfaces/IERC5192.sol";
 import "../../ERC5484/interfaces/IERC5484.sol";
 
 /**
  * @title ERC5727 Soulbound Token Interface
  * @dev The core interface of the ERC5727 standard.
  */
-interface IERC5727 is IERC3525, IERC5192, IERC5484 {
+interface IERC5727 is IERC3525, IERC5484 {
     /**
      * @dev MUST emit when a token is revoked.
      * @param from The address of the owner

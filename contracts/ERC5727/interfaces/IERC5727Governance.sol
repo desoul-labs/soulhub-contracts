@@ -5,15 +5,26 @@ import "./IERC5727.sol";
 
 /**
  * @title ERC5727 Soulbound Token Governance Interface
- * @dev This extension allows issuing and revocation of tokens by community voting.
+ * @dev This extension allows issuing of tokens by community voting.
  */
 interface IERC5727Governance is IERC5727 {
+    enum ApprovalStatus {
+        Pending,
+        Approved,
+        Rejected,
+        Removed
+    }
+
     /**
-     * @notice Emitted when a token issuance or revocation approval is changed.
+     * @notice Emitted when a token issuance approval is changed.
      * @param approvalId The id of the approval
      * @param creator The creator of the approval, zero address if the approval is removed
      */
-    event ApprovalUpdated(uint256 indexed approvalId, address indexed creator);
+    event ApprovalUpdate(
+        uint256 indexed approvalId,
+        address indexed creator,
+        ApprovalStatus status
+    );
 
     /**
      * @notice Emitted when a voter approves an approval.
@@ -86,7 +97,7 @@ interface IERC5727Governance is IERC5727 {
      * @param burnAuth The burn authorization of the token to mint
      * @param data The additional data used to mint the token
      */
-    function createIssueApproval(
+    function requestApproval(
         address to,
         uint256 tokenId,
         uint256 amount,
@@ -96,28 +107,12 @@ interface IERC5727Governance is IERC5727 {
     ) external;
 
     /**
-     * @notice Create an approval of a token.
-     * @dev MUST revert if the caller is not a voter.
-     *      MUST revert if the `from` address is the zero address.
-     * @param from The address by which the token is revoked
-     * @param tokenId The id of the token to revoke
-     * @param amount The amount of the token to revoke
-     * @param data The additional data used to revoke the token
-     */
-    function createRevokeApproval(
-        address from,
-        uint256 tokenId,
-        uint256 amount,
-        bytes calldata data
-    ) external;
-
-    /**
      * @notice Remove `approvalId` approval request.
      * @dev MUST revert if the caller is not the creator of the approval request.
      *      MUST revert if the approval request is already approved or rejected or non-existent.
      * @param approvalId The approval to remove
      */
-    function removeApproval(uint256 approvalId) external;
+    function removeApprovalRequest(uint256 approvalId) external;
 
     /**
      * @notice Approve `approvalId` approval request.

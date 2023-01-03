@@ -18,12 +18,20 @@ contract ERC5727 is AccessControlEnumerable, ERC3525, IERC5727 {
     using EnumerableSet for EnumerableSet.UintSet;
     using EnumerableSet for EnumerableSet.AddressSet;
 
-    mapping(uint256 => bool) internal _unlocked;
+    struct Token {
+        address owner;
+        uint256 value;
+        uint256 slot;
+        address issuer;
+        address verifier;
+        BurnAuth burnAuth;
+    }
 
     mapping(uint256 => address) internal _issuers;
     mapping(uint256 => address) internal _verifiers;
-    mapping(uint256 => address) internal _slotVerifiers;
     mapping(uint256 => BurnAuth) internal _burnAuths;
+
+    mapping(uint256 => address) internal _slotVerifiers;
 
     bytes32 public constant MINTER_ROLE = bytes32(uint256(0x01));
     bytes32 public constant BURNER_ROLE = bytes32(uint256(0x02));
@@ -60,14 +68,6 @@ contract ERC5727 is AccessControlEnumerable, ERC3525, IERC5727 {
         address admin
     ) ERC3525(name_, symbol_, 18) {
         _setupRole(DEFAULT_ADMIN_ROLE, admin);
-    }
-
-    function locked(
-        uint256 tokenId
-    ) public view virtual override returns (bool) {
-        _requireMinted(tokenId);
-
-        return !_unlocked[tokenId];
     }
 
     function setVerifier(
@@ -246,7 +246,7 @@ contract ERC5727 is AccessControlEnumerable, ERC3525, IERC5727 {
         uint256 firstTokenId,
         uint256 batchSize
     ) internal virtual override {
-        if (locked(firstTokenId)) revert TokenLocked(firstTokenId);
+        if (from != address(0) || to != address(0)) revert Soulbound();
 
         super._beforeTokenTransfer(from, to, firstTokenId, batchSize);
     }
@@ -259,8 +259,7 @@ contract ERC5727 is AccessControlEnumerable, ERC3525, IERC5727 {
         uint256 slot,
         uint256 value
     ) internal virtual override {
-        if (locked(fromTokenId) || locked(toTokenId))
-            revert TokenLocked(fromTokenId);
+        if (from != address(0) || to != address(0)) revert Soulbound();
 
         super._beforeValueTransfer(
             from,
@@ -270,6 +269,22 @@ contract ERC5727 is AccessControlEnumerable, ERC3525, IERC5727 {
             slot,
             value
         );
+    }
+
+    function getToken(
+        uint256 tokenId
+    ) public view virtual returns (Token memory) {
+        _requireMinted(tokenId);
+
+        return
+            Token(
+                _ownerOf(tokenId),
+                _values[tokenId],
+                _slots[tokenId],
+                _issuers[tokenId],
+                _verifiers[tokenId],
+                _burnAuths[tokenId]
+            );
     }
 
     function supportsInterface(

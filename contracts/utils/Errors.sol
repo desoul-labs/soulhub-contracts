@@ -9,7 +9,7 @@ error NotFound(uint256 tokenId);
 
 error Conflict(uint256 tokenId);
 
-error TokenLocked(uint256 tokenId);
+error Soulbound();
 
 error BadReceiver(address to);
 

@@ -10,10 +10,10 @@ import "./IERC5727.sol";
 interface IERC5727Recovery is IERC5727 {
     /**
      * @notice Emitted when the tokens of `owner` are recovered.
-     * @param oldOwner The owner whose tokens are recovered
-     * @param newOwner The new owner of the tokens
+     * @param from The owner whose tokens are recovered
+     * @param to The new owner of the tokens
      */
-    event Recovered(address indexed oldOwner, address indexed newOwner);
+    event Recovered(address indexed from, address indexed to);
 
     /**
      * @notice Recover the tokens of `owner` with `signature`.
