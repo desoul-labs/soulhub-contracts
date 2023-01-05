@@ -6,9 +6,9 @@ interface IERC5496 {
      * @notice Emitted when `owner` changes the `privilege holder` of a NFT.
      */
     event PrivilegeAssigned(
-        uint256 tokenId,
-        uint256 privilegeId,
-        address user,
+        address indexed user,
+        uint256 indexed tokenId,
+        uint256 indexed privilegeId,
         uint256 expires
     );
 

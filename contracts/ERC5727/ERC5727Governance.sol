@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
-
 import "./ERC5727.sol";
 import "./interfaces/IERC5727Governance.sol";
 

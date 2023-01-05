@@ -5,9 +5,9 @@ error Unauthorized(address from);
 
 error MethodNotAllowed(address from);
 
-error NotFound(uint256 tokenId);
+error NotFound(uint256 id);
 
-error Conflict(uint256 tokenId);
+error Conflict(uint256 id);
 
 error Soulbound();
 
@@ -27,12 +27,16 @@ error InsufficientBalance(uint256 balance, uint256 amount);
 
 error PastDate();
 
-error Expired(uint256 tokenId);
+error Expired(uint256 id);
 
-error NotRenewable(uint256 tokenId);
+error NotRenewable(uint256 id);
 
 error AlreadyRegistered(address registry);
 
 error NotRegistered(address registry);
 
 error InvalidRegistry(address registry);
+
+error NotClaimable();
+
+error AlreadyClaimed();
