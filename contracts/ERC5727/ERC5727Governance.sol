@@ -23,7 +23,7 @@ contract ERC5727Governance is IERC5727Governance, ERC5727 {
 
     EnumerableSet.AddressSet private _voters;
 
-    bytes32 public constant VOTER_ROLE = bytes32(uint256(0x02));
+    bytes32 public constant VOTER_ROLE = bytes32(uint256(0x03));
 
     constructor(
         string memory name_,
