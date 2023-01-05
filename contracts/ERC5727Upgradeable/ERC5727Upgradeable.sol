@@ -14,7 +14,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 import "./interfaces/IERC5727Upgradeable.sol";
 import "./interfaces/IERC5727MetadataUpgradeable.sol";
-import "../ERC3525/IERC3525Metadata.sol";
+import "../ERC3525/interfaces/IERC3525Metadata.sol";
 
 abstract contract ERC5727Upgradeable is
     Initializable,

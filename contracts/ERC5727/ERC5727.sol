@@ -197,7 +197,7 @@ contract ERC5727 is AccessControlEnumerable, ERC3525, IERC5727 {
     }
 
     function _burn(uint256 tokenId) internal virtual override {
-        ERC3525._burn(tokenId);
+        super._burn(tokenId);
 
         delete _issuers[tokenId];
         delete _verifiers[tokenId];

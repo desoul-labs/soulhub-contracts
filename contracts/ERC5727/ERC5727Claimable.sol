@@ -53,4 +53,12 @@ abstract contract ERC5727Claimable is IERC5727Claimable, ERC5727 {
         _issue(_slotIssuers[slot], to, tokenId, amount, slot, burnAuth);
         _claimed[to].add(slot);
     }
+
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual override(IERC165, ERC5727) returns (bool) {
+        return
+            interfaceId == type(IERC5727Claimable).interfaceId ||
+            super.supportsInterface(interfaceId);
+    }
 }
