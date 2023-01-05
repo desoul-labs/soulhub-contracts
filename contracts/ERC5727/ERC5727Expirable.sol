@@ -14,6 +14,7 @@ abstract contract ERC5727Expirable is IERC5727Expirable, ERC5727 {
         bool isRenewable
     ) public virtual override onlyManager(tokenId) {
         if (!_exists(tokenId)) revert NotFound(tokenId);
+        if (expiration == 0) revert NullValue();
         if (_expiryDate[tokenId] > 0) revert Conflict(tokenId);
         // solhint-disable-next-line not-rely-on-time
         if (expiration < block.timestamp) revert PastDate();
@@ -29,6 +30,7 @@ abstract contract ERC5727Expirable is IERC5727Expirable, ERC5727 {
         uint64 duration
     ) external payable virtual override {
         if (!_exists(tokenId)) revert NotFound(tokenId);
+        if (duration == 0) revert NullValue();
         if (!_isRenewable[tokenId]) revert NotRenewable(tokenId);
         // solhint-disable-next-line not-rely-on-time
         if (_expiryDate[tokenId] < block.timestamp) revert Expired(tokenId);
