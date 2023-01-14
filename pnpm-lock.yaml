@@ -15,7 +15,7 @@ importers:
       '@nomiclabs/hardhat-etherscan': 3.1.5
       '@nomiclabs/hardhat-solhint': 2.0.1
       '@openzeppelin/contracts': 4.8.1
-      '@openzeppelin/contracts-upgradeable': 4.8.0
+      '@openzeppelin/contracts-upgradeable': 4.8.1
       '@openzeppelin/hardhat-upgrades': 1.22.0
       '@primitivefi/hardhat-dodoc': 0.2.3
       '@tenderly/hardhat-tenderly': 1.5.1
@@ -41,7 +41,7 @@ importers:
       typescript: 4.9.4
     dependencies:
       '@openzeppelin/contracts': 4.8.1
-      '@openzeppelin/contracts-upgradeable': 4.8.0
+      '@openzeppelin/contracts-upgradeable': 4.8.1
     devDependencies:
       '@commitlint/cli': 17.4.2
       '@commitlint/config-conventional': 17.4.2
@@ -1008,8 +1008,8 @@ packages:
       - supports-color
     dev: true
 
-  /@openzeppelin/contracts-upgradeable/4.8.0:
-    resolution: {integrity: sha512-5GeFgqMiDlqGT8EdORadp1ntGF0qzWZLmEY7Wbp/yVhN7/B3NNzCxujuI77ktlyG81N3CUZP8cZe3ZAQ/cW10w==}
+  /@openzeppelin/contracts-upgradeable/4.8.1:
+    resolution: {integrity: sha512-1wTv+20lNiC0R07jyIAbHU7TNHKRwGiTGRfiNnA8jOWjKT98g5OgLpYWOi40Vgpk8SPLA9EvfJAbAeIyVn+7Bw==}
     dev: false
 
   /@openzeppelin/contracts/4.8.1:
