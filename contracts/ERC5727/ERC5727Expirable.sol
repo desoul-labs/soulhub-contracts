@@ -45,19 +45,28 @@ abstract contract ERC5727Expirable is IERC5727Expirable, ERC5727 {
     function cancelSubscription(
         uint256 tokenId
     ) external payable virtual override {
-        revert("Not implemented");
+        if (!_exists(tokenId)) revert NotFound(tokenId);
+        if (!_isRenewable[tokenId]) revert NotRenewable(tokenId);
+        if (_expiryDate[tokenId] < block.timestamp) revert Expired(tokenId);
+
+        _expiryDate[tokenId] = 0;
+        _isRenewable[tokenId] = false;
+
+        emit SubscriptionUpdate(tokenId, _expiryDate[tokenId]);
     }
 
     function isRenewable(
         uint256 tokenId
     ) public view virtual override returns (bool) {
-        revert("Not implemented");
+        if (!_exists(tokenId)) revert NotFound(tokenId);
+        return _isRenewable[tokenId];
     }
 
     function expiresAt(
         uint256 tokenId
     ) public view virtual override returns (uint64) {
-        revert("Not implemented");
+        if (!_exists(tokenId)) revert NotFound(tokenId);
+        return _expiryDate[tokenId];
     }
 
     function supportsInterface(
