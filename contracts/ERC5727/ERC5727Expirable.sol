@@ -28,7 +28,7 @@ abstract contract ERC5727Expirable is IERC5727Expirable, ERC5727 {
     function renewSubscription(
         uint256 tokenId,
         uint64 duration
-    ) external payable virtual override {
+    ) external payable virtual override onlyManager(tokenId) {
         if (!_exists(tokenId)) revert NotFound(tokenId);
         if (duration == 0) revert NullValue();
         if (!_isRenewable[tokenId]) revert NotRenewable(tokenId);
@@ -44,15 +44,15 @@ abstract contract ERC5727Expirable is IERC5727Expirable, ERC5727 {
 
     function cancelSubscription(
         uint256 tokenId
-    ) external payable virtual override {
+    ) external payable virtual override onlyManager(tokenId) {
         if (!_exists(tokenId)) revert NotFound(tokenId);
         if (!_isRenewable[tokenId]) revert NotRenewable(tokenId);
         if (_expiryDate[tokenId] < block.timestamp) revert Expired(tokenId);
 
-        _expiryDate[tokenId] = 0;
-        _isRenewable[tokenId] = false;
+        delete _expiryDate[tokenId];
+        delete _isRenewable[tokenId];
 
-        emit SubscriptionUpdate(tokenId, _expiryDate[tokenId]);
+        emit SubscriptionUpdate(tokenId, 0);
     }
 
     function isRenewable(
@@ -66,6 +66,7 @@ abstract contract ERC5727Expirable is IERC5727Expirable, ERC5727 {
         uint256 tokenId
     ) public view virtual override returns (uint64) {
         if (!_exists(tokenId)) revert NotFound(tokenId);
+        if (_expiryDate[tokenId] == 0) revert NoExpiration(_expiryDate[tokenId]);
         return _expiryDate[tokenId];
     }
 
