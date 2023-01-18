@@ -66,7 +66,7 @@ abstract contract ERC5727Expirable is IERC5727Expirable, ERC5727 {
         uint256 tokenId
     ) public view virtual override returns (uint64) {
         if (!_exists(tokenId)) revert NotFound(tokenId);
-        if (_expiryDate[tokenId] == 0) revert NoExpiration(_expiryDate[tokenId]);
+        if (_expiryDate[tokenId] == 0) revert NoExpiration(tokenId);
         return _expiryDate[tokenId];
     }
 
