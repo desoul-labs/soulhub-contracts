@@ -33,7 +33,7 @@ importers:
       lint-staged: 13.1.0
       prettier: 2.8.3
       prettier-plugin-solidity: 1.1.1
-      solhint: 3.3.7
+      solhint: 3.3.8
       solhint-plugin-prettier: 0.0.5
       solidity-coverage: 0.8.2
       standard-version: 9.5.0
@@ -70,7 +70,7 @@ importers:
       lint-staged: 13.1.0
       prettier: 2.8.3
       prettier-plugin-solidity: 1.1.1_prettier@2.8.3
-      solhint: 3.3.7
+      solhint: 3.3.8
       solhint-plugin-prettier: 0.0.5_etbixrn66gkphl2ixkyn7qn63i
       solidity-coverage: 0.8.2_hardhat@2.12.6
       standard-version: 9.5.0
@@ -6672,11 +6672,11 @@ packages:
       - supports-color
     dev: true
 
-  /solhint/3.3.7:
-    resolution: {integrity: sha512-NjjjVmXI3ehKkb3aNtRJWw55SUVJ8HMKKodwe0HnejA+k0d2kmhw7jvpa+MCTbcEgt8IWSwx0Hu6aCo/iYOZzQ==}
+  /solhint/3.3.8:
+    resolution: {integrity: sha512-TkYyJ6uUJCaiqRKuhHhFuoAoyco9Ia+RDKhl3usjG/rkaNk8/LdLRla2Xln7MVdBTaPKNAU8ezTRSit50Yy4qw==}
     hasBin: true
     dependencies:
-      '@solidity-parser/parser': 0.14.3
+      '@solidity-parser/parser': 0.14.5
       ajv: 6.12.6
       antlr4: 4.7.1
       ast-parents: 0.0.1
