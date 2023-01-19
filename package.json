@@ -58,7 +58,7 @@
     "hardhat-gas-reporter": "1.0.9",
     "@nomicfoundation/hardhat-toolbox": "2.0.1",
     "@nomiclabs/hardhat-solhint": "2.0.1",
-    "@openzeppelin/hardhat-upgrades": "1.22.0",
+    "@openzeppelin/hardhat-upgrades": "1.22.1",
     "@primitivefi/hardhat-dodoc": "0.2.3",
     "@tenderly/hardhat-tenderly": "1.5.2",
     "@typechain/hardhat": "6.1.5",
