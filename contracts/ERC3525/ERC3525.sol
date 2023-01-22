@@ -157,12 +157,14 @@ contract ERC3525 is IERC3525, IERC3525Metadata, ERC721Enumerable {
     ) public payable virtual override {
         _spendAllowance(_msgSender(), fromTokenId, value);
 
+        if (_slots[fromTokenId] != _slots[toTokenId])
+            revert Mismatch(_slots[fromTokenId], _slots[toTokenId]);
+
         _transferValue(fromTokenId, toTokenId, value);
     }
 
-    function _mint(address to, uint256 tokenId, uint256 slot) private {
-        if (tokenId == 0) revert NullValue();
-        if (slot == 0) revert NullValue();
+    function _mint(address to, uint256 tokenId, uint256 slot) internal virtual {
+        if (tokenId == 0 || slot == 0) revert NullValue();
 
         ERC721._mint(to, tokenId);
         _slots[tokenId] = slot;
@@ -170,21 +172,18 @@ contract ERC3525 is IERC3525, IERC3525Metadata, ERC721Enumerable {
         emit SlotChanged(tokenId, 0, slot);
     }
 
-    function _mintValue(
-        address to,
-        uint256 tokenId,
-        uint256 slot,
-        uint256 value
-    ) internal virtual {
-        _mint(to, tokenId, slot);
+    function _mintValue(uint256 tokenId, uint256 value) internal virtual {
+        _requireMinted(tokenId);
 
-        _beforeValueTransfer(address(0), to, 0, tokenId, slot, value);
+        address owner = ownerOf(tokenId);
+        uint256 slot = slotOf(tokenId);
+
+        _beforeValueTransfer(address(0), owner, 0, tokenId, slot, value);
 
         _values[tokenId] = value;
-
-        _afterValueTransfer(address(0), to, 0, tokenId, slot, value);
-
         emit TransferValue(0, tokenId, value);
+
+        _afterValueTransfer(address(0), owner, 0, tokenId, slot, value);
     }
 
     function _burn(uint256 tokenId) internal virtual override {
@@ -205,9 +204,12 @@ contract ERC3525 is IERC3525, IERC3525Metadata, ERC721Enumerable {
         emit SlotChanged(tokenId, slot, 0);
     }
 
-    function _burnValue(uint256 tokenId, uint256 value) internal virtual {
+    function _burn(uint256 tokenId, uint256 value) internal virtual {
         address owner = ERC721.ownerOf(tokenId);
         uint256 slot = _slots[tokenId];
+
+        if (_values[tokenId] < value)
+            revert InsufficientBalance(_values[tokenId], value);
 
         _beforeValueTransfer(owner, address(0), tokenId, 0, slot, value);
 
@@ -284,14 +286,12 @@ contract ERC3525 is IERC3525, IERC3525Metadata, ERC721Enumerable {
         uint256 slot,
         uint256 value
     ) internal virtual {
-        if (_values[fromTokenId] < value)
-            revert InsufficientBalance(_values[fromTokenId], value);
-        if (_slots[fromTokenId] != _slots[toTokenId])
-            revert Mismatch(_slots[fromTokenId], _slots[toTokenId]);
-
         from;
         to;
+        fromTokenId;
+        toTokenId;
         slot;
+        value;
     }
 
     function _afterValueTransfer(

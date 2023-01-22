@@ -134,7 +134,8 @@ contract ERC5727 is AccessControlEnumerable, ERC3525, IERC5727 {
         uint256 slot,
         BurnAuth auth
     ) internal virtual {
-        _mintValue(to, tokenId, slot, amount);
+        _mint(to, tokenId, slot);
+        _mintValue(tokenId, amount);
 
         _issuers[tokenId] = from;
         _burnAuths[tokenId] = auth;
@@ -212,7 +213,7 @@ contract ERC5727 is AccessControlEnumerable, ERC3525, IERC5727 {
         if (amount == _values[tokenId]) {
             _burn(tokenId);
         }
-        _burnValue(tokenId, amount);
+        _burn(tokenId, amount);
 
         emit Revoked(from, tokenId);
     }
@@ -248,7 +249,7 @@ contract ERC5727 is AccessControlEnumerable, ERC3525, IERC5727 {
         uint256 firstTokenId,
         uint256 batchSize
     ) internal virtual override {
-        if (from != address(0) || to != address(0)) revert Soulbound();
+        if (from != address(0) && to != address(0)) revert Soulbound();
 
         super._beforeTokenTransfer(from, to, firstTokenId, batchSize);
     }
@@ -261,7 +262,7 @@ contract ERC5727 is AccessControlEnumerable, ERC3525, IERC5727 {
         uint256 slot,
         uint256 value
     ) internal virtual override {
-        if (from != address(0) || to != address(0)) revert Soulbound();
+        if (from != address(0) && to != address(0)) revert Soulbound();
 
         super._beforeValueTransfer(
             from,

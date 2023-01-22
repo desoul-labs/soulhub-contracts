@@ -97,7 +97,7 @@ abstract contract ERC5727Enumerable is
     ) internal virtual {
         if (owner == address(0)) revert NullValue();
 
-        uint256 balanceInSlot = _ownerBalanceInSlot[slot].get(owner);
+        (, uint256 balanceInSlot) = _ownerBalanceInSlot[slot].tryGet(owner);
         unchecked {
             _ownerBalanceInSlot[slot].set(owner, balanceInSlot + 1);
         }
