@@ -103,9 +103,6 @@ abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
 
         if (to == address(0)) {
             _allTokens.remove(tokenId);
-            if (balanceOf(from) == 0) {
-                _allOwners.remove(from);
-            }
         } else if (to != from) {
             _ownedTokens[to].add(tokenId);
         }
