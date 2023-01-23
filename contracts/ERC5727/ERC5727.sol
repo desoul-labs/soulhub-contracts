@@ -7,16 +7,19 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 
 import "../ERC3525/ERC3525.sol";
 import "./interfaces/IERC5727.sol";
 import "./interfaces/IERC5727Metadata.sol";
 import "./interfaces/IERC5727Enumerable.sol";
 
-contract ERC5727 is AccessControlEnumerable, ERC3525, IERC5727 {
+contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727 {
     using EnumerableSet for EnumerableSet.UintSet;
     using EnumerableSet for EnumerableSet.AddressSet;
+    using SignatureChecker for address;
 
     struct Token {
         address owner;
@@ -35,6 +38,11 @@ contract ERC5727 is AccessControlEnumerable, ERC3525, IERC5727 {
 
     bytes32 public constant MINTER_ROLE = bytes32(uint256(0x01));
     bytes32 public constant BURNER_ROLE = bytes32(uint256(0x02));
+
+    bytes32 private constant _TOKEN_TYPEHASH =
+        keccak256(
+            "Token(uint256 tokenId,address owner,uint256 value,uint256 slot,address issuer,address verifier,BurnAuth burnAuth)"
+        );
 
     modifier onlyAdmin() {
         if (!hasRole(DEFAULT_ADMIN_ROLE, _msgSender()))
@@ -65,9 +73,10 @@ contract ERC5727 is AccessControlEnumerable, ERC3525, IERC5727 {
     constructor(
         string memory name_,
         string memory symbol_,
-        address admin
-    ) ERC3525(name_, symbol_, 18) {
-        _setupRole(DEFAULT_ADMIN_ROLE, admin);
+        address admin_,
+        string memory version_
+    ) ERC3525(name_, symbol_, 18) EIP712(name_, version_) {
+        _setupRole(DEFAULT_ADMIN_ROLE, admin_);
     }
 
     function setVerifier(
@@ -95,7 +104,7 @@ contract ERC5727 is AccessControlEnumerable, ERC3525, IERC5727 {
 
     function verifierOf(
         uint256 tokenId
-    ) external view virtual override returns (address) {
+    ) public view virtual override returns (address) {
         address verifier = _verifiers[tokenId];
         if (verifier == address(0)) revert NotFound(tokenId);
 
@@ -104,7 +113,7 @@ contract ERC5727 is AccessControlEnumerable, ERC3525, IERC5727 {
 
     function issuerOf(
         uint256 tokenId
-    ) external view virtual override returns (address) {
+    ) public view virtual override returns (address) {
         address issuer = _issuers[tokenId];
         if (issuer == address(0)) revert NotFound(tokenId);
 
@@ -175,7 +184,7 @@ contract ERC5727 is AccessControlEnumerable, ERC3525, IERC5727 {
 
     function burnAuth(
         uint256 tokenId
-    ) external view virtual override returns (BurnAuth) {
+    ) public view virtual override returns (BurnAuth) {
         _requireMinted(tokenId);
 
         return _burnAuths[tokenId];
@@ -225,20 +234,34 @@ contract ERC5727 is AccessControlEnumerable, ERC3525, IERC5727 {
         if (tokenId == 0) revert NullValue();
         _requireMinted(tokenId);
 
-        result = _verify(_msgSender(), tokenId);
+        result = _verify(_msgSender(), tokenId, data);
 
         data;
     }
 
     function _verify(
         address by,
-        uint256 tokenId
+        uint256 tokenId,
+        bytes memory data
     ) internal virtual returns (bool result) {
-        uint256 slot = _slots[tokenId];
+        bytes memory signature = abi.decode(data, (bytes));
+        bytes32 digest = _hashTypedDataV4(
+            keccak256(
+                abi.encode(
+                    _TOKEN_TYPEHASH,
+                    tokenId,
+                    ownerOf(tokenId),
+                    balanceOf(tokenId),
+                    slotOf(tokenId),
+                    issuerOf(tokenId),
+                    verifierOf(tokenId),
+                    burnAuth(tokenId)
+                )
+            )
+        );
 
-        result = _slotVerifiers[slot] != address(0)
-            ? _slotVerifiers[slot] == _issuers[tokenId]
-            : _verifiers[tokenId] == _issuers[tokenId];
+        address issuer = _issuers[tokenId];
+        result = issuer.isValidSignatureNow(digest, signature);
 
         emit Verified(by, tokenId, result);
     }
