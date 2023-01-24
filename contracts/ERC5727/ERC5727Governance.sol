@@ -10,12 +10,20 @@ contract ERC5727Governance is IERC5727Governance, ERC5727 {
 
     uint256 private _approvalRequestCount;
 
+    enum ApprovalStatus {
+        Pending,
+        Approved,
+        Rejected
+    }
+
     struct IssueApproval {
         address creator;
         address to;
         address tokenId;
         uint256 value;
         uint256 slot;
+        int256 approveNumber;
+        ApprovalStatus approvalStatus;
         BurnAuth burnAuth;
     }
 
@@ -49,7 +57,16 @@ contract ERC5727Governance is IERC5727Governance, ERC5727 {
         BurnAuth burnAuth,
         bytes calldata data
     ) external virtual override {
-        revert("Not implemented");
+        if(isVoter(_msgSender()))
+            revert MethodNotAllowed(_msgSender()); 
+        if(to == address(0)) revert NullValue();
+
+        approvalId = _approvalRequestCount; 
+        _approvalRequestCount = _approvalRequestCount + 1;
+        _approvals[approvalId] = IssueApproval(_msgSender(), to, tokenId, amount, slot, 
+        0, ApprovalStatus.Pending, burnAuth); 
+        
+        emit ApprovalUpdate(approvalId, _msgSender(), ApprovalStatus.Approved);
     }
 
     function removeApprovalRequest(
@@ -61,7 +78,7 @@ contract ERC5727Governance is IERC5727Governance, ERC5727 {
             revert Unauthorized(_msgSender());
 
         delete _approvals[approvalId];
-
+        _approvalRequestCount = _approvalRequestCount - 1;
         emit ApprovalUpdate(approvalId, address(0), ApprovalStatus.Removed);
     }
 
@@ -90,11 +107,14 @@ contract ERC5727Governance is IERC5727Governance, ERC5727 {
     }
 
     function voterByIndex(uint256 index) public view virtual returns (address) {
-        revert("Not implemented");
+        if(index >= voterCount() || index < 0) 
+            revert IndexOutOfBounds(index, voterCount());
+        
+        return _voters.at(index);
     }
 
     function isVoter(address voter) public view virtual returns (bool) {
-        revert("Not implemented");
+        return hasRole(VOTER_ROLE, _msgSender());
     }
 
     function voteApproval(
@@ -102,13 +122,27 @@ contract ERC5727Governance is IERC5727Governance, ERC5727 {
         bool approve,
         bytes calldata data
     ) external virtual override {
-        revert("Not implemented");
+        if(isVoter(_msgSender()))
+            revert MethodNotAllowed(_msgSender()); 
+        //MUST revert if the approval request is already approved or rejected or non-existent.
+        if(_approvals[approvalId].creator == address(0))
+            revert NotFound(approvalId);
+        if(_approvals[approvalId].approvalStatus == ApprovalStatus.Approved) 
+            revert Forbidden(); 
+        if(_approvals[approvalId].approvalStatus == ApprovalStatus.Rejected) 
+            revert Forbidden();   
+
+        _approvals[approvalId].ApprovalStatus = ApprovalStatus.Approved;
+        _approvals[approvalId].approveNumber += (approve == true);
     }
 
     function approvalURI(
         uint256 approvalId
     ) public view virtual override returns (string memory) {
-        revert("Not implemented");
+        if (_approvals[approvalId].creator == address(0))
+            revert NotFound(approvalId);
+
+        return string(abi.encodePacked(_baseURI(), approvalId.toString()));
     }
 
     function supportsInterface(
