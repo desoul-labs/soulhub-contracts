@@ -9,17 +9,19 @@ import "./interfaces/IERC5727Recovery.sol";
 
 abstract contract ERC5727Recovery is IERC5727Recovery, ERC5727Enumerable {
     using SignatureChecker for address;
-    using ECDSA for bytes32;
+
+    bytes32 private constant _RECOVERY_TYPEHASH =
+        keccak256("Recovery(address from,address recipient)");
 
     function recover(
         address from,
         bytes memory signature
     ) public virtual override {
         address recipient = _msgSender();
-        bytes32 messageHash = keccak256(abi.encodePacked(from, recipient));
-        bytes32 signedHash = messageHash.toEthSignedMessageHash();
-        if (!from.isValidSignatureNow(signedHash, signature))
-            revert Forbidden();
+        bytes32 digest = _hashTypedDataV4(
+            keccak256(abi.encodePacked(_RECOVERY_TYPEHASH, from, recipient))
+        );
+        if (!from.isValidSignatureNow(digest, signature)) revert Forbidden();
 
         uint256 balance = balanceOf(from);
         for (uint256 i = 0; i < balance; ) {

@@ -27,10 +27,11 @@ contract ERC5727Example is
         address admin,
         address[] memory voters,
         string memory baseTokenURI,
-        address trustedForwarder
+        address trustedForwarder,
+        string memory version
     )
         ERC2771Context(trustedForwarder)
-        ERC5727Governance(name, symbol, admin, voters)
+        ERC5727Governance(name, symbol, admin, voters, version)
     {
         _baseTokenURI = baseTokenURI;
     }
