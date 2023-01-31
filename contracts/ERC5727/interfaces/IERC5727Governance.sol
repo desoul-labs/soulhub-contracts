@@ -40,8 +40,7 @@ interface IERC5727Governance is IERC5727 {
 
     /**
      * @notice Create an approval of issuing a token.
-     * @dev 
-     
+     * @dev MUST revert if the caller is not a voter.
      *      MUST revert if the `to` address is the zero address.
      * @param to The owner which the token to mint to
      * @param tokenId The id of the token to mint

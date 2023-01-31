@@ -60,12 +60,15 @@ contract ERC5727Governance is IERC5727Governance, ERC5727 {
     ) external virtual override {
         if(isVoter(_msgSender()))
             revert MethodNotAllowed(_msgSender()); 
-        if(to == address(0)) revert NullValue();
+        if(to == address(0)) 
+            revert NullValue();
 
         approvalId = _approvalRequestCount; 
-        _approvalRequestCount = _approvalRequestCount + 1;
-        _approvals[approvalId] = IssueApproval(_msgSender(), to, tokenId, amount, slot, 
-        0, ApprovalStatus.Pending, burnAuth); 
+        
+        unchecked {
+            _approvalRequestCount ++;
+        }
+        _approvals[approvalId] = IssueApproval(_msgSender(), to, tokenId, amount, slot, 0, ApprovalStatus.Pending, burnAuth); 
         
         emit ApprovalUpdate(approvalId, _msgSender(), ApprovalStatus.Approved);
     }
@@ -79,7 +82,11 @@ contract ERC5727Governance is IERC5727Governance, ERC5727 {
             revert Unauthorized(_msgSender());
 
         delete _approvals[approvalId];
-        _approvalRequestCount = _approvalRequestCount - 1;
+
+        unchecked {
+            _approvalRequestCount --;
+        }
+        
         emit ApprovalUpdate(approvalId, address(0), ApprovalStatus.Removed);
     }
 
@@ -115,7 +122,7 @@ contract ERC5727Governance is IERC5727Governance, ERC5727 {
     }
 
     function isVoter(address voter) public view virtual returns (bool) {
-        return hasRole(VOTER_ROLE, _msgSender());
+        return hasRole(VOTER_ROLE, voter);
     }
 
     function voteApproval(
@@ -123,9 +130,8 @@ contract ERC5727Governance is IERC5727Governance, ERC5727 {
         bool approve,
         bytes calldata data
     ) external virtual override {
-        if(isVoter(_msgSender()))
+        if(!isVoter(_msgSender()))
             revert MethodNotAllowed(_msgSender()); 
-        //MUST revert if the approval request is already approved or rejected or non-existent.
         if(_approvals[approvalId].creator == address(0))
             revert NotFound(approvalId);
         if(_approvals[approvalId].approvalStatus == ApprovalStatus.Approved) 
