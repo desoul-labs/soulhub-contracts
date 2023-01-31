@@ -29,6 +29,8 @@ error PastDate();
 
 error Expired(uint256 id);
 
+error NoExpiration(uint256 id);
+
 error NotRenewable(uint256 id);
 
 error AlreadyRegistered(address registry);
