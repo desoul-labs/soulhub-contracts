@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: MIT
+//SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
@@ -14,7 +14,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 import "./interfaces/IERC5727Upgradeable.sol";
 import "./interfaces/IERC5727MetadataUpgradeable.sol";
-import "../ERC3525/IERC3525Metadata.sol";
+import "../ERC3525/interfaces/IERC3525Metadata.sol";
 
 abstract contract ERC5727Upgradeable is
     Initializable,

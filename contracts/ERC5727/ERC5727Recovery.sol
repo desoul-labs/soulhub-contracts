@@ -1,33 +1,49 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
-import "./ERC5727.sol";
-import "./interfaces/IERC5727Recovery.sol";
 import "./ERC5727Enumerable.sol";
+import "./interfaces/IERC5727Recovery.sol";
 
-abstract contract ERC5727Recovery is ERC5727Enumerable, IERC5727Recovery {
-    using ECDSA for bytes32;
+abstract contract ERC5727Recovery is IERC5727Recovery, ERC5727Enumerable {
+    using SignatureChecker for address;
+
+    bytes32 private constant _RECOVERY_TYPEHASH =
+        keccak256("Recovery(address from,address recipient)");
 
     function recover(
-        address soul,
+        address from,
         bytes memory signature
     ) public virtual override {
         address recipient = _msgSender();
-        bytes32 messageHash = keccak256(abi.encodePacked(soul, recipient));
-        bytes32 signedHash = messageHash.toEthSignedMessageHash();
-        require(signedHash.recover(signature) == soul, "Invalid signature");
-        uint256[] memory tokenIds = _tokensOfSoul(soul);
-        for (uint256 i = 0; i < tokenIds.length; i++) {
-            Token storage token = _getTokenOrRevert(tokenIds[i]);
-            address issuer = token.issuer;
-            uint256 value = token.value;
-            uint256 slot = token.slot;
-            bool valid = token.valid;
-            _destroy(tokenIds[i]);
-            _mintUnsafe(issuer, recipient, tokenIds[i], value, slot, valid);
+        bytes32 digest = _hashTypedDataV4(
+            keccak256(abi.encodePacked(_RECOVERY_TYPEHASH, from, recipient))
+        );
+        if (!from.isValidSignatureNow(digest, signature)) revert Forbidden();
+
+        uint256 balance = balanceOf(from);
+        for (uint256 i = 0; i < balance; ) {
+            uint256 tokenId = tokenOfOwnerByIndex(from, i);
+            Token memory token = getToken(tokenId);
+
+            _revoke(from, tokenId, token.value);
+            _issue(
+                token.issuer,
+                recipient,
+                tokenId,
+                token.value,
+                token.slot,
+                token.burnAuth
+            );
+
+            unchecked {
+                i++;
+            }
         }
+
+        emit Recovered(from, recipient);
     }
 
     function supportsInterface(

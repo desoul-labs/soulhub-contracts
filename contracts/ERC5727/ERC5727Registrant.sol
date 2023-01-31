@@ -1,85 +1,59 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+// SPDX-License-Identifier: Apache-2.0
+pragma solidity ^0.8.0;
+
+import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 
 import "./interfaces/IERC5727Registrant.sol";
 import "../ERC5727Registry/interfaces/IERC5727Registry.sol";
 import "./ERC5727.sol";
-import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 
-abstract contract ERC5727Registrant is ERC5727, IERC5727Registrant {
+abstract contract ERC5727Registrant is IERC5727Registrant, ERC5727 {
     using ERC165Checker for address;
     using EnumerableSet for EnumerableSet.AddressSet;
 
-    EnumerableSet.AddressSet internal _registered;
+    EnumerableSet.AddressSet private _registered;
 
-    constructor(
-        string memory name,
-        string memory symbol
-    ) ERC5727(name, symbol) {}
+    function _register(address registry) internal virtual {
+        if (!_isRegistry(registry)) revert InvalidRegistry(registry);
 
-    function _register(address _registry) internal returns (uint256) {
-        require(_isRegistry(_registry), "ERC5727Registrant: not a registry");
+        uint256 id = IERC5727Registry(registry).register(address(this));
+        _registered.add(registry);
 
-        IERC5727Registry registry = IERC5727Registry(_registry);
-        uint256 id = registry.register(address(this));
-
-        emit Registered(_registry);
-
-        return id;
+        emit Registered(registry, id);
     }
 
-    function register(
-        address _registry
-    ) public override onlyOwner returns (uint256) {
-        require(
-            !_registered.contains(_registry),
-            "ERC5727Registrant: already registered"
-        );
-        uint256 id = _register(_registry);
+    function register(address registry) public override onlyAdmin {
+        if (_registered.contains(registry)) revert AlreadyRegistered(registry);
 
-        bool success = _registered.add(_registry);
-        require(success, "ERC5727Registrant: failed to register");
-
-        return id;
+        _register(registry);
     }
 
-    function _deregister(address _registry) internal returns (uint256) {
-        require(_isRegistry(_registry), "ERC5727Registrant: not a registry");
+    function _deregister(address registry) internal virtual {
+        if (!_isRegistry(registry)) revert InvalidRegistry(registry);
 
-        IERC5727Registry registry = IERC5727Registry(_registry);
-        uint256 id = registry.deregister(address(this));
+        uint256 id = IERC5727Registry(registry).deregister(address(this));
+        _registered.remove(registry);
 
-        emit Deregistered(_registry);
-
-        return id;
+        emit Deregistered(registry, id);
     }
 
-    function deregister(
-        address _registry
-    ) public override onlyOwner returns (uint256) {
-        require(
-            _registered.contains(_registry),
-            "ERC5727Registrant: not registered"
-        );
-        uint256 id = _deregister(_registry);
+    function deregister(address registry) public override onlyAdmin {
+        if (!_registered.contains(registry)) revert NotRegistered(registry);
 
-        bool success = _registered.remove(_registry);
-        require(success, "ERC5727Registrant: failed to deregister");
-
-        return id;
+        _deregister(registry);
     }
 
-    function isRegistered(address _registry) external view returns (bool) {
-        return _registered.contains(_registry);
+    function isRegistered(address registry) external view returns (bool) {
+        return _registered.contains(registry);
     }
 
-    function _isRegistry(address _registry) internal view returns (bool) {
-        return _registry.supportsInterface(type(IERC5727Registry).interfaceId);
+    function _isRegistry(address registry) internal view returns (bool) {
+        return registry.supportsInterface(type(IERC5727Registry).interfaceId);
     }
 
     function supportsInterface(
         bytes4 interfaceId
-    ) public view virtual override(ERC5727) returns (bool) {
+    ) public view virtual override(IERC165, ERC5727) returns (bool) {
         return
             interfaceId == type(IERC5727Registrant).interfaceId ||
             super.supportsInterface(interfaceId);

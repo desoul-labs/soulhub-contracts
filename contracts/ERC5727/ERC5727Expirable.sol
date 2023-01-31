@@ -1,71 +1,74 @@
-//SPDX-License-Identifier: MIT
+//SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.0;
 
 import "./ERC5727.sol";
 import "./interfaces/IERC5727Expirable.sol";
 
 abstract contract ERC5727Expirable is IERC5727Expirable, ERC5727 {
-    mapping(uint256 => uint256) private _expiryDate;
+    mapping(uint256 => uint64) private _expiryDate;
+    mapping(uint256 => bool) private _isRenewable;
 
-    function expiryDate(
-        uint256 tokenId
-    ) public view virtual override returns (uint256) {
-        uint256 date = _expiryDate[tokenId];
-        require(date != 0, "ERC5727Expirable: No expiry date set");
-        return date;
+    function setExpiration(
+        uint256 tokenId,
+        uint64 expiration,
+        bool renewable
+    ) public virtual override onlyManager(tokenId) {
+        if (!_exists(tokenId)) revert NotFound(tokenId);
+        if (expiration == 0) revert NullValue();
+        if (_expiryDate[tokenId] > 0) revert Conflict(tokenId);
+        // solhint-disable-next-line not-rely-on-time
+        if (expiration < block.timestamp) revert PastDate();
+
+        _expiryDate[tokenId] = expiration;
+        _isRenewable[tokenId] = renewable;
+
+        emit SubscriptionUpdate(tokenId, expiration);
     }
 
-    function isExpired(
+    function renewSubscription(
+        uint256 tokenId,
+        uint64 duration
+    ) external payable virtual override onlyManager(tokenId) {
+        if (!_exists(tokenId)) revert NotFound(tokenId);
+        if (duration == 0) revert NullValue();
+        if (!_isRenewable[tokenId]) revert NotRenewable(tokenId);
+        // solhint-disable-next-line not-rely-on-time
+        if (_expiryDate[tokenId] < block.timestamp) revert Expired(tokenId);
+
+        unchecked {
+            _expiryDate[tokenId] += duration;
+        }
+
+        emit SubscriptionUpdate(tokenId, _expiryDate[tokenId]);
+    }
+
+    function cancelSubscription(
+        uint256 tokenId
+    ) external payable virtual override onlyManager(tokenId) {
+        if (!_exists(tokenId)) revert NotFound(tokenId);
+        if (!_isRenewable[tokenId]) revert NotRenewable(tokenId);
+        // solhint-disable-next-line not-rely-on-time
+        if (_expiryDate[tokenId] < block.timestamp) revert Expired(tokenId);
+
+        delete _expiryDate[tokenId];
+        delete _isRenewable[tokenId];
+
+        emit SubscriptionUpdate(tokenId, 0);
+    }
+
+    function isRenewable(
         uint256 tokenId
     ) public view virtual override returns (bool) {
-        uint256 date = _expiryDate[tokenId];
-        require(date != 0, "ERC5727Expirable: No expiry date set");
-        return date < block.timestamp;
+        if (!_exists(tokenId)) revert NotFound(tokenId);
+        return _isRenewable[tokenId];
     }
 
-    function _setExpiryDate(uint256 tokenId, uint256 date) internal virtual {
-        require(
-            date > block.timestamp,
-            "ERC5727Expirable: Expiry date cannot be in the past"
-        );
-        require(
-            date > _expiryDate[tokenId],
-            "ERC5727Expirable: Expiry date can only be extended"
-        );
-        _expiryDate[tokenId] = date;
-    }
-
-    function _setBatchExpiryDates(
-        uint256[] memory tokenIds,
-        uint256[] memory dates
-    ) internal {
-        require(
-            tokenIds.length == dates.length,
-            "ERC5727Expirable: Ids and token URIs length mismatch"
-        );
-        for (uint256 i = 0; i < tokenIds.length; i++) {
-            _setExpiryDate(tokenIds[i], dates[i]);
-        }
-    }
-
-    function _setBatchExpiryDates(
-        uint256[] memory tokenIds,
-        uint256 date
-    ) internal {
-        for (uint256 i = 0; i < tokenIds.length; i++) {
-            _setExpiryDate(tokenIds[i], date);
-        }
-    }
-
-    function setExpiryDate(uint256 tokenId, uint256 date) public onlyOwner {
-        _setExpiryDate(tokenId, date);
-    }
-
-    function setBatchExpiryDates(
-        uint256[] memory tokenIds,
-        uint256[] memory dates
-    ) public onlyOwner {
-        _setBatchExpiryDates(tokenIds, dates);
+    function expiresAt(
+        uint256 tokenId
+    ) public view virtual override returns (uint64) {
+        if (!_exists(tokenId)) revert NotFound(tokenId);
+        if (_expiryDate[tokenId] == 0) revert NoExpiration(tokenId);
+        return _expiryDate[tokenId];
     }
 
     function supportsInterface(
