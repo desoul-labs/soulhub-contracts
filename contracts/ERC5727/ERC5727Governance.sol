@@ -58,18 +58,25 @@ contract ERC5727Governance is IERC5727Governance, ERC5727 {
         BurnAuth burnAuth,
         bytes calldata data
     ) external virtual override {
-        if(isVoter(_msgSender()))
-            revert MethodNotAllowed(_msgSender()); 
-        if(to == address(0)) 
-            revert NullValue();
+        if (isVoter(_msgSender())) revert MethodNotAllowed(_msgSender());
+        if (to == address(0)) revert NullValue();
 
-        approvalId = _approvalRequestCount; 
-        
+        approvalId = _approvalRequestCount;
+
         unchecked {
-            _approvalRequestCount ++;
+            _approvalRequestCount++;
         }
-        _approvals[approvalId] = IssueApproval(_msgSender(), to, tokenId, amount, slot, 0, ApprovalStatus.Pending, burnAuth); 
-        
+        _approvals[approvalId] = IssueApproval(
+            _msgSender(),
+            to,
+            tokenId,
+            amount,
+            slot,
+            0,
+            ApprovalStatus.Pending,
+            burnAuth
+        );
+
         emit ApprovalUpdate(approvalId, _msgSender(), ApprovalStatus.Approved);
     }
 
@@ -84,9 +91,9 @@ contract ERC5727Governance is IERC5727Governance, ERC5727 {
         delete _approvals[approvalId];
 
         unchecked {
-            _approvalRequestCount --;
+            _approvalRequestCount--;
         }
-        
+
         emit ApprovalUpdate(approvalId, address(0), ApprovalStatus.Removed);
     }
 
@@ -115,9 +122,9 @@ contract ERC5727Governance is IERC5727Governance, ERC5727 {
     }
 
     function voterByIndex(uint256 index) public view virtual returns (address) {
-        if(index >= voterCount() || index < 0) 
+        if (index >= voterCount() || index < 0)
             revert IndexOutOfBounds(index, voterCount());
-        
+
         return _voters.at(index);
     }
 
@@ -130,14 +137,13 @@ contract ERC5727Governance is IERC5727Governance, ERC5727 {
         bool approve,
         bytes calldata data
     ) external virtual override {
-        if(!isVoter(_msgSender()))
-            revert MethodNotAllowed(_msgSender()); 
-        if(_approvals[approvalId].creator == address(0))
+        if (!isVoter(_msgSender())) revert MethodNotAllowed(_msgSender());
+        if (_approvals[approvalId].creator == address(0))
             revert NotFound(approvalId);
-        if(_approvals[approvalId].approvalStatus == ApprovalStatus.Approved) 
-            revert Forbidden(); 
-        if(_approvals[approvalId].approvalStatus == ApprovalStatus.Rejected) 
-            revert Forbidden();   
+        if (_approvals[approvalId].approvalStatus == ApprovalStatus.Approved)
+            revert Forbidden();
+        if (_approvals[approvalId].approvalStatus == ApprovalStatus.Rejected)
+            revert Forbidden();
 
         _approvals[approvalId].ApprovalStatus = ApprovalStatus.Approved;
         _approvals[approvalId].approveNumber += (approve == true);

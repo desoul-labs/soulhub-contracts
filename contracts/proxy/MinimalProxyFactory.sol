@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 
 import "../ERC5727Registry/ERC5727Registry.sol";
 
-contract MinimalProxyDeployer is Multicall, ERC2771Context {
+contract MinimalProxyFactory is Multicall, ERC2771Context {
     /// @dev Emitted when a proxy is deployed.
     event ProxyDeployed(
         address indexed implementation,

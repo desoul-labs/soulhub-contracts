@@ -17,7 +17,10 @@ abstract contract ERC5727Recovery is IERC5727Recovery, ERC5727Enumerable {
         address from,
         bytes memory signature
     ) public virtual override {
+        if (from == address(0)) revert NullValue();
         address recipient = _msgSender();
+        if (from == recipient) revert MethodNotAllowed(recipient);
+
         bytes32 digest = _hashTypedDataV4(
             keccak256(abi.encodePacked(_RECOVERY_TYPEHASH, from, recipient))
         );
