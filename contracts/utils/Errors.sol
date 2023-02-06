@@ -17,9 +17,9 @@ error Forbidden();
 
 error InsufficientDelay();
 
-error CancelNotAllowed(address from);
+error Challenge(address from);
 
-error RecoverPending(address from, address to);
+error RecoveryPending(address from, address to);
 
 error IndexOutOfBounds(uint256 index, uint256 length);
 
