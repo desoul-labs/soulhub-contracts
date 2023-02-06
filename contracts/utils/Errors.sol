@@ -15,6 +15,12 @@ error BadReceiver(address to);
 
 error Forbidden();
 
+error InsufficientDelay();
+
+error CancelNotAllowed(address from);
+
+error RecoverPending(address from, address to);
+
 error IndexOutOfBounds(uint256 index, uint256 length);
 
 error NullValue();

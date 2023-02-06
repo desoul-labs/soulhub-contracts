@@ -16,10 +16,19 @@ interface IERC5727Recovery is IERC5727 {
     event Recovered(address indexed from, address indexed to);
 
     /**
+     * @notice Emitted when the tokens of `owner` withdraw `Recover` operation.
+     * @param from The owner whose tokens are recovered
+     */
+    event Cancelled(address indexed from);
+
+    /**
      * @notice Recover the tokens of `owner` with `signature`.
      * @dev MUST revert if the signature is invalid.
      * @param owner The owner whose tokens are recovered
      * @param signature The signature signed by the `owner`
      */
     function recover(address owner, bytes memory signature) external;
+
+    function supportsInterface(bytes4 interfaceId) external;
+
 }
