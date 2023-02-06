@@ -20,7 +20,7 @@ abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
 
     EnumerableSet.UintSet private _allTokens;
 
-    EnumerableSet.AddressSet internal _allOwners;
+    EnumerableSet.AddressSet private _allOwners;
 
     /**
      * @dev See {IERC165-supportsInterface}.

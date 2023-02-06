@@ -195,7 +195,6 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
         address to,
         uint256 tokenId
     ) public virtual override {
-        //solhint-disable-next-line max-line-length
         if (!_isApprovedOrOwner(_msgSender(), tokenId))
             revert Unauthorized(_msgSender());
 

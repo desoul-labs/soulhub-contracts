@@ -4,9 +4,9 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/structs/EnumerableMap.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
+import "../ERC721/ERC721Enumerable.sol";
 import "./interfaces/IERC3525.sol";
 import "./interfaces/IERC3525Metadata.sol";
-import "../ERC721/ERC721Enumerable.sol";
 
 contract ERC3525 is IERC3525, IERC3525Metadata, ERC721Enumerable {
     using Address for address;

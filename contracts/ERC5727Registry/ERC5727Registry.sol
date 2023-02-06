@@ -1,29 +1,23 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
-import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableMap.sol";
-import "../ERC5727/interfaces/IERC5727.sol";
+import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
+
+import "../ERC721/ERC721Enumerable.sol";
+import "../ERC721/ERC721URIStorage.sol";
+import "../ERC721/ERC721Pausable.sol";
 import "../ERC5727/interfaces/IERC5727Metadata.sol";
 import "../ERC5727/interfaces/IERC5727Registrant.sol";
-import "./interfaces/IERC5727Registry.sol";
 import "./interfaces/IERC5727RegistryMetadata.sol";
 
 abstract contract ERC5727Registry is
     Context,
-    ERC165,
-    IERC5727Registry,
     IERC5727RegistryMetadata,
     ERC721URIStorage,
-    ERC721Enumerable
+    ERC721Enumerable,
+    ERC721Pausable
 {
     using Counters for Counters.Counter;
     using ERC165Checker for address;
@@ -87,6 +81,8 @@ abstract contract ERC5727Registry is
         );
 
         uint256 id = idOf(addr);
+        if (!_isApprovedOrOwner(_msgSender(), id))
+            revert Unauthorized(_msgSender());
         _burn(id);
         _removeEntry(id);
 
@@ -138,8 +134,17 @@ abstract contract ERC5727Registry is
         address to,
         uint256 tokenId,
         uint256 batchSize
-    ) internal virtual override(ERC721, ERC721Enumerable) {
+    ) internal virtual override(ERC721, ERC721Enumerable, ERC721Pausable) {
         super._beforeTokenTransfer(from, to, tokenId, batchSize);
+    }
+
+    function _afterTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId,
+        uint256 batchSize
+    ) internal virtual override(ERC721, ERC721Enumerable) {
+        super._afterTokenTransfer(from, to, tokenId, batchSize);
     }
 
     function _burn(
@@ -166,7 +171,7 @@ abstract contract ERC5727Registry is
         public
         view
         virtual
-        override(ERC165, IERC165, ERC721, ERC721Enumerable)
+        override(IERC165, ERC721, ERC721Enumerable)
         returns (bool)
     {
         return

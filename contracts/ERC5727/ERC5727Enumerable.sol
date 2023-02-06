@@ -15,7 +15,6 @@ abstract contract ERC5727Enumerable is
     using EnumerableMap for EnumerableMap.AddressToUintMap;
 
     mapping(address => EnumerableSet.UintSet) private _slotsOfOwner;
-    mapping(uint256 => EnumerableSet.AddressSet) private _ownersInSlot;
 
     mapping(uint256 => EnumerableMap.AddressToUintMap)
         private _ownerBalanceInSlot;
@@ -26,39 +25,6 @@ abstract contract ERC5727Enumerable is
         return
             interfaceId == type(IERC5727Enumerable).interfaceId ||
             super.supportsInterface(interfaceId);
-    }
-
-    function ownerCount() external view override returns (uint256) {
-        return _allOwners.length();
-    }
-
-    function ownerByIndex(
-        uint256 index
-    ) external view override returns (address) {
-        if (index >= _allOwners.length())
-            revert IndexOutOfBounds(index, _allOwners.length());
-
-        return _allOwners.at(index);
-    }
-
-    function ownerCountInSlot(
-        uint256 slot
-    ) external view override returns (uint256) {
-        if (!_slotExists(slot)) revert NotFound(slot);
-
-        return _ownersInSlot[slot].length();
-    }
-
-    function ownerInSlotByIndex(
-        uint256 slot,
-        uint256 index
-    ) external view override returns (address) {
-        if (!_slotExists(slot)) revert NotFound(slot);
-        uint256 ownerCountBySlot = _ownersInSlot[slot].length();
-        if (index >= ownerCountBySlot)
-            revert IndexOutOfBounds(index, ownerCountBySlot);
-
-        return _ownersInSlot[slot].at(index);
     }
 
     function slotCountOfOwner(

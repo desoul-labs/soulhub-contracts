@@ -7,31 +7,31 @@ import "./interfaces/IERC5727Governance.sol";
 contract ERC5727Governance is IERC5727Governance, ERC5727 {
     using EnumerableSet for EnumerableSet.AddressSet;
     using EnumerableSet for EnumerableSet.UintSet;
+    using Counters for Counters.Counter;
+    using Strings for uint256;
 
-    uint256 private _approvalRequestCount;
-
-    enum ApprovalStatus {
-        Pending,
-        Approved,
-        Rejected
+    modifier onlyVoter() {
+        if (!isVoter(_msgSender())) revert MethodNotAllowed(_msgSender());
+        _;
     }
 
     struct IssueApproval {
         address creator;
         address to;
-        address tokenId;
+        uint256 tokenId;
         uint256 value;
         uint256 slot;
-        int256 approveNumber;
+        uint256 votersApproved;
         ApprovalStatus approvalStatus;
         BurnAuth burnAuth;
     }
 
-    mapping(uint256 => IssueApproval) private _approvals;
+    bytes32 public constant VOTER_ROLE = bytes32(uint256(0x03));
 
     EnumerableSet.AddressSet private _voters;
 
-    bytes32 public constant VOTER_ROLE = bytes32(uint256(0x03));
+    Counters.Counter private _approvalRequestCount;
+    mapping(uint256 => IssueApproval) private _approvals;
 
     constructor(
         string memory name_,
@@ -57,15 +57,10 @@ contract ERC5727Governance is IERC5727Governance, ERC5727 {
         uint256 slot,
         BurnAuth burnAuth,
         bytes calldata data
-    ) external virtual override {
-        if (isVoter(_msgSender())) revert MethodNotAllowed(_msgSender());
+    ) external virtual override onlyVoter {
         if (to == address(0)) revert NullValue();
 
-        approvalId = _approvalRequestCount;
-
-        unchecked {
-            _approvalRequestCount++;
-        }
+        uint256 approvalId = _approvalRequestCount.current();
         _approvals[approvalId] = IssueApproval(
             _msgSender(),
             to,
@@ -77,7 +72,9 @@ contract ERC5727Governance is IERC5727Governance, ERC5727 {
             burnAuth
         );
 
-        emit ApprovalUpdate(approvalId, _msgSender(), ApprovalStatus.Approved);
+        _approvalRequestCount.increment();
+
+        emit ApprovalUpdate(approvalId, _msgSender(), ApprovalStatus.Pending);
     }
 
     function removeApprovalRequest(
@@ -87,12 +84,10 @@ contract ERC5727Governance is IERC5727Governance, ERC5727 {
             revert NotFound(approvalId);
         if (_msgSender() != _approvals[approvalId].creator)
             revert Unauthorized(_msgSender());
+        if (_approvals[approvalId].approvalStatus != ApprovalStatus.Pending)
+            revert Forbidden();
 
-        delete _approvals[approvalId];
-
-        unchecked {
-            _approvalRequestCount--;
-        }
+        _approvals[approvalId].approvalStatus = ApprovalStatus.Removed;
 
         emit ApprovalUpdate(approvalId, address(0), ApprovalStatus.Removed);
     }
@@ -136,17 +131,33 @@ contract ERC5727Governance is IERC5727Governance, ERC5727 {
         uint256 approvalId,
         bool approve,
         bytes calldata data
-    ) external virtual override {
-        if (!isVoter(_msgSender())) revert MethodNotAllowed(_msgSender());
+    ) external virtual override onlyVoter {
         if (_approvals[approvalId].creator == address(0))
             revert NotFound(approvalId);
-        if (_approvals[approvalId].approvalStatus == ApprovalStatus.Approved)
-            revert Forbidden();
-        if (_approvals[approvalId].approvalStatus == ApprovalStatus.Rejected)
-            revert Forbidden();
 
-        _approvals[approvalId].ApprovalStatus = ApprovalStatus.Approved;
-        _approvals[approvalId].approveNumber += (approve == true);
+        ApprovalStatus approvalStatus = _approvals[approvalId].approvalStatus;
+        if (approvalStatus != ApprovalStatus.Pending) revert Forbidden();
+
+        if (approve) {
+            _approvals[approvalId].votersApproved++;
+        }
+        if (_approvals[approvalId].votersApproved >= voterCount() / 2) {
+            _approvals[approvalId].approvalStatus = ApprovalStatus.Approved;
+            _issue(
+                _msgSender(),
+                _approvals[approvalId].to,
+                _approvals[approvalId].tokenId,
+                _approvals[approvalId].value,
+                _approvals[approvalId].slot,
+                _approvals[approvalId].burnAuth
+            );
+        }
+
+        emit ApprovalUpdate(
+            approvalId,
+            _msgSender(),
+            _approvals[approvalId].approvalStatus
+        );
     }
 
     function approvalURI(
@@ -155,7 +166,17 @@ contract ERC5727Governance is IERC5727Governance, ERC5727 {
         if (_approvals[approvalId].creator == address(0))
             revert NotFound(approvalId);
 
-        return string(abi.encodePacked(_baseURI(), approvalId.toString()));
+        string memory contractUri = contractURI();
+        return
+            bytes(contractUri).length > 0
+                ? string(
+                    abi.encodePacked(
+                        contractUri,
+                        "/approvals/",
+                        approvalId.toString()
+                    )
+                )
+                : "";
     }
 
     function supportsInterface(

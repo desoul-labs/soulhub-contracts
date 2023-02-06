@@ -11,40 +11,6 @@ import "./IERC5727.sol";
  */
 interface IERC5727Enumerable is IERC3525SlotEnumerable, IERC5727 {
     /**
-     * @notice Get the total number of owners.
-     * @return The total number of owners
-     */
-    function ownerCount() external view returns (uint256);
-
-    /**
-     * @notice Get the owner with `index`.
-     * @dev MUST revert if the `index` exceed the number of owners.
-     * @param index The index of the owner queried for
-     * @return The owner is queried for
-     */
-    function ownerByIndex(uint256 index) external view returns (address);
-
-    /**
-     * @notice Get the number of owners in a slot.
-     * @dev MUST revert if the slot does not exist.
-     * @param slot The slot whose number of owners is queried for
-     * @return The number of owners in the `slot`
-     */
-    function ownerCountInSlot(uint256 slot) external view returns (uint256);
-
-    /**
-     * @notice Get the owner with `index` of the `slot`.
-     * @dev MUST revert if the `index` exceed the number of owners in the `slot`.
-     * @param slot The slot whose owner is queried for.
-     * @param index The index of the owner queried for
-     * @return The owner is queried for
-     */
-    function ownerInSlotByIndex(
-        uint256 slot,
-        uint256 index
-    ) external view returns (address);
-
-    /**
      * @notice Get the number of slots of a owner.
      * @param owner The owner whose number of slots is queried for
      * @return The number of slots of the `owner`

@@ -2,12 +2,13 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./interfaces/IERC5727Registrant.sol";
 import "../ERC5727Registry/interfaces/IERC5727Registry.sol";
 import "./ERC5727.sol";
 
-abstract contract ERC5727Registrant is IERC5727Registrant, ERC5727 {
+abstract contract ERC5727Registrant is IERC5727Registrant, ERC5727, Ownable {
     using ERC165Checker for address;
     using EnumerableSet for EnumerableSet.AddressSet;
 
@@ -26,6 +27,7 @@ abstract contract ERC5727Registrant is IERC5727Registrant, ERC5727 {
         if (_registered.contains(registry)) revert AlreadyRegistered(registry);
 
         _register(registry);
+        grantRole(DEFAULT_ADMIN_ROLE, registry);
     }
 
     function _deregister(address registry) internal virtual {
@@ -41,6 +43,7 @@ abstract contract ERC5727Registrant is IERC5727Registrant, ERC5727 {
         if (!_registered.contains(registry)) revert NotRegistered(registry);
 
         _deregister(registry);
+        renounceRole(DEFAULT_ADMIN_ROLE, registry);
     }
 
     function isRegistered(address registry) external view returns (bool) {
