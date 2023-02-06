@@ -4,14 +4,13 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
-
 import "./ERC5727Enumerable.sol";
 import "./interfaces/IERC5727Recovery.sol";
 
 abstract contract ERC5727Recovery is IERC5727Recovery, ERC5727Enumerable {
     using SignatureChecker for address;
 
-    mapping(uint256 => uint256) private _challengeDeadlines;
+    mapping(address => uint256) private _challengeDeadlines;
     uint256 private _minDuration = 1 days;
 
     bytes32 private constant _RECOVERY_TYPEHASH =
@@ -24,7 +23,8 @@ abstract contract ERC5727Recovery is IERC5727Recovery, ERC5727Enumerable {
         if (from == address(0)) revert NullValue();
         address recipient = _msgSender();
         if (from == recipient) revert MethodNotAllowed(recipient);
-        if (now < _challengeDeadlines[from]) revert RecoveryPending(from, recipient);
+        if (block.timestamp < _challengeDeadlines[from])
+            revert RecoveryPending(from, recipient);
 
         bytes32 digest = _hashTypedDataV4(
             keccak256(abi.encodePacked(_RECOVERY_TYPEHASH, from, recipient))
@@ -79,7 +79,9 @@ abstract contract ERC5727Recovery is IERC5727Recovery, ERC5727Enumerable {
         return _minDuration;
     }
 
-    function ChallengeDeadline(address from) public view virtual returns (uint256) {
+    function ChallengeDeadline(
+        address from
+    ) public view virtual returns (uint256) {
         return _challengeDeadlines[from];
     }
 }
