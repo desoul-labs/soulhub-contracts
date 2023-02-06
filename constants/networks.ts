@@ -1,4 +1,4 @@
-import { NetworksUserConfig } from 'hardhat/types'
+import { type NetworksUserConfig } from 'hardhat/types'
 
 export const networks: NetworksUserConfig = {
   goerli: {

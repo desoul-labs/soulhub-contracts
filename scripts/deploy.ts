@@ -1,7 +1,7 @@
 import { ethers, run } from 'hardhat'
 
 async function sleep(ms: number): Promise<void> {
-  return await new Promise((resolve) => setTimeout(resolve, ms))
+  await new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 async function main(): Promise<void> {
