@@ -11,8 +11,8 @@ import "./interfaces/IERC5727Recovery.sol";
 abstract contract ERC5727Recovery is IERC5727Recovery, ERC5727Enumerable {
     using SignatureChecker for address;
 
-    mapping(uint256 => uint256) private _timestamps;
-    uint256 private _minDelay = 1 days;
+    mapping(uint256 => uint256) private _challengeDeadlines;
+    uint256 private _minDuration = 1 days;
 
     bytes32 private constant _RECOVERY_TYPEHASH =
         keccak256("Recovery(address from,address recipient)");
@@ -20,11 +20,11 @@ abstract contract ERC5727Recovery is IERC5727Recovery, ERC5727Enumerable {
     function recover(
         address from,
         bytes memory signature
-    ) public virtual override onlyOwner {
+    ) public virtual override {
         if (from == address(0)) revert NullValue();
         address recipient = _msgSender();
         if (from == recipient) revert MethodNotAllowed(recipient);
-        if (now < _timestamps[from]) revert RecoverPending(from, recipient);
+        if (now < _challengeDeadlines[from]) revert RecoveryPending(from, recipient);
 
         bytes32 digest = _hashTypedDataV4(
             keccak256(abi.encodePacked(_RECOVERY_TYPEHASH, from, recipient))
@@ -62,23 +62,24 @@ abstract contract ERC5727Recovery is IERC5727Recovery, ERC5727Enumerable {
             super.supportsInterface(interfaceId);
     }
 
-    function _schedule(address from, uint256 delay) private {
-        if (delay < getMinDelay()) revert InsufficientDelay();
-        _timestamps[from] = block.timestamp + delay;
+    function _schedule(address from, uint256 duration) private {
+        if (duration < ChallengeDuration()) revert InsufficientDelay();
+        _challengeDeadlines[from] = block.timestamp + duration;
     }
 
-    function cancel(address from) public virtual onlyOwner {
-        if (_timestamps[from] == 0) revert CancelNotAllowed(from);
-        delete _timestamps[from];
+    function challengeRecovery(address from) public virtual override {
+        if (from == address(0)) revert NullValue();
+        if (_challengeDeadlines[from] == 0) revert Challenge(from);
+        delete _challengeDeadlines[from];
 
-        emit Cancelled(from);
+        emit RecoveryChallenged(from);
     }
 
-    function getMinDelay() public view virtual returns (uint256 duration) {
-        return _minDelay;
+    function ChallengeDuration() public view virtual returns (uint256) {
+        return _minDuration;
     }
 
-    function getTimestamp(address from) public view virtual returns (uint256 timestamp) {
-        return _timestamps[from];
+    function ChallengeDeadline(address from) public view virtual returns (uint256) {
+        return _challengeDeadlines[from];
     }
 }
