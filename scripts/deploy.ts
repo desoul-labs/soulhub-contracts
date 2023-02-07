@@ -6,29 +6,22 @@ async function sleep(ms: number): Promise<void> {
 
 async function main(): Promise<void> {
   const ERC5727 = await ethers.getContractFactory('ERC5727Example')
-  const erc5727 = await ERC5727.deploy(
+  const ctorArgs = [
     'Soularis SBT',
     'SBT',
     '0xC5a0058Fa5f5bDEA7BE0A29F0428a0a5e6788438',
-    ['0xC5a0058Fa5f5bDEA7BE0A29F0428a0a5e6788438'],
+    ['0xC5a0058Fa5f5bDEA7BE0A29F0428a0a5e6788438'] as string[],
     'https://api.soularis.dev/sbt/',
     '0x0000000000000000000000000000000000000000',
     'v1',
-  )
+  ] as const
+  const erc5727 = await ERC5727.deploy(...ctorArgs)
   await erc5727.deployed()
   console.log('ERC5727Example contract deployed to:', erc5727.address)
   await sleep(10000)
   await run('verify:verify', {
-    address: '0xAd86DD4c87B8Ba6101CEcf635aF757C026C9f453',
-    constructorArguments: [
-      'Soularis SBT',
-      'SBT',
-      '0xC5a0058Fa5f5bDEA7BE0A29F0428a0a5e6788438',
-      ['0xC5a0058Fa5f5bDEA7BE0A29F0428a0a5e6788438'],
-      'https://api.soularis.dev/sbt/',
-      '0x0000000000000000000000000000000000000000',
-      'v1',
-    ],
+    address: erc5727.address,
+    constructorArguments: ctorArgs,
   }).catch((error) => {
     console.info(error)
   })

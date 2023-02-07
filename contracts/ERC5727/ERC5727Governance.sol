@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "./ERC5727.sol";
 import "./interfaces/IERC5727Governance.sol";
 
-contract ERC5727Governance is IERC5727Governance, ERC5727 {
+abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
     using EnumerableSet for EnumerableSet.AddressSet;
     using EnumerableSet for EnumerableSet.UintSet;
     using Counters for Counters.Counter;
