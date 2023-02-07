@@ -16,8 +16,7 @@ contract ERC5727Example is
     ERC5727Recovery,
     ERC5727Expirable,
     ERC5727Governance,
-    ERC5727Delegate,
-    ERC5727Registrant
+    ERC5727Delegate
 {
     string private _baseTokenURI;
 
@@ -146,7 +145,6 @@ contract ERC5727Example is
             ERC5727Delegate,
             ERC5727Expirable,
             ERC5727Recovery,
-            ERC5727Registrant,
             ERC5727Claimable
         )
         returns (bool)

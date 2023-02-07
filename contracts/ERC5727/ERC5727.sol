@@ -21,15 +21,6 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727 {
     using EnumerableSet for EnumerableSet.AddressSet;
     using SignatureChecker for address;
 
-    struct Token {
-        address owner;
-        uint256 value;
-        uint256 slot;
-        address issuer;
-        address verifier;
-        BurnAuth burnAuth;
-    }
-
     mapping(uint256 => address) internal _issuers;
     mapping(uint256 => address) internal _verifiers;
     mapping(uint256 => BurnAuth) internal _burnAuths;
@@ -295,22 +286,6 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727 {
             slot,
             value
         );
-    }
-
-    function getToken(
-        uint256 tokenId
-    ) public view virtual returns (Token memory) {
-        _requireMinted(tokenId);
-
-        return
-            Token(
-                _ownerOf(tokenId),
-                _values[tokenId],
-                _slots[tokenId],
-                _issuers[tokenId],
-                _verifiers[tokenId],
-                _burnAuths[tokenId]
-            );
     }
 
     function supportsInterface(

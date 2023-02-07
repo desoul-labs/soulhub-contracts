@@ -75,6 +75,8 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
         _approvalRequestCount.increment();
 
         emit ApprovalUpdate(approvalId, _msgSender(), ApprovalStatus.Pending);
+
+        data;
     }
 
     function removeApprovalRequest(
@@ -94,20 +96,17 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
 
     function addVoter(address newVoter) public virtual onlyAdmin {
         if (newVoter == address(0)) revert NullValue();
-        require(
-            !hasRole(VOTER_ROLE, newVoter),
-            "ERC5727Governance: newVoter is already a voter"
-        );
+        if (hasRole(VOTER_ROLE, newVoter))
+            revert RoleAlreadyGranted(newVoter, VOTER_ROLE);
+
         _voters.add(newVoter);
         _setupRole(VOTER_ROLE, newVoter);
     }
 
     function removeVoter(address voter) public virtual onlyAdmin {
         if (voter == address(0)) revert NullValue();
-        require(
-            _voters.contains(voter),
-            "ERC5727Governance: Voter does not exist"
-        );
+        if (!_voters.contains(voter)) revert RoleNotGranted(voter, VOTER_ROLE);
+
         _revokeRole(VOTER_ROLE, voter);
         _voters.remove(voter);
     }
@@ -158,6 +157,8 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
             _msgSender(),
             _approvals[approvalId].approvalStatus
         );
+
+        data;
     }
 
     function approvalURI(
