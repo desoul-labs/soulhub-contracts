@@ -21,7 +21,8 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
         uint256 tokenId;
         uint256 value;
         uint256 slot;
-        int256 factor;
+        uint256 votersApproved;
+        uint256 votersRejected;
         ApprovalStatus approvalStatus;
         BurnAuth burnAuth;
     }
@@ -58,7 +59,7 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
         BurnAuth burnAuth,
         bytes calldata data
     ) external virtual override onlyVoter {
-        if (to == address(0)) revert NullValue();
+        if (to == address(0) || tokenId == 0 || slot == 0) revert NullValue();
 
         uint256 approvalId = _approvalRequestCount.current();
         _approvals[approvalId] = IssueApproval(
@@ -67,6 +68,7 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
             tokenId,
             amount,
             slot,
+            0,
             0,
             ApprovalStatus.Pending,
             burnAuth
@@ -116,8 +118,7 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
     }
 
     function voterByIndex(uint256 index) public view virtual returns (address) {
-        if (index >= voterCount() || index < 0)
-            revert IndexOutOfBounds(index, voterCount());
+        if (index >= voterCount()) revert IndexOutOfBounds(index, voterCount());
 
         return _voters.at(index);
     }
@@ -138,12 +139,12 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
         if (approvalStatus != ApprovalStatus.Pending) revert Forbidden();
 
         if (approve) {
-            approval.factor++;
+            approval.votersApproved++;
         } else {
-            approval.factor--;
+            approval.votersRejected++;
         }
 
-        if (approval.factor > 0) {
+        if (approval.votersApproved > voterCount() / 2) {
             approval.approvalStatus = ApprovalStatus.Approved;
             _issue(
                 _msgSender(),
@@ -153,11 +154,22 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
                 approval.slot,
                 approval.burnAuth
             );
-        } else if (approval.factor < 0) {
-            approval.approvalStatus = ApprovalStatus.Rejected;
-        }
 
-        emit ApprovalUpdate(approvalId, _msgSender(), approval.approvalStatus);
+            emit ApprovalUpdate(
+                approvalId,
+                _msgSender(),
+                ApprovalStatus.Approved
+            );
+        }
+        if (approval.votersRejected > voterCount() / 2) {
+            approval.approvalStatus = ApprovalStatus.Rejected;
+
+            emit ApprovalUpdate(
+                approvalId,
+                _msgSender(),
+                ApprovalStatus.Rejected
+            );
+        }
 
         data;
     }
