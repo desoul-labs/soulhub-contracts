@@ -21,7 +21,7 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
         uint256 tokenId;
         uint256 value;
         uint256 slot;
-        uint256 votersApproved;
+        int256 factor;
         ApprovalStatus approvalStatus;
         BurnAuth burnAuth;
     }
@@ -131,32 +131,33 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
         bool approve,
         bytes calldata data
     ) external virtual override onlyVoter {
-        if (_approvals[approvalId].creator == address(0))
-            revert NotFound(approvalId);
+        IssueApproval storage approval = _approvals[approvalId];
+        if (approval.creator == address(0)) revert NotFound(approvalId);
 
-        ApprovalStatus approvalStatus = _approvals[approvalId].approvalStatus;
+        ApprovalStatus approvalStatus = approval.approvalStatus;
         if (approvalStatus != ApprovalStatus.Pending) revert Forbidden();
 
         if (approve) {
-            _approvals[approvalId].votersApproved++;
-        }
-        if (_approvals[approvalId].votersApproved >= voterCount() / 2) {
-            _approvals[approvalId].approvalStatus = ApprovalStatus.Approved;
-            _issue(
-                _msgSender(),
-                _approvals[approvalId].to,
-                _approvals[approvalId].tokenId,
-                _approvals[approvalId].value,
-                _approvals[approvalId].slot,
-                _approvals[approvalId].burnAuth
-            );
+            approval.factor++;
+        } else {
+            approval.factor--;
         }
 
-        emit ApprovalUpdate(
-            approvalId,
-            _msgSender(),
-            _approvals[approvalId].approvalStatus
-        );
+        if (approval.factor > 0) {
+            approval.approvalStatus = ApprovalStatus.Approved;
+            _issue(
+                _msgSender(),
+                approval.to,
+                approval.tokenId,
+                approval.value,
+                approval.slot,
+                approval.burnAuth
+            );
+        } else if (approval.factor < 0) {
+            approval.approvalStatus = ApprovalStatus.Rejected;
+        }
+
+        emit ApprovalUpdate(approvalId, _msgSender(), approval.approvalStatus);
 
         data;
     }
