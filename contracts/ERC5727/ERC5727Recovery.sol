@@ -82,7 +82,7 @@ abstract contract ERC5727Recovery is IERC5727Recovery, ERC5727Enumerable {
 
     function challengeRecovery(address from) public virtual override {
         if (from == address(0)) revert NullValue();
-        if (_challengeDeadlines[from] == 0) revert Challenge(from);
+        if (block.timestamp > _challengeDeadlines[from]) revert Challenge(from);
         delete _challengeDeadlines[from];
 
         emit RecoveryChallenged(from);

@@ -37,7 +37,7 @@ interface IERC5727Recovery is IERC5727 {
     function recover(address owner, bytes memory signature) external;
 
     /**
-     * @notice Try to recover the tokens of `owner` with `signature`.
+     * @notice Ready to recover the tokens of `owner` with `signature` and set a challengeDealine.
      * @dev MUST revert if the signature is invalid.
      * @param owner The owner whose tokens are recovered
      * @param signature The signature signed by the `owner`

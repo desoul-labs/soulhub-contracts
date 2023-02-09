@@ -15,8 +15,6 @@ error BadReceiver(address to);
 
 error Forbidden();
 
-// error InsufficientDelay();
-
 error Challenge(address from);
 
 error RecoveryPending(address from, address to);
