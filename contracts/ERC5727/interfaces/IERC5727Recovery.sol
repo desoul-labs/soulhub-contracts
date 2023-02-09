@@ -25,8 +25,9 @@ interface IERC5727Recovery is IERC5727 {
     /**
      * @notice Emitted when the tokens of `owner` withdraw `Recover` operation.
      * @param from The owner who is planing to recover his tokens
+     * @param state Challenge state indicating whether the challenge operation was successful or not
      */
-    event RecoveryChallenged(address indexed from);
+    event RecoveryChallenged(address indexed from, uint256 state);
 
     /**
      * @notice Recover the tokens of `owner` with `signature`.
