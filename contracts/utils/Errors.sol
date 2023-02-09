@@ -15,7 +15,7 @@ error BadReceiver(address to);
 
 error Forbidden();
 
-error InsufficientDelay();
+// error InsufficientDelay();
 
 error Challenge(address from);
 

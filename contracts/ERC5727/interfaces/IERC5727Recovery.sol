@@ -11,6 +11,13 @@ interface IERC5727Recovery is IERC5727 {
     /**
      * @notice Emitted when the tokens of `owner` are recovered.
      * @param from The owner whose tokens are recovered
+     * @param deadline Deadline of timelock of recovery operation
+     */
+    event Recover(address from, uint256 deadline);
+
+    /**
+     * @notice Emitted when the tokens of `owner` are recovered.
+     * @param from The owner whose tokens are recovered
      * @param to The new owner of the tokens
      */
     event Recovered(address indexed from, address indexed to);
@@ -30,11 +37,18 @@ interface IERC5727Recovery is IERC5727 {
     function recover(address owner, bytes memory signature) external;
 
     /**
+     * @notice Try to recover the tokens of `owner` with `signature`.
+     * @dev MUST revert if the signature is invalid.
+     * @param owner The owner whose tokens are recovered
+     * @param signature The signature signed by the `owner`
+     */
+    function tryRecover(address owner, bytes memory signature) external;
+
+    /**
      * @notice Withdraw the `Recover` operation
      * @dev MUST revert if the signature is invalid.
      * @dev MUST revert if there is no challenge exists.
      * @param from The owner who is planing to recover his tokens
      */
     function challengeRecovery(address from) external;
-
 }

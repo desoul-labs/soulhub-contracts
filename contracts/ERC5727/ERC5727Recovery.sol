@@ -62,9 +62,27 @@ abstract contract ERC5727Recovery is IERC5727Recovery, ERC5727Enumerable {
             super.supportsInterface(interfaceId);
     }
 
-    function _schedule(address from, uint256 duration) private {
-        if (duration < ChallengeDuration()) revert InsufficientDelay();
-        _challengeDeadlines[from] = block.timestamp + duration;
+    // function _schedule(address from, uint256 duration) private {
+    //     if (duration < challengeDuration()) revert InsufficientDelay();
+    //     _challengeDeadlines[from] = block.timestamp + duration;
+    // }
+
+    function tryRecover(
+        address from,
+        bytes memory signature
+    ) public virtual override {
+        if (from == address(0)) revert NullValue();
+        address recipient = _msgSender();
+        if (from == recipient) revert MethodNotAllowed(recipient);
+
+        bytes32 digest = _hashTypedDataV4(
+            keccak256(abi.encodePacked(_RECOVERY_TYPEHASH, from, recipient))
+        );
+        if (!from.isValidSignatureNow(digest, signature)) revert Forbidden();
+
+        _challengeDeadlines[from] = block.timestamp + _minDuration;
+
+        emit Recover(from, _challengeDeadlines[from]);
     }
 
     function challengeRecovery(address from) public virtual override {
@@ -75,11 +93,11 @@ abstract contract ERC5727Recovery is IERC5727Recovery, ERC5727Enumerable {
         emit RecoveryChallenged(from);
     }
 
-    function ChallengeDuration() public view virtual returns (uint256) {
+    function challengeDuration() public view virtual returns (uint256) {
         return _minDuration;
     }
 
-    function ChallengeDeadline(
+    function challengeDeadline(
         address from
     ) public view virtual returns (uint256) {
         return _challengeDeadlines[from];
