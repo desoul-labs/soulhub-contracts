@@ -62,11 +62,6 @@ abstract contract ERC5727Recovery is IERC5727Recovery, ERC5727Enumerable {
             super.supportsInterface(interfaceId);
     }
 
-    // function _schedule(address from, uint256 duration) private {
-    //     if (duration < challengeDuration()) revert InsufficientDelay();
-    //     _challengeDeadlines[from] = block.timestamp + duration;
-    // }
-
     function tryRecover(
         address from,
         bytes memory signature
