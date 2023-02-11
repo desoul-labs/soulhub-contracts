@@ -30,7 +30,7 @@ importers:
       hardhat: 2.12.6
       hardhat-gas-reporter: 1.0.9
       husky: 8.0.3
-      lint-staged: 13.1.0
+      lint-staged: 13.1.1
       prettier: 2.8.3
       prettier-plugin-solidity: 1.1.1
       solhint: 3.3.8
@@ -67,7 +67,7 @@ importers:
       hardhat: 2.12.6_z6wznmtyb6ovnulj6iujpct7um
       hardhat-gas-reporter: 1.0.9_hardhat@2.12.6
       husky: 8.0.3
-      lint-staged: 13.1.0
+      lint-staged: 13.1.1
       prettier: 2.8.3
       prettier-plugin-solidity: 1.1.1_prettier@2.8.3
       solhint: 3.3.8
@@ -5094,8 +5094,8 @@ packages:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
     dev: true
 
-  /lint-staged/13.1.0:
-    resolution: {integrity: sha512-pn/sR8IrcF/T0vpWLilih8jmVouMlxqXxKuAojmbiGX5n/gDnz+abdPptlj0vYnbfE0SQNl3CY/HwtM0+yfOVQ==}
+  /lint-staged/13.1.1:
+    resolution: {integrity: sha512-LLJLO0Kdbcv2a+CvSF4p1M7jBZOajKSMpBUvyR8+bXccsqPER0/NxTFQSpNHjqwV9kM3tkHczYerTB5wI+bksQ==}
     engines: {node: ^14.13.1 || >=16.0.0}
     hasBin: true
     dependencies:
