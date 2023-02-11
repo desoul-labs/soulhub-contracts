@@ -19,7 +19,10 @@ jobs:
           slither-args: --print human-summary
       - name: Print Summary
         id: print
-        run: echo "summary=$(cat slither-results.json)" >> $GITHUB_OUTPUT
+        run: |
+          echo "text<<EOF" >> $GITHUB_OUTPUT
+          echo "summary=$(cat slither-results.json)" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
       - name: Find Comment
         uses: peter-evans/find-comment@v2
         id: fc
