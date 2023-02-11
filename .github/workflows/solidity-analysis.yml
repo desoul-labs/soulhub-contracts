@@ -6,6 +6,7 @@ on:
       - '**'
     paths:
       - 'contracts/**'
+      - '.github/workflows/solidity-analysis.yml'
 
 jobs:
   analyze:
