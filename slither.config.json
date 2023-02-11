@@ -1,0 +1,5 @@
+{
+  "filter_paths": "@openzeppelin",
+  "printers_to_run": "human-summary",
+  "json": "slither-results.json"
+}

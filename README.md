@@ -1,4 +1,4 @@
-# soularis-contracts
+# soulhub-contracts
 
 [![Solidity CI](https://github.com/desoul-labs/soulhub-contracts/actions/workflows/solidity-ci.yml/badge.svg)](https://github.com/desoul-labs/soulhub-contracts/actions/workflows/solidity-ci.yml)
 [![Solidity CD](https://github.com/desoul-labs/soulhub-contracts/actions/workflows/solidity-cd.yml/badge.svg?branch=main)](https://github.com/desoul-labs/soulhub-contracts/actions/workflows/solidity-cd.yml)
