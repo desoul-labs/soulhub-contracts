@@ -11,7 +11,7 @@ abstract contract ERC5727Recovery is IERC5727Recovery, ERC5727Enumerable {
     using SignatureChecker for address;
 
     mapping(address => uint256) private _challengeDeadlines;
-    mapping(address => uint256) private _challengeStates;
+    mapping(address => bool) private _challengeStatus;
     uint256 private _minDuration = 1 days;
 
     bytes32 private constant _RECOVERY_TYPEHASH =
@@ -84,14 +84,14 @@ abstract contract ERC5727Recovery is IERC5727Recovery, ERC5727Enumerable {
     function challengeRecovery(address from) public virtual override {
         if (from == address(0)) revert NullValue();
         if (block.timestamp > _challengeDeadlines[from]) revert Challenge(from);
-        if (msg.sender == from) {
+        if (_msgSender() == from) {
             delete _challengeDeadlines[from];
-            _challengeStates[from] = 0;
+            _challengeStatus[from] = true;
         } else {
-            _challengeStates[from] = 1;
+            _challengeStatus[from] = false;
         }
 
-        emit RecoveryChallenged(from, _challengeStates[from]);
+        emit RecoveryChallenged(from, _challengeStatus[from]);
     }
 
     function approveChallenge(address from) public virtual onlyAdmin {
@@ -99,9 +99,9 @@ abstract contract ERC5727Recovery is IERC5727Recovery, ERC5727Enumerable {
         if (block.timestamp > _challengeDeadlines[from]) revert Challenge(from);
 
         delete _challengeDeadlines[from];
-        _challengeStates[from] = 0;
+        _challengeStatus[from] = true;
 
-        emit RecoveryChallenged(from, _challengeStates[from]);
+        emit RecoveryChallenged(from, _challengeStatus[from]);
     }
 
     function challengeDuration() public view virtual returns (uint256) {
@@ -114,9 +114,7 @@ abstract contract ERC5727Recovery is IERC5727Recovery, ERC5727Enumerable {
         return _challengeDeadlines[from];
     }
 
-    function challengeState(
-        address from
-    ) public view virtual returns (uint256) {
-        return _challengeStates[from];
+    function challengeState(address from) public view virtual returns (bool) {
+        return _challengeStatus[from];
     }
 }
