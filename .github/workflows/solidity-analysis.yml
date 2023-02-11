@@ -6,19 +6,29 @@ on:
       - '**'
     paths:
       - 'contracts/**'
+      - '.github/workflows/solidity-analysis.yml'
 
 jobs:
   analyze:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: crytic/slither-action@v0.2.0
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Run Slither Analyzer
+        uses: crytic/slither-action@v0.2.0
         with:
           node-version: 18
-          slither-args: --print human-summary
+
       - name: Print Summary
         id: print
-        run: echo "summary=$(cat slither-results.json)" >> $GITHUB_OUTPUT
+        run: |
+          summary=$(jq '.results.printers[0].markdown' slither-results.json)
+          summary="${summary//'%'/'%25'}"
+          summary="${summary//$'\n'/'%0A'}"
+          summary="${summary//$'\r'/'%0D'}"
+          echo "summary=$summary" >> $GITHUB_OUTPUT
+
       - name: Find Comment
         uses: peter-evans/find-comment@v2
         id: fc
@@ -33,6 +43,6 @@ jobs:
           comment-id: ${{ steps.fc.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            Slither results
-            ${{ steps.print.outputs.summary}}
+            ## Slither results
+            ${{ fromJSON(steps.print.outputs.summary) }}
           edit-mode: replace

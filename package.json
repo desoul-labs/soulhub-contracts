@@ -28,7 +28,7 @@
     "prepare": "husky install",
     "release": "standard-version",
     "test": "NODE_ENV=development hardhat test",
-    "coverage": "NODE_ENV=development hardhat coverage --testfiles 'test/*.ts'",
+    "test:coverage": "NODE_ENV=development hardhat coverage --testfiles 'test/*.ts'",
     "doc": "NODE_ENV=development hardhat dodoc",
     "typechain": "NODE_ENV=development hardhat typechain"
   },

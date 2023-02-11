@@ -26,22 +26,27 @@ jobs:
       matrix:
         network: [goerli, sepolia, mumbai, optimism-goerli, chapel]
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2.2.4
-        name: Install pnpm
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
+
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
           cache: 'pnpm'
+
       - name: Setup Tenderly
         env:
           TENDERLY_ACCESS_KEY: ${{ secrets.TENDERLY_ACCESS_KEY }}
         run: |
           curl https://raw.githubusercontent.com/Tenderly/tenderly-cli/master/scripts/install-linux.sh | sh
           tenderly login --authentication-method access-key --access-key $TENDERLY_ACCESS_KEY
+
       - name: Deploy
         run: |
           pnpm install
