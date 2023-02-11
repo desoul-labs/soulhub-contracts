@@ -13,7 +13,7 @@ importers:
       '@nomicfoundation/hardhat-toolbox': 2.0.1
       '@nomiclabs/hardhat-ethers': 2.2.2
       '@nomiclabs/hardhat-etherscan': 3.1.6
-      '@nomiclabs/hardhat-solhint': 2.0.1
+      '@nomiclabs/hardhat-solhint': 3.0.0
       '@openzeppelin/contracts': 4.8.1
       '@openzeppelin/contracts-upgradeable': 4.8.1
       '@openzeppelin/hardhat-upgrades': 1.22.1
@@ -52,7 +52,7 @@ importers:
       '@nomicfoundation/hardhat-toolbox': 2.0.1_br5xyd7z5fwosqmr5lufpgdtke
       '@nomiclabs/hardhat-ethers': 2.2.2_n3rx3kkfcos7o3ij5m4a4n7ngq
       '@nomiclabs/hardhat-etherscan': 3.1.6_hardhat@2.12.6
-      '@nomiclabs/hardhat-solhint': 2.0.1_hardhat@2.12.6
+      '@nomiclabs/hardhat-solhint': 3.0.0_hardhat@2.12.6
       '@openzeppelin/hardhat-upgrades': 1.22.1_4inqxjvu6xjksh4vvvjdbm4x7y
       '@primitivefi/hardhat-dodoc': 0.2.3_6z6mac2363tjta2l27ytp6pewm
       '@tenderly/hardhat-tenderly': 1.5.2_bt2wbihdsqucdsulj6mhhsfega
@@ -1000,13 +1000,13 @@ packages:
       - supports-color
     dev: true
 
-  /@nomiclabs/hardhat-solhint/2.0.1_hardhat@2.12.6:
-    resolution: {integrity: sha512-SrTLufY21t78KLpJL5fS6gHIsCwVv0yWsHp1aQOPL1qwRWpe0Mnh5wb2YzBHd3Dbr/KzUYys+j2ui0PsSVU9pg==}
+  /@nomiclabs/hardhat-solhint/3.0.0_hardhat@2.12.6:
+    resolution: {integrity: sha512-uouERJ2UVsN5ek2veA8nq/Pwq06INRcWdZxjE1vcEZ4i+Et8Qiy0SrPO7KRU0rh3rssBgfOtCbbAEOfh7YBAvA==}
     peerDependencies:
       hardhat: ^2.0.0
     dependencies:
       hardhat: 2.12.6_z6wznmtyb6ovnulj6iujpct7um
-      solhint: 2.3.1
+      solhint: 3.3.8
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -6731,28 +6731,6 @@ packages:
       prettier: 2.8.3
       prettier-linter-helpers: 1.0.0
       prettier-plugin-solidity: 1.1.1_prettier@2.8.3
-    dev: true
-
-  /solhint/2.3.1:
-    resolution: {integrity: sha512-wP/G+Dqj8LNWlCI9Mt6XiQRWQfZwv1rkZe/V+HKtip5SAZJVvp144PdH28KE45ZvR99Hhrp/Mujt74fSmXsFiw==}
-    hasBin: true
-    dependencies:
-      ajv: 6.12.6
-      antlr4: 4.7.1
-      chalk: 2.4.2
-      commander: 2.18.0
-      cosmiconfig: 5.2.1
-      eslint: 5.16.0
-      fast-diff: 1.2.0
-      glob: 7.2.3
-      ignore: 4.0.6
-      js-yaml: 3.14.1
-      lodash: 4.17.21
-      semver: 6.3.0
-    optionalDependencies:
-      prettier: 1.19.1
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   /solhint/3.3.8:
