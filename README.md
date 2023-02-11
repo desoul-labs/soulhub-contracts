@@ -1,10 +1,10 @@
 # soularis-contracts
 
-[![Solidity CI](https://github.com/Phaneroz-Labs/soularis-contracts/actions/workflows/solidity-ci.yml/badge.svg)](https://github.com/Phaneroz-Labs/soularis-contracts/actions/workflows/solidity-ci.yml)
-[![Solidity CD](https://github.com/Phaneroz-Labs/soularis-contracts/actions/workflows/solidity-cd.yml/badge.svg?branch=main)](https://github.com/Phaneroz-Labs/soularis-contracts/actions/workflows/solidity-cd.yml)
-[![codecov](https://codecov.io/gh/Phaneroz-Labs/soularis-contracts/branch/dev/graph/badge.svg?token=ZAMZN6WCHW)](https://codecov.io/gh/Phaneroz-Labs/soularis-contracts)
-[![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg?style=flat&logo=renovatebot)](https://app.renovatebot.com/dashboard#github/Phaneroz-Labs/soularis-contracts)
-[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-908a85?logo=gitpod)](https://gitpod.io/#https://github.com/Phaneroz-Labs/soularis-contracts)
+[![Solidity CI](https://github.com/desoul-labs/soulhub-contracts/actions/workflows/solidity-ci.yml/badge.svg)](https://github.com/desoul-labs/soulhub-contracts/actions/workflows/solidity-ci.yml)
+[![Solidity CD](https://github.com/desoul-labs/soulhub-contracts/actions/workflows/solidity-cd.yml/badge.svg?branch=main)](https://github.com/desoul-labs/soulhub-contracts/actions/workflows/solidity-cd.yml)
+[![codecov](https://codecov.io/gh/desoul-labs/soulhub-contracts/branch/dev/graph/badge.svg?token=ZAMZN6WCHW)](https://codecov.io/gh/desoul-labs/soulhub-contracts)
+[![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg?style=flat&logo=renovatebot)](https://app.renovatebot.com/dashboard#github/desoul-labs/soulhub-contracts)
+[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-908a85?logo=gitpod)](https://gitpod.io/#https://github.com/desoul-labs/soulhub-contracts)
 
 ## Getting Started
 
