@@ -8,7 +8,7 @@ importers:
       '@commitlint/config-conventional': 17.4.2
       '@ethersproject/abi': 5.7.0
       '@ethersproject/providers': 5.7.2
-      '@nomicfoundation/hardhat-chai-matchers': 1.0.5
+      '@nomicfoundation/hardhat-chai-matchers': 1.0.6
       '@nomicfoundation/hardhat-network-helpers': 1.0.8
       '@nomicfoundation/hardhat-toolbox': 2.0.1
       '@nomiclabs/hardhat-ethers': 2.2.2
@@ -47,9 +47,9 @@ importers:
       '@commitlint/config-conventional': 17.4.2
       '@ethersproject/abi': 5.7.0
       '@ethersproject/providers': 5.7.2
-      '@nomicfoundation/hardhat-chai-matchers': 1.0.5_gt7neh5sq6k2f4pi3y7o6pvdzy
+      '@nomicfoundation/hardhat-chai-matchers': 1.0.6_gt7neh5sq6k2f4pi3y7o6pvdzy
       '@nomicfoundation/hardhat-network-helpers': 1.0.8_hardhat@2.12.6
-      '@nomicfoundation/hardhat-toolbox': 2.0.1_udfhg3wrhbkmm5d46yqkivobji
+      '@nomicfoundation/hardhat-toolbox': 2.0.1_br5xyd7z5fwosqmr5lufpgdtke
       '@nomiclabs/hardhat-ethers': 2.2.2_n3rx3kkfcos7o3ij5m4a4n7ngq
       '@nomiclabs/hardhat-etherscan': 3.1.6_hardhat@2.12.6
       '@nomiclabs/hardhat-solhint': 2.0.1_hardhat@2.12.6
@@ -804,8 +804,8 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /@nomicfoundation/hardhat-chai-matchers/1.0.5_gt7neh5sq6k2f4pi3y7o6pvdzy:
-    resolution: {integrity: sha512-+W5C/+5FHI2xBajUN9THSNc1UP6FUsA7LeLmfnaC9VMi/50/DEjjxd8OmizEXgV1Bjck7my4NVQLL1Ti39FkpA==}
+  /@nomicfoundation/hardhat-chai-matchers/1.0.6_gt7neh5sq6k2f4pi3y7o6pvdzy:
+    resolution: {integrity: sha512-f5ZMNmabZeZegEfuxn/0kW+mm7+yV7VNDxLpMOMGXWFJ2l/Ct3QShujzDRF9cOkK9Ui/hbDeOWGZqyQALDXVCQ==}
     peerDependencies:
       '@nomiclabs/hardhat-ethers': ^2.0.0
       chai: ^4.2.0
@@ -817,7 +817,6 @@ packages:
       '@types/chai-as-promised': 7.1.5
       chai: 4.3.6
       chai-as-promised: 7.1.1_chai@4.3.6
-      chalk: 2.4.2
       deep-eql: 4.1.0
       ethers: 5.7.2
       hardhat: 2.12.6_z6wznmtyb6ovnulj6iujpct7um
@@ -833,7 +832,7 @@ packages:
       hardhat: 2.12.6_z6wznmtyb6ovnulj6iujpct7um
     dev: true
 
-  /@nomicfoundation/hardhat-toolbox/2.0.1_udfhg3wrhbkmm5d46yqkivobji:
+  /@nomicfoundation/hardhat-toolbox/2.0.1_br5xyd7z5fwosqmr5lufpgdtke:
     resolution: {integrity: sha512-/pr8m9xlqiNlq6fXv4hEPNwdNwUhysoB2qbDCKqERfPpq34EydUQTC3Vis4aIea8RLwSrU8sDXFdv4TQxYstKw==}
     peerDependencies:
       '@ethersproject/abi': ^5.4.7
@@ -858,7 +857,7 @@ packages:
     dependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/providers': 5.7.2
-      '@nomicfoundation/hardhat-chai-matchers': 1.0.5_gt7neh5sq6k2f4pi3y7o6pvdzy
+      '@nomicfoundation/hardhat-chai-matchers': 1.0.6_gt7neh5sq6k2f4pi3y7o6pvdzy
       '@nomicfoundation/hardhat-network-helpers': 1.0.8_hardhat@2.12.6
       '@nomiclabs/hardhat-ethers': 2.2.2_n3rx3kkfcos7o3ij5m4a4n7ngq
       '@nomiclabs/hardhat-etherscan': 3.1.6_hardhat@2.12.6
