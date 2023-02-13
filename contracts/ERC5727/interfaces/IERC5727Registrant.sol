@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.4;
 
-import "./IERC5727.sol";
+import "../../ERC173/interfaces/IERC173.sol";
+import "./IERC5727Metadata.sol";
 
 /**
  *    interfaceId = 0x0349722d
  */
-interface IERC5727Registrant is IERC5727 {
+interface IERC5727Registrant is IERC5727Metadata, IERC173 {
     /**
      * @notice Emitted when the contract is registerd to a registry.
      * @param registry The registry address

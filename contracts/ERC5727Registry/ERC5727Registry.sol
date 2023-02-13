@@ -10,14 +10,14 @@ import "../ERC721/ERC721URIStorage.sol";
 import "../ERC721/ERC721Pausable.sol";
 import "../ERC5727/interfaces/IERC5727Metadata.sol";
 import "../ERC5727/interfaces/IERC5727Registrant.sol";
-import "./interfaces/IERC5727RegistryMetadata.sol";
+import "./interfaces/IERC5727Registry.sol";
 
-abstract contract ERC5727Registry is
+contract ERC5727Registry is
     Context,
-    IERC5727RegistryMetadata,
+    IERC5727Registry,
     ERC721URIStorage,
-    ERC721Enumerable,
-    ERC721Pausable
+    ERC721Pausable,
+    ERC721Enumerable
 {
     using Counters for Counters.Counter;
     using ERC165Checker for address;
@@ -25,8 +25,6 @@ abstract contract ERC5727Registry is
     using EnumerableMap for EnumerableMap.UintToAddressMap;
     using Strings for address;
 
-    string private _name;
-    string private _namespace;
     string private _uri;
 
     Counters.Counter private _entryIdCounter;
@@ -34,99 +32,137 @@ abstract contract ERC5727Registry is
     EnumerableMap.UintToAddressMap private _entries;
     EnumerableMap.AddressToUintMap private _indexedEntries;
 
+    modifier onlyRegistrantOrOwner(address addr) {
+        bool isRegistrant = addr.supportsInterface(
+            type(IERC5727Registrant).interfaceId
+        );
+        if (!isRegistrant) revert NotSupported();
+
+        address owner = IERC5727Registrant(addr).owner();
+        if (_msgSender() != addr && _msgSender() != owner)
+            revert Unauthorized(_msgSender());
+        _;
+    }
+
     constructor(
         string memory name,
         string memory namespace,
         string memory uri
-    ) {
-        _name = name;
-        _namespace = namespace;
+    ) ERC721(name, namespace) {
         _uri = uri;
     }
 
-    function _setEntry(uint256 id, address addr) internal {
-        bool success = _entries.set(id, addr);
-        bool successIndex = _indexedEntries.set(addr, id);
+    function _setEntry(uint256 entry, address addr) internal virtual {
+        bool success = _entries.set(entry, addr);
+        bool successIndex = _indexedEntries.set(addr, entry);
 
         require(success && successIndex, "Entry already exists");
     }
 
-    function _removeEntry(uint256 id) internal {
-        address addr = addressOf(id);
-        bool success = _entries.remove(id);
+    function _removeEntry(uint256 entry) internal virtual {
+        address addr = addressOf(entry);
+        bool success = _entries.remove(entry);
         bool successIndex = _indexedEntries.remove(addr);
 
         require(success && successIndex, "Entry does not exist");
     }
 
+    function register(
+        address addr
+    ) public virtual override onlyRegistrantOrOwner(addr) returns (uint256) {
+        if (isRegistered(addr)) revert("Address already registered");
+
+        uint256 tokenId = _register(addr);
+        string memory uri = IERC5727Registrant(addr).contractURI();
+        address owner = IERC5727Registrant(addr).owner();
+        _safeMint(owner, tokenId, uri);
+
+        return tokenId;
+    }
+
+    function _safeMint(
+        address to,
+        uint256 tokenId,
+        string memory uri
+    ) internal {
+        _safeMint(to, tokenId);
+        _setTokenURI(tokenId, uri);
+    }
+
     function _register(address addr) public virtual returns (uint256) {
-        require(
-            _isERC5727Contract(addr),
-            "Only ERC5727 contract can be registered"
-        );
-
-        uint256 id = _entryIdCounter.current();
+        uint256 entry = _entryIdCounter.current();
         _entryIdCounter.increment();
-        _setEntry(id, addr);
+        _setEntry(entry, addr);
 
-        emit Registered(id, addr);
+        emit Registered(entry, addr);
 
-        return id;
+        return entry;
+    }
+
+    function deregister(
+        address addr
+    ) public virtual override onlyRegistrantOrOwner(addr) returns (uint256) {
+        if (!isRegistered(addr)) revert("Address not registered");
+
+        uint256 tokenId = _deregister(addr);
+
+        return tokenId;
     }
 
     function _deregister(address addr) public virtual returns (uint256) {
-        require(
-            _isERC5727Contract(addr),
-            "Only ERC5727 contract can be deregistered"
-        );
-
-        uint256 id = idOf(addr);
-        if (!_isApprovedOrOwner(_msgSender(), id))
+        uint256 entry = entryOf(addr);
+        if (!_isApprovedOrOwner(_msgSender(), entry))
             revert Unauthorized(_msgSender());
-        _burn(id);
-        _removeEntry(id);
+        _burn(entry);
+        _removeEntry(entry);
 
-        emit Deregistered(id, addr);
+        emit Deregistered(entry, addr);
 
-        return id;
+        return entry;
+    }
+
+    function transferOwnership(
+        address addr,
+        address newOwner
+    ) public virtual override onlyRegistrantOrOwner(addr) {
+        safeTransferFrom(_msgSender(), newOwner, entryOf(addr));
     }
 
     function isRegistered(
         address addr
-    ) external view virtual override returns (bool) {
+    ) public view virtual override returns (bool) {
         return _indexedEntries.contains(addr);
     }
 
     function addressOf(
-        uint256 id
+        uint256 entry
     ) public view virtual override returns (address) {
-        (bool exists, address addr) = _entries.tryGet(id);
-        require(exists, "ERC5727Registry: entry not found");
+        (bool exists, address addr) = _entries.tryGet(entry);
+        if (!exists) revert NotFound(entry);
+
         return addr;
     }
 
-    function idOf(address addr) public view virtual override returns (uint256) {
-        (bool exists, uint256 id) = _indexedEntries.tryGet(addr);
-        require(exists, "ERC5727Registry: entry not found");
-        return id;
+    function entryOf(
+        address addr
+    ) public view virtual override returns (uint256) {
+        (bool exists, uint256 entry) = _indexedEntries.tryGet(addr);
+        if (!exists) revert NotRegistered(addr);
+
+        return entry;
     }
 
-    function total() external view override returns (uint256) {
-        return _entryIdCounter.current();
-    }
-
-    function registryURI() external view returns (string memory) {
+    function registryURI()
+        external
+        view
+        virtual
+        override
+        returns (string memory)
+    {
         return
             bytes(_uri).length > 0
                 ? string(abi.encodePacked(_uri, address(this).toHexString()))
                 : "";
-    }
-
-    function _isERC5727Contract(address addr) internal view returns (bool) {
-        return
-            addr.supportsInterface(type(IERC5727).interfaceId) &&
-            addr.supportsInterface(type(IERC5727Metadata).interfaceId) &&
-            addr.supportsInterface(type(IERC5727Registrant).interfaceId);
     }
 
     function _beforeTokenTransfer(
