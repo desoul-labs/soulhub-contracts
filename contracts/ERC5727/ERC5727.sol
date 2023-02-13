@@ -12,11 +12,10 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 
 import "../ERC3525/ERC3525.sol";
-import "./interfaces/IERC5727.sol";
 import "./interfaces/IERC5727Metadata.sol";
 import "./interfaces/IERC5727Enumerable.sol";
 
-contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727 {
+contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
     using EnumerableSet for EnumerableSet.UintSet;
     using EnumerableSet for EnumerableSet.AddressSet;
     using SignatureChecker for address;
