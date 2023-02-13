@@ -8,6 +8,6 @@ import "./IERC5727.sol";
  * @title ERC5727 Soulbound Token Metadata Interface
  * @dev This extension allows querying the metadata of soulbound tokens.
  */
-interface IERC5727Metadata is IERC5727, IERC3525Metadata {
+interface IERC5727Metadata is IERC3525Metadata, IERC5727 {
 
 }
