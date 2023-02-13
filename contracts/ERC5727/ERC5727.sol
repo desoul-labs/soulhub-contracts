@@ -42,13 +42,13 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727 {
     }
 
     modifier onlyMinter(uint256 tokenId) {
-        if (_checkMintAuth(_msgSender(), tokenId))
+        if (!_checkMintAuth(_msgSender(), tokenId))
             revert Unauthorized(_msgSender());
         _;
     }
 
     modifier onlyBurner(uint256 tokenId) {
-        if (_checkBurnAuth(_msgSender(), tokenId))
+        if (!_checkBurnAuth(_msgSender(), tokenId))
             revert Unauthorized(_msgSender());
         _;
     }
