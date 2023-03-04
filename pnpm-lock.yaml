@@ -14,7 +14,7 @@ importers:
       '@nomiclabs/hardhat-ethers': 2.2.2
       '@nomiclabs/hardhat-etherscan': 3.1.6
       '@nomiclabs/hardhat-solhint': 3.0.0
-      '@openzeppelin/contracts': 4.8.1
+      '@openzeppelin/contracts': 4.8.2
       '@openzeppelin/contracts-upgradeable': 4.8.1
       '@openzeppelin/hardhat-upgrades': 1.22.1
       '@primitivefi/hardhat-dodoc': 0.2.3
@@ -40,7 +40,7 @@ importers:
       ts-node: 10.9.1
       typescript: 4.9.5
     dependencies:
-      '@openzeppelin/contracts': 4.8.1
+      '@openzeppelin/contracts': 4.8.2
       '@openzeppelin/contracts-upgradeable': 4.8.1
     devDependencies:
       '@commitlint/cli': 17.4.3
@@ -1015,8 +1015,8 @@ packages:
     resolution: {integrity: sha512-1wTv+20lNiC0R07jyIAbHU7TNHKRwGiTGRfiNnA8jOWjKT98g5OgLpYWOi40Vgpk8SPLA9EvfJAbAeIyVn+7Bw==}
     dev: false
 
-  /@openzeppelin/contracts/4.8.1:
-    resolution: {integrity: sha512-xQ6eUZl+RDyb/FiZe1h+U7qr/f4p/SrTSQcTPH2bjur3C5DbuW/zFgCU/b1P/xcIaEqJep+9ju4xDRi3rmChdQ==}
+  /@openzeppelin/contracts/4.8.2:
+    resolution: {integrity: sha512-kEUOgPQszC0fSYWpbh2kT94ltOJwj1qfT2DWo+zVttmGmf97JZ99LspePNaeeaLhCImaHVeBbjaQFZQn7+Zc5g==}
     dev: false
 
   /@openzeppelin/hardhat-upgrades/1.22.1_b5m5gp6m4sj3jjg35kxj7kdo3a:
@@ -1889,7 +1889,7 @@ packages:
   /axios/0.27.2:
     resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
     dependencies:
-      follow-redirects: 1.15.1_debug@4.3.4
+      follow-redirects: 1.15.1
       form-data: 4.0.0
     transitivePeerDependencies:
       - debug
@@ -3828,6 +3828,16 @@ packages:
     resolution: {integrity: sha512-Y6hyofImk9JdzU8k5INtTXX1cu8LDlePWDFU5sftm9H+zKCr5SGrVjdhkvsim646cw5zD0nADj8oHyXMZmCZ9w==}
     dependencies:
       imul: 1.0.1
+    dev: true
+
+  /follow-redirects/1.15.1:
+    resolution: {integrity: sha512-yLAMQs+k0b2m7cVxpS1VKJVvoz7SS9Td1zss3XRwXj+ZDH00RJgnuLx7E44wx02kQLrdM3aOOy+FpzS7+8OizA==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
     dev: true
 
   /follow-redirects/1.15.1_debug@4.3.4:
