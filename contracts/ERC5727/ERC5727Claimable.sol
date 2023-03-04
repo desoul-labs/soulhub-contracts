@@ -35,6 +35,7 @@ abstract contract ERC5727Claimable is IERC5727Claimable, ERC5727 {
         uint256 amount,
         uint256 slot,
         BurnAuth burnAuth,
+        address verifier,
         bytes calldata data,
         bytes32[] calldata proof
     ) external virtual override {
@@ -50,7 +51,9 @@ abstract contract ERC5727Claimable is IERC5727Claimable, ERC5727 {
         );
         if (!proof.verify(merkelRoot, node)) revert Unauthorized(to);
 
-        _issue(_slotIssuers[slot], to, tokenId, amount, slot, burnAuth);
+        _issue(_slotIssuers[slot], to, tokenId, slot, burnAuth, verifier);
+        _issue(_slotIssuers[slot], tokenId, amount);
+
         _claimed[to].add(slot);
     }
 

@@ -29,6 +29,7 @@ interface IERC5727Claimable is IERC5727 {
         uint256 amount,
         uint256 slot,
         BurnAuth burnAuth,
+        address verifier,
         bytes calldata data,
         bytes32[] calldata proof
     ) external;

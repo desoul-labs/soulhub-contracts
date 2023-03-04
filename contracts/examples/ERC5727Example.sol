@@ -39,25 +39,6 @@ contract ERC5727Example is
         return _baseTokenURI;
     }
 
-    function _issue(
-        address from,
-        address to,
-        uint256 tokenId,
-        uint256 amount,
-        uint256 slot,
-        BurnAuth auth
-    ) internal virtual override(ERC5727, ERC5727Delegate) {
-        ERC5727Delegate._issue(from, to, tokenId, amount, slot, auth);
-    }
-
-    function _revoke(
-        address from,
-        uint256 tokenId,
-        uint256 amount
-    ) internal virtual override(ERC5727, ERC5727Delegate) {
-        ERC5727Delegate._revoke(from, tokenId, amount);
-    }
-
     function _burn(
         uint256 tokenId
     ) internal virtual override(ERC5727, ERC5727Enumerable) {
