@@ -11,11 +11,19 @@ abstract contract ERC5727Expirable is IERC5727Expirable, ERC5727 {
     mapping(uint256 => uint64) private _slotExpiryDate;
     mapping(uint256 => bool) private _slotIsRenewable;
 
+    modifier onlyManager(uint256 tokenId) {
+        if (
+            _msgSender() != _issuers[tokenId] ||
+            _msgSender() != ownerOf(tokenId)
+        ) revert Unauthorized(_msgSender());
+        _;
+    }
+
     function setExpiration(
         uint256 tokenId,
         uint64 expiration,
         bool renewable
-    ) public virtual override onlyManager(tokenId) {
+    ) public virtual override onlyIssuer(tokenId) {
         if (!_exists(tokenId)) revert NotFound(tokenId);
         if (expiration == 0) revert NullValue();
         if (_expiryDate[tokenId] > 0) revert Conflict(tokenId);
