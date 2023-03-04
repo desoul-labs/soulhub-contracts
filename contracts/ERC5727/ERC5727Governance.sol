@@ -19,15 +19,16 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
         address creator;
         address to;
         uint256 tokenId;
-        uint256 value;
+        uint256 amount;
         uint256 slot;
         uint256 votersApproved;
         uint256 votersRejected;
         ApprovalStatus approvalStatus;
         BurnAuth burnAuth;
+        address verifier;
     }
 
-    bytes32 public constant VOTER_ROLE = bytes32(uint256(0x03));
+    bytes32 public constant VOTER_ROLE = bytes32(uint256(0x04));
 
     EnumerableSet.AddressSet private _voters;
 
@@ -57,6 +58,7 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
         uint256 amount,
         uint256 slot,
         BurnAuth burnAuth,
+        address verifier,
         bytes calldata data
     ) external virtual override onlyVoter {
         if (to == address(0) || tokenId == 0 || slot == 0) revert NullValue();
@@ -71,7 +73,8 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
             0,
             0,
             ApprovalStatus.Pending,
-            burnAuth
+            burnAuth,
+            verifier
         );
 
         _approvalRequestCount.increment();
@@ -150,10 +153,11 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
                 _msgSender(),
                 approval.to,
                 approval.tokenId,
-                approval.value,
                 approval.slot,
-                approval.burnAuth
+                approval.burnAuth,
+                approval.verifier
             );
+            _issue(_msgSender(), approval.tokenId, approval.amount);
 
             emit ApprovalUpdate(
                 approvalId,

@@ -8,6 +8,9 @@ abstract contract ERC5727Expirable is IERC5727Expirable, ERC5727 {
     mapping(uint256 => uint64) private _expiryDate;
     mapping(uint256 => bool) private _isRenewable;
 
+    mapping(uint256 => uint64) private _slotExpiryDate;
+    mapping(uint256 => bool) private _slotIsRenewable;
+
     function setExpiration(
         uint256 tokenId,
         uint64 expiration,

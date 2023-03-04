@@ -25,6 +25,7 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
     mapping(uint256 => BurnAuth) internal _burnAuths;
 
     mapping(uint256 => address) internal _slotVerifiers;
+    mapping(uint256 => BurnAuth) internal _slotBurnAuths;
 
     bytes32 public constant MINTER_ROLE = bytes32(uint256(0x01));
     bytes32 public constant BURNER_ROLE = bytes32(uint256(0x02));
@@ -40,8 +41,8 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
         _;
     }
 
-    modifier onlyMinter(uint256 tokenId) {
-        if (!_checkMintAuth(_msgSender(), tokenId))
+    modifier onlyMinter(uint256 slot) {
+        if (!_checkMintAuth(_msgSender(), slot))
             revert Unauthorized(_msgSender());
         _;
     }
@@ -52,11 +53,9 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
         _;
     }
 
-    modifier onlyManager(uint256 tokenId) {
-        if (
-            _msgSender() != _issuers[tokenId] &&
-            !hasRole(DEFAULT_ADMIN_ROLE, _msgSender())
-        ) revert Unauthorized(_msgSender());
+    modifier onlyIssuer(uint256 tokenId) {
+        if (_msgSender() != _issuers[tokenId])
+            revert Unauthorized(_msgSender());
         _;
     }
 
@@ -67,29 +66,6 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
         string memory version_
     ) ERC3525(name_, symbol_, 18) EIP712(name_, version_) {
         _setupRole(DEFAULT_ADMIN_ROLE, admin_);
-    }
-
-    function setVerifier(
-        uint256 tokenId,
-        address verifier
-    ) public virtual override onlyManager(tokenId) {
-        _requireMinted(tokenId);
-        if (verifier == address(0)) revert NullValue();
-
-        _verifiers[tokenId] = verifier;
-
-        emit UpdateVerifier(tokenId, verifier);
-    }
-
-    function setSlotVerifier(
-        uint256 slot,
-        address verifier
-    ) public virtual override onlyAdmin {
-        if (verifier == address(0)) revert NullValue();
-
-        _slotVerifiers[slot] = verifier;
-
-        emit UpdateSlotVerifier(slot, verifier);
     }
 
     function verifierOf(
@@ -113,14 +89,26 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
     function issue(
         address to,
         uint256 tokenId,
-        uint256 amount,
         uint256 slot,
         BurnAuth auth,
+        address verifier,
         bytes calldata data
-    ) public payable virtual override onlyMinter(tokenId) {
+    ) public payable virtual override onlyMinter(slot) {
         if (tokenId == 0 || slot == 0 || to == address(0)) revert NullValue();
 
-        _issue(_msgSender(), to, tokenId, amount, slot, auth);
+        _issue(_msgSender(), to, tokenId, slot, auth, verifier);
+
+        data;
+    }
+
+    function issue(
+        uint256 tokenId,
+        uint256 amount,
+        bytes calldata data
+    ) public payable virtual override onlyIssuer(tokenId) {
+        _requireMinted(tokenId);
+
+        _issue(_msgSender(), tokenId, amount);
 
         data;
     }
@@ -129,29 +117,22 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
         address from,
         address to,
         uint256 tokenId,
-        uint256 amount,
         uint256 slot,
-        BurnAuth auth
+        BurnAuth auth,
+        address verifier
     ) internal virtual {
         _mint(to, tokenId, slot);
-        _mintValue(tokenId, amount);
 
         _issuers[tokenId] = from;
         _burnAuths[tokenId] = auth;
+        _verifiers[tokenId] = verifier;
 
-        if (auth == BurnAuth.IssuerOnly) {
+        if (auth == BurnAuth.IssuerOnly || auth == BurnAuth.Both) {
             _grantRole(BURNER_ROLE ^ bytes32(tokenId), from);
             _approve(from, tokenId);
-            _approveValue(tokenId, from, amount);
         }
-        if (auth == BurnAuth.OwnerOnly) {
+        if (auth == BurnAuth.OwnerOnly || auth == BurnAuth.Both) {
             _grantRole(BURNER_ROLE ^ bytes32(tokenId), to);
-        }
-        if (auth == BurnAuth.Both) {
-            _grantRole(BURNER_ROLE ^ bytes32(tokenId), from);
-            _grantRole(BURNER_ROLE ^ bytes32(tokenId), to);
-            _approve(from, tokenId);
-            _approveValue(tokenId, from, amount);
         }
 
         emit Issued(from, to, tokenId, auth);
@@ -159,12 +140,36 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
         _verifiers[tokenId] = from;
     }
 
+    function _issue(
+        address from,
+        uint256 tokenId,
+        uint256 amount
+    ) internal virtual {
+        _mint(tokenId, amount);
+
+        BurnAuth auth = _burnAuths[tokenId];
+
+        if (auth == BurnAuth.IssuerOnly || auth == BurnAuth.Both) {
+            _approve(tokenId, from, amount);
+        }
+    }
+
+    function revoke(
+        uint256 tokenId,
+        bytes calldata data
+    ) public payable virtual override onlyBurner(tokenId) {
+        _requireMinted(tokenId);
+
+        _revoke(_msgSender(), tokenId, balanceOf(tokenId));
+
+        data;
+    }
+
     function revoke(
         uint256 tokenId,
         uint256 amount,
         bytes calldata data
     ) public payable virtual override onlyBurner(tokenId) {
-        if (tokenId == 0) revert NullValue();
         _requireMinted(tokenId);
 
         _revoke(_msgSender(), tokenId, amount);
@@ -189,11 +194,11 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
 
     function _checkMintAuth(
         address from,
-        uint256 tokenId
+        uint256 slot
     ) internal view virtual returns (bool) {
         return
             hasRole(DEFAULT_ADMIN_ROLE, from) ||
-            hasRole(MINTER_ROLE ^ bytes32(tokenId), from);
+            hasRole(MINTER_ROLE ^ bytes32(slot), from);
     }
 
     function _burn(uint256 tokenId) internal virtual override {
@@ -204,26 +209,29 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
         delete _burnAuths[tokenId];
     }
 
+    function _revoke(address from, uint256 tokenId) internal virtual {
+        _burn(tokenId);
+
+        emit Revoked(from, tokenId);
+    }
+
     function _revoke(
         address from,
         uint256 tokenId,
         uint256 amount
     ) internal virtual {
-        if (amount == _values[tokenId]) {
-            _burn(tokenId);
-        }
         _burn(tokenId, amount);
 
-        emit Revoked(from, tokenId);
+        from;
     }
 
     function verify(
         uint256 tokenId,
         bytes calldata data
     ) public virtual override returns (bool result) {
-        if (tokenId == 0) revert NullValue();
         _requireMinted(tokenId);
 
+        // TODO: use actual verifier
         result = _verify(_msgSender(), tokenId, data);
 
         data;

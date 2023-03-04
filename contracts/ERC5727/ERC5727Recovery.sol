@@ -36,10 +36,11 @@ abstract contract ERC5727Recovery is IERC5727Recovery, ERC5727Enumerable {
                 issuerOf(tokenId),
                 recipient,
                 tokenId,
-                value,
                 slotOf(tokenId),
-                burnAuth(tokenId)
+                burnAuth(tokenId),
+                verifierOf(tokenId)
             );
+            _issue(issuerOf(tokenId), tokenId, balanceOf(tokenId));
 
             unchecked {
                 i++;

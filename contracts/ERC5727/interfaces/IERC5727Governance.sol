@@ -55,6 +55,7 @@ interface IERC5727Governance is IERC5727 {
         uint256 amount,
         uint256 slot,
         BurnAuth burnAuth,
+        address verifier,
         bytes calldata data
     ) external;
 

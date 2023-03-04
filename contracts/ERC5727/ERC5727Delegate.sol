@@ -5,137 +5,37 @@ import "./interfaces/IERC5727Delegate.sol";
 import "./ERC5727.sol";
 
 abstract contract ERC5727Delegate is IERC5727Delegate, ERC5727 {
-    struct DelegatedIssue {
-        address operator;
-        address to;
-        uint256 value;
-        uint256 slot;
-        BurnAuth burnAuth;
-    }
-
-    struct DelegatedRevoke {
-        address operator;
-        uint256 value;
-    }
-
-    mapping(uint256 => DelegatedIssue) private _issuances;
-
-    mapping(uint256 => DelegatedRevoke) private _revocations;
-
-    function delegateIssue(
+    function delegate(
         address operator,
-        address to,
-        uint256 tokenId,
-        uint256 amount,
-        uint256 slot,
-        BurnAuth burnAuth,
-        bytes calldata data
-    ) external virtual override onlyMinter(tokenId) {
-        if (
-            operator == address(0) ||
-            to == address(0) ||
-            tokenId == 0 ||
-            slot == 0
-        ) revert NullValue();
+        uint256 slot
+    ) external virtual override onlyAdmin {
+        if (operator == address(0) || slot == 0) revert NullValue();
+        if (isOperatorFor(operator, slot))
+            revert RoleAlreadyGranted(operator, MINTER_ROLE ^ bytes32(slot));
 
-        _issuances[tokenId] = DelegatedIssue(
-            operator,
-            to,
-            amount,
-            slot,
-            burnAuth
-        );
-        _grantRole(MINTER_ROLE ^ bytes32(tokenId), operator);
-
-        emit DelegateToken(operator, tokenId);
-
-        data;
+        _grantRole(MINTER_ROLE ^ bytes32(slot), operator);
+        emit Delegate(operator, slot);
     }
 
-    function delegateRevoke(
+    function unDelegate(
         address operator,
-        uint256 tokenId,
-        uint256 amount,
-        bytes calldata data
-    ) external virtual override onlyBurner(tokenId) {
-        if (operator == address(0) || tokenId == 0) revert NullValue();
+        uint256 slot
+    ) external virtual override onlyAdmin {
+        if (operator == address(0) || slot == 0) revert NullValue();
+        if (!isOperatorFor(operator, slot))
+            revert RoleNotGranted(operator, MINTER_ROLE ^ bytes32(slot));
 
-        _revocations[tokenId] = DelegatedRevoke(operator, amount);
-        _grantRole(BURNER_ROLE ^ bytes32(tokenId), operator);
-
-        emit DelegateToken(operator, tokenId);
-
-        data;
+        _revokeRole(MINTER_ROLE ^ bytes32(slot), operator);
+        emit UnDelegate(operator, slot);
     }
 
-    function _issue(
-        address from,
-        address to,
-        uint256 tokenId,
-        uint256 amount,
-        uint256 slot,
-        BurnAuth auth
-    ) internal virtual override {
-        if (_issuances[tokenId].operator == from) {
-            if (!_validateIssuance(tokenId, to, amount, slot, auth))
-                revert Unauthorized(from);
+    function isOperatorFor(
+        address operator,
+        uint256 slot
+    ) public view virtual override returns (bool) {
+        if (operator == address(0) || slot == 0) revert NullValue();
 
-            _revokeRole(MINTER_ROLE ^ bytes32(tokenId), from);
-            delete _issuances[tokenId];
-        }
-
-        super._issue(from, to, tokenId, amount, slot, auth);
-    }
-
-    function _revoke(
-        address from,
-        uint256 tokenId,
-        uint256 amount
-    ) internal virtual override {
-        if (_revocations[tokenId].operator == from) {
-            if (!_validateRevocation(tokenId, amount))
-                revert Unauthorized(from);
-
-            _revokeRole(BURNER_ROLE ^ bytes32(tokenId), from);
-            delete _revocations[tokenId];
-        }
-
-        super._revoke(from, tokenId, amount);
-    }
-
-    function _issuanceExists(
-        uint256 tokenId
-    ) internal view virtual returns (bool) {
-        return _issuances[tokenId].operator != address(0);
-    }
-
-    function _revocationExists(
-        uint256 tokenId
-    ) internal view virtual returns (bool) {
-        return _revocations[tokenId].operator != address(0);
-    }
-
-    function _validateIssuance(
-        uint256 tokenId,
-        address to,
-        uint256 amount,
-        uint256 slot,
-        BurnAuth auth
-    ) internal view virtual returns (bool) {
-        DelegatedIssue memory issuance = _issuances[tokenId];
-        return
-            issuance.to == to &&
-            issuance.value == amount &&
-            issuance.slot == slot &&
-            issuance.burnAuth == auth;
-    }
-
-    function _validateRevocation(
-        uint256 tokenId,
-        uint256 amount
-    ) internal view virtual returns (bool) {
-        DelegatedRevoke memory revocation = _revocations[tokenId];
-        return revocation.value == amount;
+        return hasRole(MINTER_ROLE ^ bytes32(slot), operator);
     }
 
     function supportsInterface(

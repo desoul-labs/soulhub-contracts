@@ -65,7 +65,7 @@ abstract contract ERC3525SlotApprovable is ERC3525, IERC3525SlotApprovable {
             "ERC3525: caller is not owner nor approved"
         );
 
-        _approveValue(tokenId_, to_, value_);
+        _approve(tokenId_, to_, value_);
     }
 
     function _setApprovalForSlot(

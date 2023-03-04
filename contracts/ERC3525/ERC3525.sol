@@ -13,8 +13,6 @@ contract ERC3525 is IERC3525, IERC3525Metadata, ERC721Enumerable {
     using Strings for address;
     using Strings for uint256;
     using EnumerableMap for EnumerableMap.AddressToUintMap;
-    using EnumerableSet for EnumerableSet.AddressSet;
-    using Counters for Counters.Counter;
 
     /// @dev tokenId => values
     mapping(uint256 => uint256) internal _values;
@@ -126,7 +124,7 @@ contract ERC3525 is IERC3525, IERC3525Metadata, ERC721Enumerable {
         if (!ERC721._isApprovedOrOwner(_msgSender(), tokenId))
             revert Unauthorized(_msgSender());
 
-        _approveValue(tokenId, to, value);
+        _approve(tokenId, to, value);
     }
 
     function allowance(
@@ -145,7 +143,7 @@ contract ERC3525 is IERC3525, IERC3525Metadata, ERC721Enumerable {
 
         uint256 newTokenId = _getNewTokenId(fromTokenId);
         _mint(to, newTokenId, _slots[fromTokenId]);
-        _transferValue(fromTokenId, newTokenId, value);
+        _transfer(fromTokenId, newTokenId, value);
 
         return newTokenId;
     }
@@ -160,7 +158,7 @@ contract ERC3525 is IERC3525, IERC3525Metadata, ERC721Enumerable {
         if (_slots[fromTokenId] != _slots[toTokenId])
             revert Mismatch(_slots[fromTokenId], _slots[toTokenId]);
 
-        _transferValue(fromTokenId, toTokenId, value);
+        _transfer(fromTokenId, toTokenId, value);
     }
 
     function _mint(address to, uint256 tokenId, uint256 slot) internal virtual {
@@ -172,7 +170,7 @@ contract ERC3525 is IERC3525, IERC3525Metadata, ERC721Enumerable {
         emit SlotChanged(tokenId, 0, slot);
     }
 
-    function _mintValue(uint256 tokenId, uint256 value) internal virtual {
+    function _mint(uint256 tokenId, uint256 value) internal virtual {
         _requireMinted(tokenId);
 
         address owner = ownerOf(tokenId);
@@ -222,7 +220,7 @@ contract ERC3525 is IERC3525, IERC3525Metadata, ERC721Enumerable {
         emit TransferValue(tokenId, 0, value);
     }
 
-    function _transferValue(
+    function _transfer(
         uint256 fromTokenId,
         uint256 toTokenId,
         uint256 value
@@ -256,11 +254,11 @@ contract ERC3525 is IERC3525, IERC3525Metadata, ERC721Enumerable {
             if (currentAllowance < value)
                 revert InsufficientBalance(currentAllowance, value);
 
-            _approveValue(tokenId, operator, currentAllowance - value);
+            _approve(tokenId, operator, currentAllowance - value);
         }
     }
 
-    function _approveValue(
+    function _approve(
         uint256 tokenId,
         address to,
         uint256 value
