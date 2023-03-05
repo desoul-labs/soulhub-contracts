@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/utils/structs/EnumerableMap.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 
 import "../ERC721/ERC721Enumerable.sol";
-import "../ERC721/ERC721URIStorage.sol";
 import "../ERC721/ERC721Pausable.sol";
 import "../ERC5727/interfaces/IERC5727Metadata.sol";
 import "../ERC5727/interfaces/IERC5727Registrant.sol";
@@ -15,7 +14,6 @@ import "./interfaces/IERC5727Registry.sol";
 contract ERC5727Registry is
     Context,
     IERC5727Registry,
-    ERC721URIStorage,
     ERC721Pausable,
     ERC721Enumerable
 {
@@ -170,7 +168,7 @@ contract ERC5727Registry is
         address to,
         uint256 tokenId,
         uint256 batchSize
-    ) internal virtual override(ERC721, ERC721Enumerable, ERC721Pausable) {
+    ) internal virtual override(ERC721Enumerable, ERC721Pausable) {
         super._beforeTokenTransfer(from, to, tokenId, batchSize);
     }
 
@@ -181,24 +179,6 @@ contract ERC5727Registry is
         uint256 batchSize
     ) internal virtual override(ERC721, ERC721Enumerable) {
         super._afterTokenTransfer(from, to, tokenId, batchSize);
-    }
-
-    function _burn(
-        uint256 tokenId
-    ) internal virtual override(ERC721, ERC721URIStorage) {
-        super._burn(tokenId);
-    }
-
-    function tokenURI(
-        uint256 tokenId
-    )
-        public
-        view
-        virtual
-        override(ERC721, ERC721URIStorage)
-        returns (string memory)
-    {
-        return ERC721URIStorage.tokenURI(tokenId);
     }
 
     function supportsInterface(

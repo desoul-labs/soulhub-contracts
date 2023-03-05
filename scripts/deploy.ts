@@ -1,105 +1,126 @@
 import { ethers, run } from 'hardhat'
+import { ERC5727ExampleUpgradeable__factory } from '../typechain'
+import type {
+  BeaconProxy,
+  MinimalProxyFactory,
+  ERC5727ExampleUpgradeable,
+  UpgradeableBeacon,
+} from '../typechain'
 
 async function sleep(ms: number): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-async function main(): Promise<void> {
-  const ERC5727 = await ethers.getContractFactory('ERC5727Example')
-  const ctorArgs = [
-    'Soularis SBT',
-    'SBT',
-    '0xC5a0058Fa5f5bDEA7BE0A29F0428a0a5e6788438',
-    ['0xC5a0058Fa5f5bDEA7BE0A29F0428a0a5e6788438'] as string[],
-    'https://api.soularis.dev/sbt/',
-    '0x0000000000000000000000000000000000000000',
-    'v1',
-  ] as const
-  const erc5727 = await ERC5727.deploy(...ctorArgs)
-  await erc5727.deployed()
-  console.log('ERC5727Example contract deployed to:', erc5727.address)
+async function deploySbt(): Promise<ERC5727ExampleUpgradeable> {
+  const sbtContract = await ethers.getContractFactory('ERC5727ExampleUpgradeable')
+
+  const sbt = await sbtContract.deploy()
+  await sbt.deployed()
+  console.log('SBT contract deployed to:', sbt.address)
+
   await sleep(10000)
   await run('verify:verify', {
-    address: erc5727.address,
-    constructorArguments: ctorArgs,
+    address: sbt.address,
+    constructorArguments: [],
   }).catch((error) => {
     console.info(error)
   })
-  // const erc5727Factory = await ethers.getContractFactory('ERC5727ExampleUpgradeable')
-  // const erc5727 = await erc5727Factory.deploy()
-  // await erc5727.deployed()
-  // await sleep(10000)
-  // console.log('ERC5727Example contract deployed to:', erc5727.address)
-  // // await tenderly.verify({
-  // //   name: 'ERC5727Example',
-  // //   address: erc5727.address,
-  // // })
-  // await run('verify:verify', {
-  //   address: erc5727.address,
-  //   constructorArguments: [],
-  // }).catch((error) => {
-  //   console.info(error)
-  // })
 
-  // const registryFactory = await ethers.getContractFactory('ERC5727RegistryExample')
-  // const registry = await registryFactory.deploy(
-  //   'RegistryExample',
-  //   'REG',
-  //   '/soularis/example',
-  //   'https://soularis-demo.s3.ap-northeast-1.amazonaws.com/registry/',
-  // )
-  // await registry.deployed()
-  // console.log('ERC5727RegistryExample contract deployed to:', registry.address)
-  // // await tenderly.verify({
-  // //   name: 'ERC5727RegistryExample',
-  // //   address: registry.address,
-  // // })
-  // await sleep(10000)
-  // await run('verify:verify', {
-  //   address: registry.address,
-  //   constructorArguments: [
-  //     'RegistryExample',
-  //     'REG',
-  //     '/soularis/example',
-  //     'https://soularis-demo.s3.ap-northeast-1.amazonaws.com/registry/',
-  //   ],
-  // }).catch((error) => {
-  //   console.info(error)
-  // })
+  return sbt
+}
 
-  // const minimalProxyDeployerFactory = await ethers.getContractFactory('MinimalProxyDeployer')
-  // const minimalProxyDeployer = await minimalProxyDeployerFactory.deploy(
-  //   '0x0000000000000000000000000000000000000000',
-  // )
-  // await minimalProxyDeployer.deployed()
-  // console.log('MinimalProxyFactory contract deployed to:', minimalProxyDeployer.address)
-  // // await tenderly.verify({
-  // //   name: 'MinimalProxyFactory',
-  // //   address: minimalProxyDeployer.address,
-  // // })
-  // await sleep(10000)
-  // await run('verify:verify', {
-  //   address: minimalProxyDeployer.address,
-  //   constructorArguments: ['0x0000000000000000000000000000000000000000'],
-  // }).catch((error) => {
-  //   console.info(error)
-  // })
+async function deployBeacon(implementation: string): Promise<UpgradeableBeacon> {
+  const beaconContract = await ethers.getContractFactory('UpgradeableBeacon')
+  const beacon = await beaconContract.deploy(implementation)
 
-  // const souldropFactory = await ethers.getContractFactory('Souldrop')
-  // const souldrop = await souldropFactory.deploy()
-  // await souldrop.deployed()
-  // console.log('Souldrop contract deployed to:', souldrop.address)
-  // // await tenderly.verify({
-  // //   name: 'Souldrop',
-  // //   address: souldrop.address,
-  // // })
-  // await sleep(10000)
-  // await run('verify:verify', {
-  //   address: souldrop.address,
-  //   constructorArguments: [],
-  // }).catch((error) => {
-  //   console.info(error)
-  // })
+  await beacon.deployed()
+  console.log('Beacon contract deployed to:', beacon.address)
+
+  await sleep(10000)
+  await run('verify:verify', {
+    address: beacon.address,
+    constructorArguments: [implementation],
+  }).catch((error) => {
+    console.info(error)
+  })
+
+  return beacon
+}
+
+async function deployBeaconProxy(beacon: string, initCode: string): Promise<BeaconProxy> {
+  const proxyContract = await ethers.getContractFactory('BeaconProxy')
+  const proxy = await proxyContract.deploy(beacon, initCode)
+
+  await proxy.deployed()
+  console.log('BeaconProxy contract deployed to:', proxy.address)
+
+  await sleep(10000)
+  await run('verify:verify', {
+    address: proxy.address,
+    constructorArguments: [beacon, initCode],
+  }).catch((error) => {
+    console.info(error)
+  })
+
+  return proxy
+}
+
+async function deployMinimalProxy(): Promise<MinimalProxyFactory> {
+  const minimalProxyFactoryContract = await ethers.getContractFactory('MinimalProxyFactory')
+  const minimalProxyFactory = await minimalProxyFactoryContract.deploy(
+    '0x0000000000000000000000000000000000000000',
+  )
+
+  await minimalProxyFactory.deployed()
+  console.log('MinimalProxyFactory contract deployed to:', minimalProxyFactory.address)
+
+  await sleep(10000)
+  await run('verify:verify', {
+    address: minimalProxyFactory.address,
+    constructorArguments: ['0x0000000000000000000000000000000000000000'],
+  }).catch((error) => {
+    console.info(error)
+  })
+
+  return minimalProxyFactory
+}
+
+async function main(): Promise<void> {
+  const [deployer] = await ethers.getSigners()
+  console.log('Deploying contracts with the account:', deployer.address)
+  console.log('Network:', (await ethers.provider.getNetwork()).name)
+
+  const sbt = await deploySbt()
+  const beacon = await deployBeacon(sbt.address)
+  const beaconProxy = await deployBeaconProxy(beacon.address, '0x')
+
+  const minimalProxy = await deployMinimalProxy()
+  const salt = ethers.utils.formatBytes32String(Math.random().toString().slice(2, 10))
+  const tx = await minimalProxy.deployProxyByImplementation(beaconProxy.address, '0x', salt)
+  const receipt = await tx.wait()
+  const proxyAddress: string = receipt.events?.[0].args?.[1]
+  console.log('Proxy contract deployed to:', proxyAddress)
+
+  const sbtProxy = ERC5727ExampleUpgradeable__factory.connect(
+    '0xaB5405c03DF0f52dfC3D75975C6c30E64B9046Cd',
+    deployer,
+  )
+  await sbtProxy.__ERC5727Example_init(
+    'SoulHub SBT',
+    'SBT',
+    '0xC5a0058Fa5f5bDEA7BE0A29F0428a0a5e6788438',
+    ['0xC5a0058Fa5f5bDEA7BE0A29F0428a0a5e6788438'],
+    'https://api.soulhub.dev/sbt/',
+    'v1',
+  )
+  await sbtProxy['issue(address,uint256,uint256,uint8,address,bytes)'](
+    deployer.address,
+    1,
+    1,
+    1,
+    deployer.address,
+    '0x',
+  )
 }
 
 // We recommend this pattern to be able to use async/await everywhere

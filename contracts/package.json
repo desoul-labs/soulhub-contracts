@@ -1,14 +1,14 @@
 {
-  "name": "@desoul-labs/soularis-contracts",
+  "name": "@desoul-labs/soulhub-contracts",
   "version": "0.0.11",
-  "description": "Soularis Contracts",
-  "homepage": "https://github.com/desoul-labs/soularis-contracts#readme",
+  "description": "SoulHub Contracts",
+  "homepage": "https://github.com/desoul-labs/soulhub-contracts#readme",
   "bugs": {
-    "url": "https://github.com/desoul-labs/soularis-contracts/issues"
+    "url": "https://github.com/desoul-labs/soulhub-contracts/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+git@github.com:desoul-labs/soularis-contracts.git"
+    "url": "git+git@github.com:desoul-labs/soulhub-contracts.git"
   },
   "author": "Austin Zhu",
   "files": [

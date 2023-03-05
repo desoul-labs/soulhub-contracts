@@ -7,7 +7,6 @@ import "../ERC5727/ERC5727Expirable.sol";
 import "../ERC5727/ERC5727Governance.sol";
 import "../ERC5727/ERC5727Delegate.sol";
 import "../ERC5727/ERC5727Recovery.sol";
-import "../ERC5727/ERC5727Registrant.sol";
 import "../ERC5727/ERC5727Claimable.sol";
 
 contract ERC5727Example is
@@ -42,7 +41,7 @@ contract ERC5727Example is
     function _burn(
         uint256 tokenId
     ) internal virtual override(ERC5727, ERC5727Enumerable) {
-        ERC5727Enumerable._burn(tokenId);
+        super._burn(tokenId);
     }
 
     function _msgData()
@@ -71,12 +70,7 @@ contract ERC5727Example is
         uint256 firstTokenId,
         uint256 batchSize
     ) internal virtual override(ERC5727, ERC5727Enumerable) {
-        ERC5727Enumerable._beforeTokenTransfer(
-            from,
-            to,
-            firstTokenId,
-            batchSize
-        );
+        super._beforeTokenTransfer(from, to, firstTokenId, batchSize);
     }
 
     function _beforeValueTransfer(
@@ -113,6 +107,26 @@ contract ERC5727Example is
             slot,
             value
         );
+    }
+
+    function batchIssue(
+        address[] calldata to,
+        uint256 slot,
+        string calldata uri,
+        bytes calldata data
+    ) external virtual onlyAdmin {
+        uint256 next = totalSupply() + 1;
+        for (uint256 i = 0; i < to.length; i++) {
+            issue(
+                to[i],
+                next + i,
+                slot,
+                BurnAuth.IssuerOnly,
+                address(this),
+                data
+            );
+            _setTokenURI(next + i, uri);
+        }
     }
 
     function supportsInterface(

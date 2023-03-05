@@ -12,6 +12,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 
 import "../ERC3525/ERC3525.sol";
+import "../ERC5192/interfaces/IERC5192.sol";
 import "./interfaces/IERC5727Metadata.sol";
 import "./interfaces/IERC5727Enumerable.sol";
 
@@ -23,6 +24,7 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
     mapping(uint256 => address) internal _issuers;
     mapping(uint256 => address) internal _verifiers;
     mapping(uint256 => BurnAuth) internal _burnAuths;
+    mapping(uint256 => bool) internal _unlocked;
 
     mapping(uint256 => address) internal _slotVerifiers;
     mapping(uint256 => BurnAuth) internal _slotBurnAuths;
@@ -136,6 +138,7 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
         }
 
         emit Issued(from, to, tokenId, auth);
+        emit Locked(tokenId);
 
         _verifiers[tokenId] = from;
     }
@@ -175,6 +178,14 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
         _revoke(_msgSender(), tokenId, amount);
 
         data;
+    }
+
+    function locked(
+        uint256 tokenId
+    ) public view virtual override returns (bool) {
+        _requireMinted(tokenId);
+
+        return !_unlocked[tokenId];
     }
 
     function burnAuth(
@@ -270,7 +281,8 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
         uint256 firstTokenId,
         uint256 batchSize
     ) internal virtual override {
-        if (from != address(0) && to != address(0)) revert Soulbound();
+        if (from != address(0) && to != address(0) && !_unlocked[firstTokenId])
+            revert Soulbound();
 
         super._beforeTokenTransfer(from, to, firstTokenId, batchSize);
     }

@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
-import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 import "./ERC5727Enumerable.sol";
 import "./interfaces/IERC5727Recovery.sol";
@@ -29,18 +28,10 @@ abstract contract ERC5727Recovery is IERC5727Recovery, ERC5727Enumerable {
         uint256 balance = balanceOf(from);
         for (uint256 i = 0; i < balance; ) {
             uint256 tokenId = tokenOfOwnerByIndex(from, i);
-            uint256 value = balanceOf(tokenId);
 
-            _revoke(from, tokenId, value);
-            _issue(
-                issuerOf(tokenId),
-                recipient,
-                tokenId,
-                slotOf(tokenId),
-                burnAuth(tokenId),
-                verifierOf(tokenId)
-            );
-            _issue(issuerOf(tokenId), tokenId, balanceOf(tokenId));
+            _unlocked[tokenId] = true;
+            _transfer(from, recipient, tokenId);
+            _unlocked[tokenId] = false;
 
             unchecked {
                 i++;

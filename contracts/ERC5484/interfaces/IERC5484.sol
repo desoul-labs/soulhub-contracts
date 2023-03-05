@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.0;
 
-interface IERC5484 {
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+
+interface IERC5484 is IERC721 {
     // A guideline to standardlize burn-authorization's number coding
     enum BurnAuth {
         IssuerOnly,

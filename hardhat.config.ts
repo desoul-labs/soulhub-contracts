@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import '@nomicfoundation/hardhat-toolbox'
 import '@nomiclabs/hardhat-solhint'
 import '@typechain/hardhat'
@@ -18,7 +19,9 @@ const config: HardhatUserConfig = {
       },
     },
   },
-  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+  paths: {
+    sources: process.env.UPGRADEABLE === '1' ? './contracts-upgradeable' : './contracts',
+  },
   ...(process.env.PRIVATE_KEY ? { networks } : { defaultNetwork: 'hardhat' }),
   typechain: {
     outDir: './typechain',

@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
+
 import "../../ERC3525/interfaces/IERC3525SlotEnumerable.sol";
 import "./IERC5727.sol";
 
