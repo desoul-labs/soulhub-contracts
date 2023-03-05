@@ -3,23 +3,23 @@ name: Solidity CI
 on:
   push:
     branches:
-      - "**"
+      - '**'
     paths:
-      - "**.ts"
-      - "contracts/**"
-      - ".github/workflows/solidity-ci.yml"
-      - "**.json"
-      - "**.yaml"
+      - '**.ts'
+      - 'contracts/**'
+      - '.github/workflows/solidity-ci.yml'
+      - '**.json'
+      - '**.yaml'
 
   pull_request:
     branches:
-      - "**"
+      - '**'
     paths:
-      - "**.ts"
-      - "contracts/**"
-      - ".github/workflows/solidity-ci.yml"
-      - "**.json"
-      - "**.yaml"
+      - '**.ts'
+      - 'contracts/**'
+      - '.github/workflows/solidity-ci.yml'
+      - '**.json'
+      - '**.yaml'
 
 env:
   ALCHEMY_API_URL: ${{ secrets.ALCHEMY_API_URL }}
@@ -42,7 +42,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-          cache: "pnpm"
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install
@@ -68,7 +68,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-          cache: "pnpm"
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install
@@ -92,7 +92,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-          cache: "pnpm"
+          cache: 'pnpm'
 
       - name: Setup Tenderly
         env:

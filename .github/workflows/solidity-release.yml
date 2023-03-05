@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - "v*"
+      - 'v*'
 
 jobs:
   release:
@@ -33,13 +33,13 @@ jobs:
         with:
           node-version: 18.x
           registry-url: https://npm.pkg.github.com/
-          cache: "pnpm"
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install
 
       - name: Compile
-        run: pnpm run compile
+        run: pnpm run compile:upgradeable
 
       - name: Publish
         run: pnpm --filter=./typechain publish --no-git-checks
@@ -65,7 +65,33 @@ jobs:
         with:
           node-version: 18.x
           registry-url: https://npm.pkg.github.com/
-          cache: "pnpm"
+          cache: 'pnpm'
+
+      - name: Publish
+        run: pnpm publish --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+  publish-contracts-upgradeable:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: contracts-upgradeable
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 7
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          registry-url: https://npm.pkg.github.com/
+          cache: 'pnpm'
 
       - name: Publish
         run: pnpm publish --no-git-checks
