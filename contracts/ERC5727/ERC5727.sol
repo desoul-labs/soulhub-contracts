@@ -140,7 +140,8 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
         emit Issued(from, to, tokenId, auth);
         emit Locked(tokenId);
 
-        _verifiers[tokenId] = from;
+        _beforeValueTransfer(address(0), to, 0, tokenId, slot, 0);
+        _afterValueTransfer(address(0), to, 0, tokenId, slot, 0);
     }
 
     function _issue(
@@ -163,7 +164,7 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
     ) public payable virtual override onlyBurner(tokenId) {
         _requireMinted(tokenId);
 
-        _revoke(_msgSender(), tokenId, balanceOf(tokenId));
+        _revoke(_msgSender(), tokenId);
 
         data;
     }
