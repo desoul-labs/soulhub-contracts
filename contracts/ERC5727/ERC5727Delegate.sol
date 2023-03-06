@@ -17,7 +17,7 @@ abstract contract ERC5727Delegate is IERC5727Delegate, ERC5727 {
         emit Delegate(operator, slot);
     }
 
-    function unDelegate(
+    function undelegate(
         address operator,
         uint256 slot
     ) external virtual override onlyAdmin {

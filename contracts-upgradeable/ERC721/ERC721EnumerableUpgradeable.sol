@@ -55,7 +55,7 @@ abstract contract ERC721EnumerableUpgradeable is
         address owner,
         uint256 index
     ) public view virtual override returns (uint256) {
-        if (index < ERC721Upgradeable.balanceOf(owner))
+        if (index >= ERC721Upgradeable.balanceOf(owner))
             revert IndexOutOfBounds(index, ERC721Upgradeable.balanceOf(owner));
         return _ownedTokens[owner].at(index);
     }
