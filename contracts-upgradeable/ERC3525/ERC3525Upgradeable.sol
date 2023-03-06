@@ -117,6 +117,11 @@ contract ERC3525Upgradeable is
     {
         _requireMinted(tokenId);
 
+        string memory _tokenURI = _tokenURIs[tokenId];
+        if (bytes(_tokenURI).length > 0) {
+            return _tokenURI;
+        }
+
         string memory contractUri = contractURI();
         return
             bytes(contractUri).length > 0
