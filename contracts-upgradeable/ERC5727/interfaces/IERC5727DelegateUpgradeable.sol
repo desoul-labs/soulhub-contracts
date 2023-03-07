@@ -41,7 +41,7 @@ interface IERC5727DelegateUpgradeable is IERC5727Upgradeable {
      * @param slot The slot to issue the token in
      */
 
-    function unDelegate(address operator, uint256 slot) external;
+    function undelegate(address operator, uint256 slot) external;
 
     /**
      * @notice Check if an operator has the permission to issue or revoke tokens in a slot.

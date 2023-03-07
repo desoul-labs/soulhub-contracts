@@ -26,7 +26,7 @@ abstract contract ERC5727DelegateUpgradeable is
         emit Delegate(operator, slot);
     }
 
-    function unDelegate(
+    function undelegate(
         address operator,
         uint256 slot
     ) external virtual override onlyAdmin {
