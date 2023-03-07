@@ -4,11 +4,12 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableMapUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165CheckerUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
 import "../ERC721/ERC721EnumerableUpgradeable.sol";
 import "../ERC721/ERC721PausableUpgradeable.sol";
 import "../ERC5727/interfaces/IERC5727MetadataUpgradeable.sol";
-import "../ERC5727/interfaces/IERC5727RegistrantUpgradeable.sol";
+import "../ERC5727/interfaces/IERC5727Upgradeable.sol";
 import "./interfaces/IERC5727RegistryUpgradeable.sol";
 
 contract ERC5727RegistryUpgradeable is
@@ -30,15 +31,11 @@ contract ERC5727RegistryUpgradeable is
     EnumerableMapUpgradeable.UintToAddressMap private _entries;
     EnumerableMapUpgradeable.AddressToUintMap private _indexedEntries;
 
-    modifier onlyRegistrantOrOwner(address addr) {
-        bool isRegistrant = addr.supportsInterface(
-            type(IERC5727RegistrantUpgradeable).interfaceId
+    modifier onlyERC5727Contract(address addr) {
+        bool isERC5727Contract = addr.supportsInterface(
+            type(IERC5727MetadataUpgradeable).interfaceId
         );
-        if (!isRegistrant) revert NotSupported();
-
-        address owner = IERC5727RegistrantUpgradeable(addr).owner();
-        if (_msgSender() != addr && _msgSender() != owner)
-            revert Unauthorized(_msgSender());
+        if (!isERC5727Contract) revert NotSupported();
         _;
     }
 
@@ -46,7 +43,7 @@ contract ERC5727RegistryUpgradeable is
         string memory name_,
         string memory namespace_,
         string memory uri_
-    ) internal onlyInitializing {
+    ) public initializer {
         __ERC721_init_unchained(name_, namespace_);
         __ERC5727Registry_init_unchained(uri_);
     }
@@ -74,13 +71,12 @@ contract ERC5727RegistryUpgradeable is
 
     function register(
         address addr
-    ) public virtual override onlyRegistrantOrOwner(addr) returns (uint256) {
+    ) public virtual override onlyERC5727Contract(addr) returns (uint256) {
         if (isRegistered(addr)) revert("Address already registered");
 
         uint256 tokenId = _register(addr);
-        string memory uri = IERC5727RegistrantUpgradeable(addr).contractURI();
-        address owner = IERC5727RegistrantUpgradeable(addr).owner();
-        _safeMint(owner, tokenId, uri);
+        string memory uri = IERC5727MetadataUpgradeable(addr).contractURI();
+        _safeMint(_msgSender(), tokenId, uri);
 
         return tokenId;
     }
@@ -94,9 +90,9 @@ contract ERC5727RegistryUpgradeable is
         _setTokenURI(tokenId, uri);
     }
 
-    function _register(address addr) public virtual returns (uint256) {
-        uint256 entry = _entryIdCounter.current();
+    function _register(address addr) internal virtual returns (uint256) {
         _entryIdCounter.increment();
+        uint256 entry = _entryIdCounter.current();
         _setEntry(entry, addr);
 
         emit Registered(entry, addr);
@@ -106,7 +102,7 @@ contract ERC5727RegistryUpgradeable is
 
     function deregister(
         address addr
-    ) public virtual override onlyRegistrantOrOwner(addr) returns (uint256) {
+    ) public virtual override onlyERC5727Contract(addr) returns (uint256) {
         if (!isRegistered(addr)) revert("Address not registered");
 
         uint256 tokenId = _deregister(addr);
@@ -114,7 +110,7 @@ contract ERC5727RegistryUpgradeable is
         return tokenId;
     }
 
-    function _deregister(address addr) public virtual returns (uint256) {
+    function _deregister(address addr) internal virtual returns (uint256) {
         uint256 entry = entryOf(addr);
         if (!_isApprovedOrOwner(_msgSender(), entry))
             revert Unauthorized(_msgSender());
@@ -129,7 +125,7 @@ contract ERC5727RegistryUpgradeable is
     function transferOwnership(
         address addr,
         address newOwner
-    ) public virtual override onlyRegistrantOrOwner(addr) {
+    ) public virtual override onlyERC5727Contract(addr) {
         safeTransferFrom(_msgSender(), newOwner, entryOf(addr));
     }
 

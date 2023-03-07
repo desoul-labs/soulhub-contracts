@@ -2,17 +2,18 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableMap.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 
 import "../ERC721/ERC721Enumerable.sol";
 import "../ERC721/ERC721Pausable.sol";
 import "../ERC5727/interfaces/IERC5727Metadata.sol";
-import "../ERC5727/interfaces/IERC5727Registrant.sol";
 import "./interfaces/IERC5727Registry.sol";
 
 contract ERC5727Registry is
     Context,
+    Ownable,
     IERC5727Registry,
     ERC721Pausable,
     ERC721Enumerable
@@ -30,15 +31,11 @@ contract ERC5727Registry is
     EnumerableMap.UintToAddressMap private _entries;
     EnumerableMap.AddressToUintMap private _indexedEntries;
 
-    modifier onlyRegistrantOrOwner(address addr) {
-        bool isRegistrant = addr.supportsInterface(
-            type(IERC5727Registrant).interfaceId
+    modifier onlyERC5727Contract(address addr) {
+        bool isERC5727Contract = addr.supportsInterface(
+            type(IERC5727Metadata).interfaceId
         );
-        if (!isRegistrant) revert NotSupported();
-
-        address owner = IERC5727Registrant(addr).owner();
-        if (_msgSender() != addr && _msgSender() != owner)
-            revert Unauthorized(_msgSender());
+        if (!isERC5727Contract) revert NotSupported();
         _;
     }
 
@@ -67,13 +64,12 @@ contract ERC5727Registry is
 
     function register(
         address addr
-    ) public virtual override onlyRegistrantOrOwner(addr) returns (uint256) {
+    ) public virtual override onlyERC5727Contract(addr) returns (uint256) {
         if (isRegistered(addr)) revert("Address already registered");
 
         uint256 tokenId = _register(addr);
-        string memory uri = IERC5727Registrant(addr).contractURI();
-        address owner = IERC5727Registrant(addr).owner();
-        _safeMint(owner, tokenId, uri);
+        string memory uri = IERC5727Metadata(addr).contractURI();
+        _safeMint(_msgSender(), tokenId, uri);
 
         return tokenId;
     }
@@ -87,9 +83,9 @@ contract ERC5727Registry is
         _setTokenURI(tokenId, uri);
     }
 
-    function _register(address addr) public virtual returns (uint256) {
-        uint256 entry = _entryIdCounter.current();
+    function _register(address addr) internal virtual returns (uint256) {
         _entryIdCounter.increment();
+        uint256 entry = _entryIdCounter.current();
         _setEntry(entry, addr);
 
         emit Registered(entry, addr);
@@ -99,7 +95,7 @@ contract ERC5727Registry is
 
     function deregister(
         address addr
-    ) public virtual override onlyRegistrantOrOwner(addr) returns (uint256) {
+    ) public virtual override onlyERC5727Contract(addr) returns (uint256) {
         if (!isRegistered(addr)) revert("Address not registered");
 
         uint256 tokenId = _deregister(addr);
@@ -107,7 +103,7 @@ contract ERC5727Registry is
         return tokenId;
     }
 
-    function _deregister(address addr) public virtual returns (uint256) {
+    function _deregister(address addr) internal virtual returns (uint256) {
         uint256 entry = entryOf(addr);
         if (!_isApprovedOrOwner(_msgSender(), entry))
             revert Unauthorized(_msgSender());
@@ -122,7 +118,7 @@ contract ERC5727Registry is
     function transferOwnership(
         address addr,
         address newOwner
-    ) public virtual override onlyRegistrantOrOwner(addr) {
+    ) public virtual override onlyERC5727Contract(addr) {
         safeTransferFrom(_msgSender(), newOwner, entryOf(addr));
     }
 

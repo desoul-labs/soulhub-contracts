@@ -4,6 +4,8 @@ import type {
   BeaconProxy,
   MinimalProxyFactory,
   ERC5727ExampleUpgradeable,
+  ERC5727RegistryUpgradeable,
+  TransparentUpgradeableProxy,
   UpgradeableBeacon,
 } from '../typechain'
 
@@ -85,6 +87,46 @@ async function deployMinimalProxy(): Promise<MinimalProxyFactory> {
   return minimalProxyFactory
 }
 
+async function deployTransparentProxy(
+  registry: string,
+  admin: string,
+  data: string,
+): Promise<TransparentUpgradeableProxy> {
+  const transparentProxyContract = await ethers.getContractFactory('TransparentUpgradeableProxy')
+  const transparentProxy = await transparentProxyContract.deploy(registry, admin, data)
+
+  await transparentProxy.deployed()
+  console.log('TransparentUpgradeableProxy contract deployed to:', transparentProxy.address)
+
+  await sleep(10000)
+  await run('verify:verify', {
+    address: transparentProxy.address,
+    constructorArguments: [registry, admin, data],
+  }).catch((error) => {
+    console.info(error)
+  })
+
+  return transparentProxy
+}
+
+async function deployRegistry(): Promise<ERC5727RegistryUpgradeable> {
+  const registryContract = await ethers.getContractFactory('ERC5727RegistryUpgradeable')
+  const registry = await registryContract.deploy()
+
+  await registry.deployed()
+  console.log('Registry contract deployed to:', registry.address)
+
+  await sleep(10000)
+  await run('verify:verify', {
+    address: registry.address,
+    constructorArguments: [],
+  }).catch((error) => {
+    console.info(error)
+  })
+
+  return registry
+}
+
 async function main(): Promise<void> {
   const [deployer] = await ethers.getSigners()
   console.log('Deploying contracts with the account:', deployer.address)
@@ -101,15 +143,12 @@ async function main(): Promise<void> {
   const proxyAddress: string = receipt.events?.[0].args?.[1]
   console.log('Proxy contract deployed to:', proxyAddress)
 
-  const sbtProxy = ERC5727ExampleUpgradeable__factory.connect(
-    '0xaB5405c03DF0f52dfC3D75975C6c30E64B9046Cd',
-    deployer,
-  )
+  const sbtProxy = ERC5727ExampleUpgradeable__factory.connect(proxyAddress, deployer)
   await sbtProxy.__ERC5727Example_init(
     'SoulHub SBT',
     'SBT',
-    '0xC5a0058Fa5f5bDEA7BE0A29F0428a0a5e6788438',
-    ['0xC5a0058Fa5f5bDEA7BE0A29F0428a0a5e6788438'],
+    deployer.address,
+    [deployer.address],
     'https://api.soulhub.dev/sbt/',
     'v1',
   )
@@ -121,6 +160,15 @@ async function main(): Promise<void> {
     deployer.address,
     '0x',
   )
+
+  const registry = await deployRegistry()
+  const initData = registry.interface.encodeFunctionData('__ERC5727Registry_init', [
+    'SoulHub Registry',
+    '/',
+    'https://api.soulhub.dev/registry/',
+  ])
+
+  await deployTransparentProxy(registry.address, deployer.address, initData)
 }
 
 // We recommend this pattern to be able to use async/await everywhere

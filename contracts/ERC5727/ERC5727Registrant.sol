@@ -8,20 +8,11 @@ import "../ERC173/ERC173.sol";
 import "./interfaces/IERC5727Registrant.sol";
 import "./ERC5727.sol";
 
-contract ERC5727Registrant is ERC173, ERC5727, IERC5727Registrant {
+abstract contract ERC5727Registrant is ERC173, ERC5727, IERC5727Registrant {
     using ERC165Checker for address;
     using EnumerableSet for EnumerableSet.AddressSet;
 
     EnumerableSet.AddressSet private _registered;
-
-    constructor(
-        string memory name_,
-        string memory symbol_,
-        address admin_,
-        string memory version_
-    ) ERC5727(name_, symbol_, admin_, version_) ERC173() {
-        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
-    }
 
     function register(address registry) public virtual override onlyAdmin {
         if (!_isRegistry(registry)) revert InvalidRegistry(registry);
