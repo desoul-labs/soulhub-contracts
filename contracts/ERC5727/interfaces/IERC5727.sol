@@ -44,7 +44,7 @@ interface IERC5727 is IERC3525, IERC5192, IERC5484, IERC4906 {
     function issuerOf(uint256 tokenId) external view returns (address);
 
     /**
-     * @notice Issue a token in a specified slot with certain value and a verifier to an address.
+     * @notice Issue a token in a specified slot to an address.
      * @dev MUST revert if the `to` address is the zero address.
      *      MUST revert if the `verifier` address is the zero address.
      * @param to The address to issue the token to
@@ -64,11 +64,11 @@ interface IERC5727 is IERC3525, IERC5192, IERC5484, IERC4906 {
     ) external payable;
 
     /**
-     * @notice Issue value to a token.
+     * @notice Issue credit to a token.
      * @dev MUST revert if the `tokenId` does not exist.
      * @param tokenId The token id
-     * @param amount The amount of the token
-     * @param data The additional data used to issue the value
+     * @param amount The amount of the credit
+     * @param data The additional data used to issue the credit
      */
     function issue(
         uint256 tokenId,
@@ -85,11 +85,11 @@ interface IERC5727 is IERC3525, IERC5192, IERC5484, IERC4906 {
     function revoke(uint256 tokenId, bytes calldata data) external payable;
 
     /**
-     * @notice Revoke value from a token.
+     * @notice Revoke credit from a token.
      * @dev MUST revert if the `tokenId` does not exist.
      * @param tokenId The token id
-     * @param amount The amount of the token
-     * @param data The additional data used to revoke the value
+     * @param amount The amount of the credit
+     * @param data The additional data used to revoke the credit
      */
     function revoke(
         uint256 tokenId,
@@ -98,11 +98,11 @@ interface IERC5727 is IERC3525, IERC5192, IERC5484, IERC4906 {
     ) external payable;
 
     /**
-     * @notice Verify a token from an address.
-     * @dev MUST revert if the `by` address is the zero address.
+     * @notice Verify if a token is valid.
+     * @dev MUST revert if the `tokenId` does not exist.
      * @param tokenId The token id
      * @param data The additional data used to verify the token
-     * @return A boolean indicating whether the token is verified
+     * @return A boolean indicating whether the token is successfully verified
      */
     function verify(
         uint256 tokenId,
