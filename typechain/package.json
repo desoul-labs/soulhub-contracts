@@ -1,6 +1,6 @@
 {
   "name": "@desoul-labs/soulhub-typechain",
-  "version": "0.0.12",
+  "version": "0.1.0-alpha.1",
   "description": "SoulHub TypeChain",
   "homepage": "https://github.com/desoul-labs/soulhub-contracts#readme",
   "bugs": {
