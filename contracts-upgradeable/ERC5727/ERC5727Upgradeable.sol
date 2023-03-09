@@ -154,7 +154,8 @@ contract ERC5727Upgradeable is
         emit Issued(from, to, tokenId, auth);
         emit Locked(tokenId);
 
-        _verifiers[tokenId] = from;
+        _beforeValueTransfer(address(0), to, 0, tokenId, slot, 0);
+        _afterValueTransfer(address(0), to, 0, tokenId, slot, 0);
     }
 
     function _issue(
