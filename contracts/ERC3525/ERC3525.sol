@@ -23,8 +23,6 @@ contract ERC3525 is IERC3525, IERC3525Metadata, ERC721Enumerable {
     /// @dev tokenId => slot
     mapping(uint256 => uint256) internal _slots;
 
-    string private _name;
-    string private _symbol;
     uint8 private _decimals;
 
     constructor(
@@ -100,6 +98,11 @@ contract ERC3525 is IERC3525, IERC3525Metadata, ERC721Enumerable {
         returns (string memory)
     {
         _requireMinted(tokenId);
+
+        string memory _tokenURI = _tokenURIs[tokenId];
+        if (bytes(_tokenURI).length > 0) {
+            return _tokenURI;
+        }
 
         string memory contractUri = contractURI();
         return
