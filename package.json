@@ -60,7 +60,7 @@
     "@nomiclabs/hardhat-solhint": "3.0.0",
     "@openzeppelin/hardhat-upgrades": "1.22.1",
     "@primitivefi/hardhat-dodoc": "0.2.3",
-    "@tenderly/hardhat-tenderly": "1.5.3",
+    "@tenderly/hardhat-tenderly": "1.6.1",
     "@typechain/hardhat": "6.1.5",
     "@types/node": "18.13.0",
     "@typescript-eslint/eslint-plugin": "5.52.0",

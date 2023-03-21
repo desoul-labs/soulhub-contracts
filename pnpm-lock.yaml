@@ -18,7 +18,7 @@ importers:
       '@openzeppelin/contracts-upgradeable': 4.8.1
       '@openzeppelin/hardhat-upgrades': 1.22.1
       '@primitivefi/hardhat-dodoc': 0.2.3
-      '@tenderly/hardhat-tenderly': 1.5.3
+      '@tenderly/hardhat-tenderly': 1.6.1
       '@typechain/hardhat': 6.1.5
       '@types/node': 18.13.0
       '@typescript-eslint/eslint-plugin': 5.52.0
@@ -55,7 +55,7 @@ importers:
       '@nomiclabs/hardhat-solhint': 3.0.0_hardhat@2.12.7
       '@openzeppelin/hardhat-upgrades': 1.22.1_b5m5gp6m4sj3jjg35kxj7kdo3a
       '@primitivefi/hardhat-dodoc': 0.2.3_zmjgmocurrxawud7lzfwayoukm
-      '@tenderly/hardhat-tenderly': 1.5.3_6zapgcldo6lkqyl6jombhluxde
+      '@tenderly/hardhat-tenderly': 1.6.1_vywora72r2oxtv4ne3llmzii7e
       '@typechain/hardhat': 6.1.5_oiikrsglaityxahgeoev6t5lpu
       '@types/node': 18.13.0
       '@typescript-eslint/eslint-plugin': 5.52.0_v7zzbk6mzhwbu4zbed74t6wnya
@@ -1165,11 +1165,11 @@ packages:
       antlr4ts: 0.5.0-alpha.4
     dev: true
 
-  /@tenderly/hardhat-tenderly/1.5.3_6zapgcldo6lkqyl6jombhluxde:
-    resolution: {integrity: sha512-DuWp8Lm2lHQeDujM6szvMmE+wx1dE7PLILgtBnfGfhJy4Hv3SJHZDCOiP/V3X3InYPoKjMxNL/TN1jQbT+AXQA==}
+  /@tenderly/hardhat-tenderly/1.6.1_vywora72r2oxtv4ne3llmzii7e:
+    resolution: {integrity: sha512-VhnOcRVB8J1mZk5QUifthsidyEb4p6Qj0nyy07qdnF8GL/kcVDBgqluyapGS1hUhp/SVQqpKHcFTWbVJ/B0l4w==}
     peerDependencies:
       hardhat: ^2.10.2
-      tenderly: ^0.3.0
+      tenderly: ^0.4.0
     dependencies:
       '@ethersproject/bignumber': 5.7.0
       '@nomiclabs/hardhat-ethers': 2.2.2_4tzilew2vuitdwerzusliplz24
@@ -1179,7 +1179,7 @@ packages:
       hardhat: 2.12.7_6qtx7vkbdhwvdm4crzlegk4mvi
       hardhat-deploy: 0.11.15
       js-yaml: 4.1.0
-      tenderly: 0.3.0_6qtx7vkbdhwvdm4crzlegk4mvi
+      tenderly: 0.4.0_6qtx7vkbdhwvdm4crzlegk4mvi
       tslog: 4.4.4
     transitivePeerDependencies:
       - bufferutil
@@ -1889,7 +1889,7 @@ packages:
   /axios/0.27.2:
     resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
     dependencies:
-      follow-redirects: 1.15.1_debug@4.3.4
+      follow-redirects: 1.15.1
       form-data: 4.0.0
     transitivePeerDependencies:
       - debug
@@ -3828,6 +3828,16 @@ packages:
     resolution: {integrity: sha512-Y6hyofImk9JdzU8k5INtTXX1cu8LDlePWDFU5sftm9H+zKCr5SGrVjdhkvsim646cw5zD0nADj8oHyXMZmCZ9w==}
     dependencies:
       imul: 1.0.1
+    dev: true
+
+  /follow-redirects/1.15.1:
+    resolution: {integrity: sha512-yLAMQs+k0b2m7cVxpS1VKJVvoz7SS9Td1zss3XRwXj+ZDH00RJgnuLx7E44wx02kQLrdM3aOOy+FpzS7+8OizA==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
     dev: true
 
   /follow-redirects/1.15.1_debug@4.3.4:
@@ -7142,8 +7152,8 @@ packages:
       strip-ansi: 6.0.1
     dev: true
 
-  /tenderly/0.3.0_6qtx7vkbdhwvdm4crzlegk4mvi:
-    resolution: {integrity: sha512-JulOh626MZUzfur4YGJeIjpGS+1e3f+dfutHg+JkaDTFaGdEzhE68qVyBAmhynbCcXUItkZTpLARdhQEpEXW5w==}
+  /tenderly/0.4.0_6qtx7vkbdhwvdm4crzlegk4mvi:
+    resolution: {integrity: sha512-wZgQ8Z1utc/QoAfVvMHO/ONLXJ3Vw3yjzJzpMmMUR4kvUu861mI7+mL9R1aeUuXI06cv81LZH96Vh+AOseIYoA==}
     peerDependencies:
       ts-node: '*'
       typescript: '*'
