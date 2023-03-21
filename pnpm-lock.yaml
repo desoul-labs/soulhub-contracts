@@ -10,7 +10,7 @@ importers:
       '@ethersproject/providers': 5.7.2
       '@nomicfoundation/hardhat-chai-matchers': 1.0.6
       '@nomicfoundation/hardhat-network-helpers': 1.0.8
-      '@nomicfoundation/hardhat-toolbox': 2.0.1
+      '@nomicfoundation/hardhat-toolbox': 2.0.2
       '@nomiclabs/hardhat-ethers': 2.2.2
       '@nomiclabs/hardhat-etherscan': 3.1.6
       '@nomiclabs/hardhat-solhint': 3.0.0
@@ -49,7 +49,7 @@ importers:
       '@ethersproject/providers': 5.7.2
       '@nomicfoundation/hardhat-chai-matchers': 1.0.6_axemq4kj7nnrlzug2vc4as6uaa
       '@nomicfoundation/hardhat-network-helpers': 1.0.8_hardhat@2.12.7
-      '@nomicfoundation/hardhat-toolbox': 2.0.1_rhn673clvneryklj2gvwjuut7u
+      '@nomicfoundation/hardhat-toolbox': 2.0.2_rhn673clvneryklj2gvwjuut7u
       '@nomiclabs/hardhat-ethers': 2.2.2_4tzilew2vuitdwerzusliplz24
       '@nomiclabs/hardhat-etherscan': 3.1.6_hardhat@2.12.7
       '@nomiclabs/hardhat-solhint': 3.0.0_hardhat@2.12.7
@@ -832,8 +832,8 @@ packages:
       hardhat: 2.12.7_6qtx7vkbdhwvdm4crzlegk4mvi
     dev: true
 
-  /@nomicfoundation/hardhat-toolbox/2.0.1_rhn673clvneryklj2gvwjuut7u:
-    resolution: {integrity: sha512-/pr8m9xlqiNlq6fXv4hEPNwdNwUhysoB2qbDCKqERfPpq34EydUQTC3Vis4aIea8RLwSrU8sDXFdv4TQxYstKw==}
+  /@nomicfoundation/hardhat-toolbox/2.0.2_rhn673clvneryklj2gvwjuut7u:
+    resolution: {integrity: sha512-vnN1AzxbvpSx9pfdRHbUzTRIXpMLPXnUlkW855VaDk6N1pwRaQ2gNzEmFAABk4lWf11E00PKwFd/q27HuwYrYg==}
     peerDependencies:
       '@ethersproject/abi': ^5.4.7
       '@ethersproject/providers': ^5.4.7
@@ -1889,7 +1889,7 @@ packages:
   /axios/0.27.2:
     resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
     dependencies:
-      follow-redirects: 1.15.1_debug@4.3.4
+      follow-redirects: 1.15.1
       form-data: 4.0.0
     transitivePeerDependencies:
       - debug
@@ -3828,6 +3828,16 @@ packages:
     resolution: {integrity: sha512-Y6hyofImk9JdzU8k5INtTXX1cu8LDlePWDFU5sftm9H+zKCr5SGrVjdhkvsim646cw5zD0nADj8oHyXMZmCZ9w==}
     dependencies:
       imul: 1.0.1
+    dev: true
+
+  /follow-redirects/1.15.1:
+    resolution: {integrity: sha512-yLAMQs+k0b2m7cVxpS1VKJVvoz7SS9Td1zss3XRwXj+ZDH00RJgnuLx7E44wx02kQLrdM3aOOy+FpzS7+8OizA==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
     dev: true
 
   /follow-redirects/1.15.1_debug@4.3.4:
