@@ -1,4 +1,4 @@
-import { type NetworksUserConfig } from 'hardhat/types'
+import { type NetworksUserConfig } from 'hardhat/types';
 
 export const networks: NetworksUserConfig = {
   goerli: {
@@ -89,4 +89,4 @@ export const networks: NetworksUserConfig = {
     url: 'https://rpc.tenderly.co/fork/fdc07e58-3d7e-4a61-b91f-0bf903e50439',
     accounts: [process.env.PRIVATE_KEY ?? ''],
   },
-}
+};
