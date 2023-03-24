@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
-import '@nomicfoundation/hardhat-toolbox'
-import '@nomiclabs/hardhat-solhint'
-import '@typechain/hardhat'
-import '@nomiclabs/hardhat-ethers'
-import { type HardhatUserConfig } from 'hardhat/types'
-import { networks } from './constants/networks'
-import * as tenderly from '@tenderly/hardhat-tenderly'
-import 'solidity-coverage'
-import '@primitivefi/hardhat-dodoc'
+import '@nomicfoundation/hardhat-toolbox';
+import '@nomiclabs/hardhat-solhint';
+import '@typechain/hardhat';
+import '@nomiclabs/hardhat-ethers';
+import { type HardhatUserConfig } from 'hardhat/types';
+import { networks } from './constants/networks';
+import * as tenderly from '@tenderly/hardhat-tenderly';
+import 'solidity-coverage';
+import '@primitivefi/hardhat-dodoc';
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -28,8 +28,8 @@ const config: HardhatUserConfig = {
     target: 'ethers-v5',
   },
   tenderly: {
-    project: 'soularis-protocol',
-    username: 'phaneroz-labs',
+    project: 'soulhub',
+    username: 'desoul-labs',
     privateVerification: true,
     // deploymentsDir: "deployments"
   },
@@ -53,8 +53,8 @@ const config: HardhatUserConfig = {
   dodoc: {
     runOnCompile: false,
   },
-}
+};
 
-tenderly.setup({ automaticVerifications: false })
+tenderly.setup({ automaticVerifications: false });
 
-export default config
+export default config;

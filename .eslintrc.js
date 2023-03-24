@@ -3,7 +3,7 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  extends: 'standard-with-typescript',
+  extends: ['standard-with-typescript', 'prettier'],
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint'],
   overrides: [],
@@ -12,24 +12,4 @@ module.exports = {
     sourceType: 'module',
     project: './tsconfig.json',
   },
-  rules: {
-    'comma-dangle': 'off',
-    '@typescript-eslint/comma-dangle': [
-      'error',
-      'only-multiline',
-      {
-        arrays: 'always',
-        objects: 'always',
-        imports: 'always',
-        exports: 'always',
-        functions: 'never',
-      },
-    ],
-    'space-before-function-paren': 'off',
-    '@typescript-eslint/space-before-function-paren': [
-      'error',
-      { anonymous: 'always', named: 'never', asyncArrow: 'always' },
-    ],
-    '@typescript-eslint/restrict-template-expressions': 'off',
-  },
-}
+};
