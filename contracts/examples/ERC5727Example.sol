@@ -1,21 +1,16 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/metatx/ERC2771Context.sol";
-
 import "../ERC5727/ERC5727Expirable.sol";
 import "../ERC5727/ERC5727Governance.sol";
 import "../ERC5727/ERC5727Delegate.sol";
 import "../ERC5727/ERC5727Recovery.sol";
 import "../ERC5727/ERC5727Claimable.sol";
-import "../ERC5727/ERC5727Registrant.sol";
 
 contract ERC5727Example is
-    ERC2771Context,
     ERC5727Claimable,
     ERC5727Recovery,
     ERC5727Expirable,
-    ERC5727Registrant,
     ERC5727Governance,
     ERC5727Delegate
 {
@@ -27,16 +22,9 @@ contract ERC5727Example is
         address admin,
         address[] memory voters,
         string memory baseTokenURI,
-        address trustedForwarder,
         string memory version
-    )
-        ERC2771Context(trustedForwarder)
-        ERC5727Governance(name, symbol, admin, voters, version)
-        ERC173()
-    {
+    ) ERC5727Governance(name, symbol, admin, voters, version) {
         _baseTokenURI = baseTokenURI;
-
-        ERC173._transferOwnership(admin);
     }
 
     function _baseURI() internal view virtual override returns (string memory) {
@@ -47,26 +35,6 @@ contract ERC5727Example is
         uint256 tokenId
     ) internal virtual override(ERC5727, ERC5727Enumerable) {
         super._burn(tokenId);
-    }
-
-    function _msgData()
-        internal
-        view
-        virtual
-        override(Context, ERC2771Context)
-        returns (bytes calldata)
-    {
-        return ERC2771Context._msgData();
-    }
-
-    function _msgSender()
-        internal
-        view
-        virtual
-        override(Context, ERC2771Context)
-        returns (address sender)
-    {
-        return ERC2771Context._msgSender();
     }
 
     function _beforeTokenTransfer(
@@ -145,8 +113,7 @@ contract ERC5727Example is
             ERC5727Delegate,
             ERC5727Expirable,
             ERC5727Recovery,
-            ERC5727Claimable,
-            ERC5727Registrant
+            ERC5727Claimable
         )
         returns (bool)
     {
