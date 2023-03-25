@@ -17,8 +17,8 @@ interface Fixture {
   tokenOwner2: SignerWithAddress;
   voter1: SignerWithAddress;
   voter2: SignerWithAddress;
-  delegate1: SignerWithAddress;
-  delegate2: SignerWithAddress;
+  operator1: SignerWithAddress;
+  operator2: SignerWithAddress;
 }
 
 describe('ERC5727Test', function () {
@@ -26,7 +26,7 @@ describe('ERC5727Test', function () {
     const ERC5727ExampleFactory: ERC5727Example__factory = await ethers.getContractFactory(
       'ERC5727Example',
     );
-    const [admin, tokenOwner1, tokenOwner2, voter1, voter2, delegate1, delegate2] =
+    const [admin, tokenOwner1, tokenOwner2, voter1, voter2, operator1, operator2] =
       await ethers.getSigners();
     const ERC5727ExampleContract = await ERC5727ExampleFactory.deploy(
       'Soularis',
@@ -47,11 +47,11 @@ describe('ERC5727Test', function () {
       tokenOwner2,
       voter1,
       voter2,
-      delegate1,
-      delegate2,
+      operator1,
+      operator2,
     };
   }
-  describe('ERC5727', function () {
+  describe('ERC5727Core', function () {
     it('Only admin can issue', async function () {
       const { getCoreContract, admin, tokenOwner1, tokenOwner2 } = await loadFixture(
         deployTokenFixture,
@@ -218,6 +218,12 @@ describe('ERC5727Test', function () {
       await expect(coreContractOwner1['revoke(uint256,bytes)'](10, [])).be.reverted;
       await coreContract['revoke(uint256,bytes)'](10, []);
     });
+    it('Revert if a token not exist is revoked', async function () {
+      const { getCoreContract, admin } = await loadFixture(deployTokenFixture);
+      const coreContract = getCoreContract(admin);
+      await expect(coreContract['revoke(uint256,bytes)'](100, [])).be.reverted;
+      await expect(coreContract['revoke(uint256,uint256,bytes)'](100, 0, [])).be.reverted;
+    });
     it('Revoke will decrease address token balance', async function () {
       const { getCoreContract, admin, tokenOwner1 } = await loadFixture(deployTokenFixture);
       const coreContract = getCoreContract(admin);
@@ -275,6 +281,131 @@ describe('ERC5727Test', function () {
       await expect(coreContractOwner1['revoke(uint256,uint256,bytes)'](10, 50, [])).be.reverted;
       await coreContract['revoke(uint256,uint256,bytes)'](10, 50, []);
       expect(await coreContract['balanceOf(uint256)'](10)).equal(50);
+    });
+  });
+  describe('ERC5727Delegate', function () {
+    it('Only admin can delegate', async function () {
+      const {
+        getCoreContract,
+        ERC5727ExampleContract,
+        admin,
+        tokenOwner1,
+        tokenOwner2,
+        operator1,
+      } = await loadFixture(deployTokenFixture);
+      const coreContract = getCoreContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await expect(ERC5727ExampleContract.connect(tokenOwner2).delegate(operator1.address, 1)).be
+        .reverted;
+      await ERC5727ExampleContract.connect(admin).delegate(operator1.address, 1);
+    });
+    it('Delegate should give operator the permission to issue tokens in a slot', async function () {
+      const { getCoreContract, ERC5727ExampleContract, admin, tokenOwner1, operator1 } =
+        await loadFixture(deployTokenFixture);
+      const coreContract = getCoreContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await ERC5727ExampleContract.connect(admin).delegate(operator1.address, 1);
+      expect(await ERC5727ExampleContract.isOperatorFor(operator1.address, 1)).equal(true);
+    });
+    it('Delegate revert if operator already has delegation', async function () {
+      const { getCoreContract, ERC5727ExampleContract, admin, tokenOwner1, operator1 } =
+        await loadFixture(deployTokenFixture);
+      const coreContract = getCoreContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await ERC5727ExampleContract.connect(admin).delegate(operator1.address, 1);
+      await expect(ERC5727ExampleContract.connect(admin).delegate(operator1.address, 1)).be
+        .reverted;
+    });
+    it('Delegate revert when slot is a invalid slot', async function () {
+      const { ERC5727ExampleContract, admin, operator1 } = await loadFixture(deployTokenFixture);
+      await expect(ERC5727ExampleContract.connect(admin).delegate(operator1.address, 0)).be
+        .reverted;
+    });
+    it('Delegate revert when operator address is the zero address', async function () {
+      const { ERC5727ExampleContract, admin } = await loadFixture(deployTokenFixture);
+      await expect(ERC5727ExampleContract.connect(admin).delegate(ethers.constants.AddressZero, 1))
+        .be.reverted;
+    });
+    it('Only admin can undelegate', async function () {
+      const {
+        getCoreContract,
+        ERC5727ExampleContract,
+        admin,
+        tokenOwner1,
+        tokenOwner2,
+        operator1,
+      } = await loadFixture(deployTokenFixture);
+      const coreContract = getCoreContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await ERC5727ExampleContract.connect(admin).delegate(operator1.address, 1);
+      await expect(ERC5727ExampleContract.connect(tokenOwner2).undelegate(operator1.address, 1)).be
+        .reverted;
+      await ERC5727ExampleContract.connect(admin).undelegate(operator1.address, 1);
+    });
+    it('Undelegate revert when slot is a invalid slot', async function () {
+      const { ERC5727ExampleContract, admin, operator1 } = await loadFixture(deployTokenFixture);
+      await expect(ERC5727ExampleContract.connect(admin).undelegate(operator1.address, 0)).be
+        .reverted;
+    });
+    it('Undelegate revert when operator address is the zero address', async function () {
+      const { getCoreContract, ERC5727ExampleContract, admin, tokenOwner1, operator1 } =
+        await loadFixture(deployTokenFixture);
+      const coreContract = getCoreContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await ERC5727ExampleContract.connect(admin).delegate(operator1.address, 1);
+      await expect(
+        ERC5727ExampleContract.connect(admin).undelegate(ethers.constants.AddressZero, 1),
+      ).be.reverted;
+    });
+    it("Undelegate revert when operator don't have delegation", async function () {
+      const { getCoreContract, ERC5727ExampleContract, admin, tokenOwner1, operator1 } =
+        await loadFixture(deployTokenFixture);
+      const coreContract = getCoreContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await expect(ERC5727ExampleContract.connect(admin).undelegate(operator1.address, 1)).be
+        .reverted;
     });
   });
 });
