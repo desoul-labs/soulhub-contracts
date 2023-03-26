@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+
 import "../ERC721/ERC721EnumerableUpgradeable.sol";
-import "../examples/ERC5727ExampleUpgradeable.sol";
 import "../proxy/BeaconProxy.sol";
 import "../proxy/UpgradeableBeacon.sol";
 
@@ -17,41 +18,54 @@ contract SoulHubUpgradeable is ERC721EnumerableUpgradeable {
     mapping(uint256 => address) private _organizations;
     mapping(address => mapping(address => uint256)) private _members;
 
-    ERC5727ExampleUpgradeable private _sbtImpl;
     UpgradeableBeacon private _beacon;
 
-    function __SoulHub_init() public initializer {
-        __SoulHub_init_unchained();
+    function __SoulHub_init(address beacon) public initializer {
+        __ERC721_init_unchained("SoulHub", "SOUL");
+        __SoulHub_init_unchained(beacon);
     }
 
-    function __SoulHub_init_unchained() internal onlyInitializing {
-        __ERC721_init_unchained("SoulHub", "SOUL");
-        _sbtImpl = new ERC5727ExampleUpgradeable();
-        _beacon = new UpgradeableBeacon(address(_sbtImpl));
+    function __SoulHub_init_unchained(
+        address beacon
+    ) internal onlyInitializing {
+        _beacon = UpgradeableBeacon(beacon);
     }
 
     function _baseURI() internal view virtual override returns (string memory) {
-        return "https://soulhub.dev/organizations/";
+        return "https://soulhub.dev/";
+    }
+
+    function tokenURI(
+        uint256 tokenId
+    ) public view virtual override returns (string memory) {
+        _requireMinted(tokenId);
+
+        return
+            string(
+                abi.encodePacked(
+                    _baseURI(),
+                    "contracts/",
+                    organizationOf(tokenId)
+                )
+            );
     }
 
     function createOrganization(
-        string memory name,
-        string memory baseURI
-    ) external returns (address) {
+        string memory name
+    ) external payable returns (address) {
         bytes memory data = abi.encodeWithSignature(
-            "__ERC5727Example_init(string,string,address,address[],string,string)",
+            "__ERC5727SBT_init(string,string,address,string,string)",
             name,
             name,
             _msgSender(),
-            [_msgSender()],
-            baseURI,
+            _baseURI(),
             "v1"
         );
         BeaconProxy proxy = new BeaconProxy(address(_beacon), data);
 
         emit OrganizationCreated(_msgSender(), address(proxy));
 
-        uint256 nextId = totalSupply();
+        uint256 nextId = totalSupply() + 1;
         _organizations[nextId] = address(proxy);
         _members[address(proxy)][_msgSender()] = nextId;
         _safeMint(_msgSender(), nextId);

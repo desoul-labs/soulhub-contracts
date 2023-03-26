@@ -39,17 +39,10 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
         string memory name_,
         string memory symbol_,
         address admin_,
-        address[] memory voters_,
         string memory version_
     ) ERC5727(name_, symbol_, admin_, version_) {
-        for (uint256 i = 0; i < voters_.length; ) {
-            _voters.add(voters_[i]);
-            _setupRole(VOTER_ROLE, voters_[i]);
-
-            unchecked {
-                i++;
-            }
-        }
+        _voters.add(admin_);
+        _setupRole(VOTER_ROLE, admin_);
     }
 
     function requestApproval(

@@ -20,7 +20,6 @@ contract ERC5727ExampleUpgradeable is
         string memory name_,
         string memory symbol_,
         address admin_,
-        address[] memory voters_,
         string memory baseURI_,
         string memory version_
     ) public initializer {
@@ -28,7 +27,7 @@ contract ERC5727ExampleUpgradeable is
         __ERC721_init_unchained(name_, symbol_);
         __ERC3525_init_unchained(18);
         __ERC5727_init_unchained(admin_);
-        __ERC5727Governance_init_unchained(voters_);
+        __ERC5727Governance_init_unchained(admin_);
         __ERC5727Example_init_unchained(baseURI_);
     }
 

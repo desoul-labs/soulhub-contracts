@@ -42,27 +42,20 @@ abstract contract ERC5727GovernanceUpgradeable is
         string memory name_,
         string memory symbol_,
         address admin_,
-        address[] memory voters_,
         string memory version_
     ) internal onlyInitializing {
         __EIP712_init_unchained(name_, version_);
         __ERC721_init_unchained(name_, symbol_);
         __ERC3525_init_unchained(18);
         __ERC5727_init_unchained(admin_);
-        __ERC5727Governance_init_unchained(voters_);
+        __ERC5727Governance_init_unchained(admin_);
     }
 
     function __ERC5727Governance_init_unchained(
-        address[] memory voters_
+        address admin_
     ) internal onlyInitializing {
-        for (uint256 i = 0; i < voters_.length; ) {
-            _voters.add(voters_[i]);
-            _setupRole(VOTER_ROLE, voters_[i]);
-
-            unchecked {
-                i++;
-            }
-        }
+        _voters.add(admin_);
+        _setupRole(VOTER_ROLE, admin_);
     }
 
     function requestApproval(

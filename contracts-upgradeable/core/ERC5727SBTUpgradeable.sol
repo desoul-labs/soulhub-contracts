@@ -7,7 +7,7 @@ import "../ERC5727/ERC5727DelegateUpgradeable.sol";
 import "../ERC5727/ERC5727RecoveryUpgradeable.sol";
 import "../ERC5727/ERC5727ClaimableUpgradeable.sol";
 
-contract ERC5727SBT is
+contract ERC5727SBTUpgradeable is
     ERC5727ClaimableUpgradeable,
     ERC5727RecoveryUpgradeable,
     ERC5727ExpirableUpgradeable,
@@ -20,11 +20,10 @@ contract ERC5727SBT is
     // slot -> period
     mapping(uint256 => uint64) private _expiration;
 
-    function __ERC5727Example_init(
+    function __ERC5727SBT_init(
         string memory name_,
         string memory symbol_,
         address admin_,
-        address[] memory voters_,
         string memory baseURI_,
         string memory version_
     ) public initializer {
@@ -32,11 +31,11 @@ contract ERC5727SBT is
         __ERC721_init_unchained(name_, symbol_);
         __ERC3525_init_unchained(18);
         __ERC5727_init_unchained(admin_);
-        __ERC5727Governance_init_unchained(voters_);
-        __ERC5727Example_init_unchained(baseURI_);
+        __ERC5727Governance_init_unchained(admin_);
+        __ERC5727SBT_init_unchained(baseURI_);
     }
 
-    function __ERC5727Example_init_unchained(
+    function __ERC5727SBT_init_unchained(
         string memory baseURI_
     ) internal onlyInitializing {
         _baseUri = baseURI_;
