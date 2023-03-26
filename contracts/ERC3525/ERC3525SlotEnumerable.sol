@@ -33,7 +33,7 @@ abstract contract ERC3525SlotEnumerable is ERC3525, IERC3525SlotEnumerable {
 
     function tokenSupplyInSlot(
         uint256 slot
-    ) external view virtual override returns (uint256) {
+    ) public view virtual override returns (uint256) {
         if (!_slotExists(slot)) revert NotFound(slot);
 
         return _tokensInSlot[slot].length();
