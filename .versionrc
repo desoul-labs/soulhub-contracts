@@ -11,6 +11,10 @@
     {
       "filename": "contracts/package.json",
       "type": "json"
+    },
+    {
+      "filename": "contracts-upgradeable/package.json",
+      "type": "json"
     }
   ]
 }
