@@ -8,6 +8,7 @@ import {
   type ERC5727Example__factory,
 } from '../typechain';
 import { type SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
+import { MerkleTree } from 'merkletreejs';
 
 interface Fixture {
   getCoreContract: (signer: SignerWithAddress) => IERC5727;
@@ -19,6 +20,19 @@ interface Fixture {
   voter2: SignerWithAddress;
   operator1: SignerWithAddress;
   operator2: SignerWithAddress;
+}
+interface leaf {
+  address: string;
+  tokenId: number;
+  amount: number;
+  slot: number;
+  BurnAuth: number;
+  verifier: string;
+  data: string | [];
+}
+interface MerkleTreeStore {
+  root: string;
+  storedJSON: any;
 }
 
 describe('ERC5727Test', function () {
@@ -406,6 +420,467 @@ describe('ERC5727Test', function () {
       );
       await expect(ERC5727ExampleContract.connect(admin).undelegate(operator1.address, 1)).be
         .reverted;
+    });
+  });
+  describe('ERC5727Claimable', function () {
+    function createMerkleTree(addresses: leaf[]): MerkleTreeStore {
+      const leaf = addresses.map((addr) =>
+        ethers.utils.solidityKeccak256(
+          ['address', 'uint256', 'uint256', 'uint256', 'uint8', 'address', 'bytes'],
+          [
+            addr.address,
+            addr.tokenId,
+            addr.amount,
+            addr.slot,
+            addr.BurnAuth,
+            addr.verifier,
+            addr.data,
+          ],
+        ),
+      );
+      const merkletree = new MerkleTree(leaf, ethers.utils.keccak256, { sortPairs: true });
+      const root: string = merkletree.getHexRoot();
+      const storedJSON: any = {};
+      for (let i = 0; i < addresses.length; i++) {
+        storedJSON[addresses[i].address] = {
+          leaf: leaf[i],
+          proof: merkletree.getHexProof(leaf[i]),
+        };
+      }
+      return {
+        root,
+        storedJSON,
+      };
+    }
+    it('Only amdin can set claim event', async function () {
+      const { ERC5727ExampleContract, admin, tokenOwner1, tokenOwner2, operator1 } =
+        await loadFixture(deployTokenFixture);
+      const { root } = createMerkleTree([
+        {
+          address: tokenOwner1.address,
+          tokenId: 1,
+          amount: 1,
+          slot: 1,
+          BurnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+        {
+          address: tokenOwner2.address,
+          tokenId: 1,
+          amount: 1,
+          slot: 1,
+          BurnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+      ]);
+      await ERC5727ExampleContract.connect(admin).setClaimEvent(admin.address, 1, root);
+      await expect(
+        ERC5727ExampleContract.connect(operator1).setClaimEvent(operator1.address, 1, root),
+      ).be.reverted;
+    });
+    it('Should revert when slot already has a issuer', async function () {
+      const { ERC5727ExampleContract, admin, tokenOwner1, tokenOwner2, operator1 } =
+        await loadFixture(deployTokenFixture);
+      const { root } = createMerkleTree([
+        {
+          address: tokenOwner1.address,
+          tokenId: 1,
+          amount: 1,
+          slot: 1,
+          BurnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+        {
+          address: tokenOwner2.address,
+          tokenId: 1,
+          amount: 1,
+          slot: 1,
+          BurnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+      ]);
+      await ERC5727ExampleContract.connect(admin).setClaimEvent(
+        admin.address,
+        1,
+        ethers.constants.HashZero,
+      );
+      await expect(ERC5727ExampleContract.connect(admin).setClaimEvent(operator1.address, 1, root))
+        .be.reverted;
+    });
+    it('Should revert when slot already has a merkelRoot', async function () {
+      const { ERC5727ExampleContract, admin, tokenOwner1, tokenOwner2, operator1 } =
+        await loadFixture(deployTokenFixture);
+      const { root } = createMerkleTree([
+        {
+          address: tokenOwner1.address,
+          tokenId: 1,
+          amount: 1,
+          slot: 1,
+          BurnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+        {
+          address: tokenOwner2.address,
+          tokenId: 1,
+          amount: 1,
+          slot: 1,
+          BurnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+      ]);
+      await ERC5727ExampleContract.connect(admin).setClaimEvent(
+        ethers.constants.AddressZero,
+        1,
+        root,
+      );
+      await expect(ERC5727ExampleContract.connect(admin).setClaimEvent(operator1.address, 1, root))
+        .be.reverted;
+    });
+    it('Can claim if address is in the merkletree', async function () {
+      const { ERC5727ExampleContract, admin, tokenOwner1, tokenOwner2 } = await loadFixture(
+        deployTokenFixture,
+      );
+      const { root, storedJSON } = createMerkleTree([
+        {
+          address: tokenOwner1.address,
+          tokenId: 1,
+          amount: 1,
+          slot: 1,
+          BurnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+        {
+          address: tokenOwner2.address,
+          tokenId: 1,
+          amount: 1,
+          slot: 1,
+          BurnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+      ]);
+      await ERC5727ExampleContract.connect(admin).setClaimEvent(admin.address, 1, root);
+      await ERC5727ExampleContract.connect(tokenOwner1).claim(
+        tokenOwner1.address,
+        1,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+        storedJSON[tokenOwner1.address].proof,
+      );
+      await ERC5727ExampleContract.connect(tokenOwner2).claim(
+        tokenOwner2.address,
+        1,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+        storedJSON[tokenOwner2.address].proof,
+      );
+    });
+    it('Slot balance and address balance will increase after claim', async function () {
+      const { ERC5727ExampleContract, admin, tokenOwner1, tokenOwner2 } = await loadFixture(
+        deployTokenFixture,
+      );
+      const { root, storedJSON } = createMerkleTree([
+        {
+          address: tokenOwner1.address,
+          tokenId: 1,
+          amount: 1,
+          slot: 1,
+          BurnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+        {
+          address: tokenOwner2.address,
+          tokenId: 1,
+          amount: 1,
+          slot: 1,
+          BurnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+      ]);
+      await ERC5727ExampleContract.connect(admin).setClaimEvent(admin.address, 1, root);
+      await ERC5727ExampleContract.connect(tokenOwner1).claim(
+        tokenOwner1.address,
+        1,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+        storedJSON[tokenOwner1.address].proof,
+      );
+      expect(await ERC5727ExampleContract['balanceOf(uint256)'](1)).equal(1);
+      expect(await ERC5727ExampleContract['balanceOf(address)'](tokenOwner1.address)).equal(1);
+    });
+    it('Revert if claimer', async function () {
+      const { ERC5727ExampleContract, admin, tokenOwner1, tokenOwner2 } = await loadFixture(
+        deployTokenFixture,
+      );
+      const { root, storedJSON } = createMerkleTree([
+        {
+          address: tokenOwner1.address,
+          tokenId: 1,
+          amount: 1,
+          slot: 1,
+          BurnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+        {
+          address: tokenOwner2.address,
+          tokenId: 1,
+          amount: 1,
+          slot: 1,
+          BurnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+      ]);
+      await ERC5727ExampleContract.connect(admin).setClaimEvent(admin.address, 1, root);
+      await ERC5727ExampleContract.connect(tokenOwner1).claim(
+        tokenOwner1.address,
+        1,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+        storedJSON[tokenOwner1.address].proof,
+      );
+      expect(await ERC5727ExampleContract['balanceOf(uint256)'](1)).equal(1);
+      expect(await ERC5727ExampleContract['balanceOf(address)'](tokenOwner1.address)).equal(1);
+    });
+  });
+  describe('ERC5727Expirable', function () {
+    it('Only issuer can set expiration', async function () {
+      const { getCoreContract, ERC5727ExampleContract, admin, tokenOwner1, operator1 } =
+        await loadFixture(deployTokenFixture);
+      const coreContract = getCoreContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      const time = Math.floor(Date.now() / 1000);
+      await expect(ERC5727ExampleContract.connect(operator1).setExpiration(1, time + 1000, true)).be
+        .reverted;
+      await ERC5727ExampleContract.connect(admin).setExpiration(1, time + 1000, true);
+    });
+    it('Set expiration will revert if expiration time is invaild', async function () {
+      const { getCoreContract, ERC5727ExampleContract, admin, tokenOwner1 } = await loadFixture(
+        deployTokenFixture,
+      );
+      const coreContract = getCoreContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      const time = Math.floor(Date.now() / 1000);
+      console.log(time);
+      await expect(
+        ERC5727ExampleContract.connect(admin).setExpiration(1, 0, true),
+      ).to.be.revertedWithCustomError(ERC5727ExampleContract, 'NullValue');
+      await expect(ERC5727ExampleContract.connect(admin).setExpiration(1, time - 1000, true)).be
+        .reverted;
+    });
+    it('Set expiration will revert if token id is invaild', async function () {
+      const { ERC5727ExampleContract, admin } = await loadFixture(deployTokenFixture);
+      const time = Math.floor(Date.now() / 1000);
+      await expect(ERC5727ExampleContract.connect(admin).setExpiration(1, time + 1000, true)).be
+        .reverted;
+    });
+    it('Set expiration will revert if token already has a expiration', async function () {
+      const { getCoreContract, ERC5727ExampleContract, admin, tokenOwner1 } = await loadFixture(
+        deployTokenFixture,
+      );
+      const coreContract = getCoreContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      const time = Math.floor(Date.now() / 1000);
+      await ERC5727ExampleContract.connect(admin).setExpiration(1, time + 1000, true);
+      await expect(ERC5727ExampleContract.connect(admin).setExpiration(1, time + 1000, true)).be
+        .reverted;
+    });
+    it('Set expiration should set right expiration time', async function () {
+      const { getCoreContract, ERC5727ExampleContract, admin, tokenOwner1 } = await loadFixture(
+        deployTokenFixture,
+      );
+      const coreContract = getCoreContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      const time = Math.floor(Date.now() / 1000);
+      await ERC5727ExampleContract.connect(admin).setExpiration(1, time + 1000, true);
+      expect(await ERC5727ExampleContract.expiresAt(1)).equal(time + 1000);
+    });
+    it('ExpiresAt will revert if token id is invaild', async function () {
+      const { ERC5727ExampleContract } = await loadFixture(deployTokenFixture);
+      await expect(ERC5727ExampleContract.expiresAt(1)).be.revertedWithCustomError(
+        ERC5727ExampleContract,
+        'NotFound',
+      );
+    });
+    it('ExpiresAt will revert if token has no expiration', async function () {
+      const { getCoreContract, ERC5727ExampleContract, admin, tokenOwner1 } = await loadFixture(
+        deployTokenFixture,
+      );
+      const coreContract = getCoreContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await expect(ERC5727ExampleContract.expiresAt(1)).be.revertedWithCustomError(
+        ERC5727ExampleContract,
+        'NoExpiration',
+      );
+    });
+    it('Renew will revert if token is not renewable', async function () {
+      const { getCoreContract, ERC5727ExampleContract, admin, tokenOwner1 } = await loadFixture(
+        deployTokenFixture,
+      );
+      const coreContract = getCoreContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      const time = Math.floor(Date.now() / 1000);
+      await ERC5727ExampleContract.connect(admin).setExpiration(1, time + 1000, false);
+      await expect(
+        ERC5727ExampleContract.connect(admin).renewSubscription(1, 1000),
+      ).be.revertedWithCustomError(ERC5727ExampleContract, 'NotRenewable');
+    });
+    it('Renew will revert if duration is invaild', async function () {
+      const { getCoreContract, ERC5727ExampleContract, admin, tokenOwner1 } = await loadFixture(
+        deployTokenFixture,
+      );
+      const coreContract = getCoreContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      const time = Math.floor(Date.now() / 1000);
+      await ERC5727ExampleContract.connect(admin).setExpiration(1, time + 1000, true);
+      await expect(ERC5727ExampleContract.connect(admin).renewSubscription(1, 0)).be.reverted;
+    });
+    it('Only issuer or owner can renew', async function () {
+      const { getCoreContract, ERC5727ExampleContract, admin, tokenOwner1, operator1 } =
+        await loadFixture(deployTokenFixture);
+      const coreContract = getCoreContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      const time = Math.floor(Date.now() / 1000);
+      await ERC5727ExampleContract.connect(admin).setExpiration(1, time + 1000, true);
+      await expect(ERC5727ExampleContract.connect(operator1).renewSubscription(1, 1000)).be
+        .reverted;
+      await ERC5727ExampleContract.connect(admin).renewSubscription(1, 1000);
+      await ERC5727ExampleContract.connect(tokenOwner1).renewSubscription(1, 1000);
+    });
+    it('Renew will increase expiration time', async function () {
+      const { getCoreContract, ERC5727ExampleContract, admin, tokenOwner1 } = await loadFixture(
+        deployTokenFixture,
+      );
+      const coreContract = getCoreContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      const time = Math.floor(Date.now() / 1000);
+      await ERC5727ExampleContract.connect(admin).setExpiration(1, time + 1000, true);
+      expect(await ERC5727ExampleContract.expiresAt(1)).equal(time + 1000);
+      await ERC5727ExampleContract.connect(tokenOwner1).renewSubscription(1, 1000);
+      expect(await ERC5727ExampleContract.expiresAt(1)).equal(time + 2000);
+    });
+    it('Cancel Subscription will revert if token is not renewable', async function () {
+      const { getCoreContract, ERC5727ExampleContract, admin, tokenOwner1 } = await loadFixture(
+        deployTokenFixture,
+      );
+      const coreContract = getCoreContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      const time = Math.floor(Date.now() / 1000);
+      await ERC5727ExampleContract.connect(admin).setExpiration(1, time + 1000, false);
+      await expect(
+        ERC5727ExampleContract.connect(admin).cancelSubscription(1),
+      ).be.revertedWithCustomError(ERC5727ExampleContract, 'NotRenewable');
+    });
+    it('Cancel Subscription will revert if token is invaild', async function () {
+      const { getCoreContract, ERC5727ExampleContract, admin, tokenOwner1 } = await loadFixture(
+        deployTokenFixture,
+      );
+      const coreContract = getCoreContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      const time = Math.floor(Date.now() / 1000);
+      await ERC5727ExampleContract.connect(admin).setExpiration(1, time + 1000, false);
+      await expect(
+        ERC5727ExampleContract.connect(admin).cancelSubscription(1),
+      ).be.revertedWithCustomError(ERC5727ExampleContract, 'NotRenewable');
     });
   });
 });
