@@ -3,15 +3,24 @@ import { ethers } from 'hardhat';
 import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
 import {
   type IERC5727,
-  IERC5727__factory,
   type ERC5727Example,
   type ERC5727Example__factory,
+  type IERC5727Recovery,
+  type IERC5727Enumerable,
+  type IERC5727Governance,
+  IERC5727__factory,
+  IERC5727Recovery__factory,
+  IERC5727Enumerable__factory,
+  IERC5727Governance__factory,
 } from '../typechain';
 import { type SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { MerkleTree } from 'merkletreejs';
 
 interface Fixture {
   getCoreContract: (signer: SignerWithAddress) => IERC5727;
+  getRecoveryContract: (signer: SignerWithAddress) => IERC5727Recovery;
+  getEnumerableContract: (signer: SignerWithAddress) => IERC5727Enumerable;
+  getGovernanceContract: (signer: SignerWithAddress) => IERC5727Governance;
   ERC5727ExampleContract: ERC5727Example;
   admin: SignerWithAddress;
   tokenOwner1: SignerWithAddress;
@@ -51,9 +60,18 @@ describe('ERC5727Test', function () {
     );
     const getCoreContract = (signer: SignerWithAddress): IERC5727 =>
       IERC5727__factory.connect(ERC5727ExampleContract.address, signer);
+    const getRecoveryContract = (signer: SignerWithAddress): IERC5727Recovery =>
+      IERC5727Recovery__factory.connect(ERC5727ExampleContract.address, signer);
+    const getEnumerableContract = (signer: SignerWithAddress): IERC5727Enumerable =>
+      IERC5727Enumerable__factory.connect(ERC5727ExampleContract.address, signer);
+    const getGovernanceContract = (signer: SignerWithAddress): IERC5727Governance =>
+      IERC5727Governance__factory.connect(ERC5727ExampleContract.address, signer);
     await ERC5727ExampleContract.deployed();
     return {
       getCoreContract,
+      getRecoveryContract,
+      getEnumerableContract,
+      getGovernanceContract,
       ERC5727ExampleContract,
       admin,
       tokenOwner1,
@@ -605,11 +623,23 @@ describe('ERC5727Test', function () {
         [],
         proofs[tokenOwner1.address],
       );
+      await ERC5727ExampleContract.connect(tokenOwner2).claim(
+        tokenOwner2.address,
+        2,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+        proofs[tokenOwner2.address],
+      );
       expect(await ERC5727ExampleContract['balanceOf(uint256)'](1)).equal(1);
       expect(await ERC5727ExampleContract['balanceOf(address)'](tokenOwner1.address)).equal(1);
+      expect(await ERC5727ExampleContract['balanceOf(uint256)'](2)).equal(1);
+      expect(await ERC5727ExampleContract['balanceOf(address)'](tokenOwner2.address)).equal(1);
     });
 
-    it('revert if claimer', async function () {
+    it('revert if claimer already claimed', async function () {
       const { ERC5727ExampleContract, admin, tokenOwner1, tokenOwner2 } = await loadFixture(
         deployTokenFixture,
       );
@@ -646,6 +676,97 @@ describe('ERC5727Test', function () {
       );
       expect(await ERC5727ExampleContract['balanceOf(uint256)'](1)).equal(1);
       expect(await ERC5727ExampleContract['balanceOf(address)'](tokenOwner1.address)).equal(1);
+      await expect(
+        ERC5727ExampleContract.connect(tokenOwner1).claim(
+          tokenOwner1.address,
+          1,
+          1,
+          1,
+          0,
+          admin.address,
+          [],
+          proofs[tokenOwner1.address],
+        ),
+      ).be.reverted;
+    });
+    it('query if a slot is claimed', async function () {
+      const { ERC5727ExampleContract, admin, tokenOwner1, tokenOwner2 } = await loadFixture(
+        deployTokenFixture,
+      );
+      const { root, proofs } = createMerkleTree([
+        {
+          to: tokenOwner1.address,
+          tokenId: 1,
+          amount: 1,
+          slot: 1,
+          burnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+        {
+          to: tokenOwner2.address,
+          tokenId: 2,
+          amount: 1,
+          slot: 1,
+          burnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+      ]);
+      await ERC5727ExampleContract.connect(admin).setClaimEvent(admin.address, 1, root);
+      expect(await ERC5727ExampleContract.connect(admin).isClaimed(tokenOwner1.address, 1)).equal(
+        false,
+      );
+      await ERC5727ExampleContract.connect(tokenOwner1).claim(
+        tokenOwner1.address,
+        1,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+        proofs[tokenOwner1.address],
+      );
+      expect(await ERC5727ExampleContract.connect(admin).isClaimed(tokenOwner1.address, 1)).equal(
+        true,
+      );
+    });
+    it('revert if claimer is not eligible', async function () {
+      const { ERC5727ExampleContract, admin, tokenOwner1, tokenOwner2, operator1 } =
+        await loadFixture(deployTokenFixture);
+      const { root, proofs } = createMerkleTree([
+        {
+          to: tokenOwner1.address,
+          tokenId: 1,
+          amount: 1,
+          slot: 1,
+          burnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+        {
+          to: tokenOwner2.address,
+          tokenId: 2,
+          amount: 1,
+          slot: 1,
+          burnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+      ]);
+      await ERC5727ExampleContract.connect(admin).setClaimEvent(admin.address, 1, root);
+      await expect(
+        ERC5727ExampleContract.connect(operator1).claim(
+          tokenOwner1.address,
+          1,
+          1,
+          1,
+          0,
+          admin.address,
+          [],
+          proofs[tokenOwner1.address],
+        ),
+      ).be.reverted;
     });
   });
 
@@ -682,7 +803,6 @@ describe('ERC5727Test', function () {
         [],
       );
       const time = Math.floor(Date.now() / 1000);
-      console.log(time);
       await expect(
         ERC5727ExampleContract.connect(admin).setExpiration(1, 0, true),
       ).to.be.revertedWithCustomError(ERC5727ExampleContract, 'NullValue');
@@ -880,5 +1000,240 @@ describe('ERC5727Test', function () {
     });
   });
 
-  describe('ERC5727Enumerable', function () {});
+  describe('ERC5727Enumerable', function () {
+    it('query slot count of owner', async function () {
+      const { getCoreContract, admin, tokenOwner1, getEnumerableContract } = await loadFixture(
+        deployTokenFixture,
+      );
+      const coreContract = getCoreContract(admin);
+      const enumerableContract = getEnumerableContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        2,
+        2,
+        0,
+        admin.address,
+        [],
+      );
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        3,
+        3,
+        0,
+        admin.address,
+        [],
+      );
+      expect(await enumerableContract.slotCountOfOwner(tokenOwner1.address)).equal(3);
+    });
+    it('query slot of owner by index', async function () {
+      const { getCoreContract, admin, tokenOwner1, getEnumerableContract } = await loadFixture(
+        deployTokenFixture,
+      );
+      const coreContract = getCoreContract(admin);
+      const enumerableContract = getEnumerableContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        2,
+        2,
+        0,
+        admin.address,
+        [],
+      );
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        3,
+        3,
+        0,
+        admin.address,
+        [],
+      );
+      expect(await enumerableContract.slotOfOwnerByIndex(tokenOwner1.address, 0)).equal(1);
+      expect(await enumerableContract.slotOfOwnerByIndex(tokenOwner1.address, 1)).equal(2);
+      expect(await enumerableContract.slotOfOwnerByIndex(tokenOwner1.address, 2)).equal(3);
+    });
+    it('query owner balance in slot', async function () {
+      const { getCoreContract, admin, tokenOwner1, getEnumerableContract } = await loadFixture(
+        deployTokenFixture,
+      );
+      const coreContract = getCoreContract(admin);
+      const enumerableContract = getEnumerableContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        2,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        3,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      expect(await enumerableContract.ownerBalanceInSlot(tokenOwner1.address, 1)).equal(3);
+    });
+    it('should revert on query slot of owner by index if index out of bounds', async function () {
+      const { getCoreContract, admin, tokenOwner1, getEnumerableContract, ERC5727ExampleContract } =
+        await loadFixture(deployTokenFixture);
+      const coreContract = getCoreContract(admin);
+      const enumerableContract = getEnumerableContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        2,
+        2,
+        0,
+        admin.address,
+        [],
+      );
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        3,
+        3,
+        0,
+        admin.address,
+        [],
+      );
+      expect(await enumerableContract.slotOfOwnerByIndex(tokenOwner1.address, 0)).equal(1);
+      expect(await enumerableContract.slotOfOwnerByIndex(tokenOwner1.address, 1)).equal(2);
+      expect(await enumerableContract.slotOfOwnerByIndex(tokenOwner1.address, 2)).equal(3);
+      await expect(
+        enumerableContract.slotOfOwnerByIndex(tokenOwner1.address, 3),
+      ).be.revertedWithCustomError(ERC5727ExampleContract, 'IndexOutOfBounds');
+    });
+    it('should revert on query slot count if owner is invaild', async function () {
+      const { getCoreContract, admin, tokenOwner1, getEnumerableContract, ERC5727ExampleContract } =
+        await loadFixture(deployTokenFixture);
+      const coreContract = getCoreContract(admin);
+      const enumerableContract = getEnumerableContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await expect(
+        enumerableContract.slotCountOfOwner(ethers.constants.AddressZero),
+      ).be.revertedWithCustomError(ERC5727ExampleContract, 'NullValue');
+    });
+    it('should revert on query owner balance in slot if owner is invaild', async function () {
+      const { getCoreContract, admin, tokenOwner1, getEnumerableContract, ERC5727ExampleContract } =
+        await loadFixture(deployTokenFixture);
+      const coreContract = getCoreContract(admin);
+      const enumerableContract = getEnumerableContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await expect(
+        enumerableContract.ownerBalanceInSlot(ethers.constants.AddressZero, 1),
+      ).be.revertedWithCustomError(ERC5727ExampleContract, 'NullValue');
+    });
+    it('should revert on query owner balance in slot if slot is invaild', async function () {
+      const { getCoreContract, admin, tokenOwner1, getEnumerableContract, ERC5727ExampleContract } =
+        await loadFixture(deployTokenFixture);
+      const coreContract = getCoreContract(admin);
+      const enumerableContract = getEnumerableContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await expect(
+        enumerableContract.ownerBalanceInSlot(tokenOwner1.address, 3),
+      ).be.revertedWithCustomError(ERC5727ExampleContract, 'NotFound');
+    });
+    it('should revert on query slot of owner by index if owner is invaild', async function () {
+      const { getCoreContract, admin, tokenOwner1, getEnumerableContract, ERC5727ExampleContract } =
+        await loadFixture(deployTokenFixture);
+      const coreContract = getCoreContract(admin);
+      const enumerableContract = getEnumerableContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await expect(
+        enumerableContract.slotOfOwnerByIndex(ethers.constants.AddressZero, 1),
+      ).be.revertedWithCustomError(ERC5727ExampleContract, 'NullValue');
+    });
+  });
+  describe('ERC5727Governance', function () {});
+  // describe('ERC5727Rcovery', function () {
+  //   const domain = {
+  //     name: 'ERC5727Recovery',
+  //     version: '1',
+  //   };
+  //   const types = {
+  //     Recovery: [
+  //       { name: 'from', type: 'address' },
+  //       { name: 'recipient', type: 'address' },
+  //     ],
+  //   };
+  //   it('can recover tokens if signature is valid', async function () {
+  //     const { getCoreContract, getRecoveryContract, admin, tokenOwner1, operator1 } =
+  //       await loadFixture(deployTokenFixture);
+  //     const coreContract = getCoreContract(admin);
+  //     const recoveryContract = getRecoveryContract(operator1);
+  //     await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+  //       tokenOwner1.address,
+  //       1,
+  //       1,
+  //       1,
+  //       admin.address,
+  //       [],
+  //     );
+  //     const signature = tokenOwner1._signTypedData(domain, types, {
+  //       from: tokenOwner1.address,
+  //       recipient: operator1.address,
+  //     });
+  //     await recoveryContract.recover(tokenOwner1.address, signature);
+  //   });
+  // });
 });
