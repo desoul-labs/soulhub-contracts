@@ -21,7 +21,7 @@ interface Fixture {
   operator1: SignerWithAddress;
   operator2: SignerWithAddress;
 }
-interface leaf {
+interface Leaf {
   address: string;
   tokenId: number;
   amount: number;
@@ -423,7 +423,7 @@ describe('ERC5727Test', function () {
     });
   });
   describe('ERC5727Claimable', function () {
-    function createMerkleTree(addresses: leaf[]): MerkleTreeStore {
+    function createMerkleTree(addresses: Leaf[]): MerkleTreeStore {
       const leaf = addresses.map((addr) =>
         ethers.utils.solidityKeccak256(
           ['address', 'uint256', 'uint256', 'uint256', 'uint8', 'address', 'bytes'],
@@ -883,4 +883,5 @@ describe('ERC5727Test', function () {
       ).be.revertedWithCustomError(ERC5727ExampleContract, 'NotRenewable');
     });
   });
+  describe('ERC5727Enumerable', function () {});
 });

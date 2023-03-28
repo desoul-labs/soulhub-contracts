@@ -16,7 +16,7 @@ abstract contract ERC5727ExpirableUpgradeable is
 
     modifier onlyManager(uint256 tokenId) {
         if (
-            _msgSender() != _issuers[tokenId] ||
+            _msgSender() != _issuers[tokenId] &&
             _msgSender() != ownerOf(tokenId)
         ) revert Unauthorized(_msgSender());
         _;
