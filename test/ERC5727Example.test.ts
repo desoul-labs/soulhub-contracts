@@ -32,7 +32,7 @@ interface Leaf {
 }
 interface MerkleTreeStore {
   root: string;
-  storedJSON: any;
+  proofs: any;
 }
 
 describe('ERC5727Test', function () {
@@ -423,33 +423,30 @@ describe('ERC5727Test', function () {
     });
   });
   describe('ERC5727Claimable', function () {
-    function createMerkleTree(addresses: Leaf[]): MerkleTreeStore {
-      const leaf = addresses.map((addr) =>
+    function createMerkleTree(leaves: Leaf[]): MerkleTreeStore {
+      const leaf = leaves.map((leaf) =>
         ethers.utils.solidityKeccak256(
           ['address', 'uint256', 'uint256', 'uint256', 'uint8', 'address', 'bytes'],
           [
-            addr.address,
-            addr.tokenId,
-            addr.amount,
-            addr.slot,
-            addr.BurnAuth,
-            addr.verifier,
-            addr.data,
+            leaf.address,
+            leaf.tokenId,
+            leaf.amount,
+            leaf.slot,
+            leaf.BurnAuth,
+            leaf.verifier,
+            leaf.data,
           ],
         ),
       );
       const merkletree = new MerkleTree(leaf, ethers.utils.keccak256, { sortPairs: true });
       const root: string = merkletree.getHexRoot();
-      const storedJSON: any = {};
-      for (let i = 0; i < addresses.length; i++) {
-        storedJSON[addresses[i].address] = {
-          leaf: leaf[i],
-          proof: merkletree.getHexProof(leaf[i]),
-        };
+      const proofs: any = {};
+      for (let i = 0; i < leaves.length; i++) {
+        proofs[leaves[i].address] = merkletree.getHexProof(leaf[i]);
       }
       return {
         root,
-        storedJSON,
+        proofs,
       };
     }
     it('Only amdin can set claim event', async function () {
@@ -546,7 +543,7 @@ describe('ERC5727Test', function () {
       const { ERC5727ExampleContract, admin, tokenOwner1, tokenOwner2 } = await loadFixture(
         deployTokenFixture,
       );
-      const { root, storedJSON } = createMerkleTree([
+      const { root, proofs } = createMerkleTree([
         {
           address: tokenOwner1.address,
           tokenId: 1,
@@ -575,7 +572,7 @@ describe('ERC5727Test', function () {
         0,
         admin.address,
         [],
-        storedJSON[tokenOwner1.address].proof,
+        proofs[tokenOwner1.address].proof,
       );
       await ERC5727ExampleContract.connect(tokenOwner2).claim(
         tokenOwner2.address,
@@ -585,14 +582,14 @@ describe('ERC5727Test', function () {
         0,
         admin.address,
         [],
-        storedJSON[tokenOwner2.address].proof,
+        proofs[tokenOwner2.address].proof,
       );
     });
     it('Slot balance and address balance will increase after claim', async function () {
       const { ERC5727ExampleContract, admin, tokenOwner1, tokenOwner2 } = await loadFixture(
         deployTokenFixture,
       );
-      const { root, storedJSON } = createMerkleTree([
+      const { root, proofs } = createMerkleTree([
         {
           address: tokenOwner1.address,
           tokenId: 1,
@@ -621,7 +618,7 @@ describe('ERC5727Test', function () {
         0,
         admin.address,
         [],
-        storedJSON[tokenOwner1.address].proof,
+        proofs[tokenOwner1.address].proof,
       );
       expect(await ERC5727ExampleContract['balanceOf(uint256)'](1)).equal(1);
       expect(await ERC5727ExampleContract['balanceOf(address)'](tokenOwner1.address)).equal(1);
@@ -630,7 +627,7 @@ describe('ERC5727Test', function () {
       const { ERC5727ExampleContract, admin, tokenOwner1, tokenOwner2 } = await loadFixture(
         deployTokenFixture,
       );
-      const { root, storedJSON } = createMerkleTree([
+      const { root, proofs } = createMerkleTree([
         {
           address: tokenOwner1.address,
           tokenId: 1,
@@ -659,7 +656,7 @@ describe('ERC5727Test', function () {
         0,
         admin.address,
         [],
-        storedJSON[tokenOwner1.address].proof,
+        proofs[tokenOwner1.address].proof,
       );
       expect(await ERC5727ExampleContract['balanceOf(uint256)'](1)).equal(1);
       expect(await ERC5727ExampleContract['balanceOf(address)'](tokenOwner1.address)).equal(1);

@@ -4,11 +4,10 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [0.2.0-alpha.1](https://github.com/desoul-labs/soulhub-contracts/compare/v0.1.0-alpha.1...v0.2.0-alpha.1) (2023-03-27)
 
-
 ### Bug Fixes
 
-* remove unused storage variables ([162fd11](https://github.com/desoul-labs/soulhub-contracts/commit/162fd11b84e2ccb39cdef52ac20a4c70290e8fc4))
-* slot is not initlized ([2267b4c](https://github.com/desoul-labs/soulhub-contracts/commit/2267b4c7992e79167c6b081c550529b407857efa))
+- remove unused storage variables ([162fd11](https://github.com/desoul-labs/soulhub-contracts/commit/162fd11b84e2ccb39cdef52ac20a4c70290e8fc4))
+- slot is not initlized ([2267b4c](https://github.com/desoul-labs/soulhub-contracts/commit/2267b4c7992e79167c6b081c550529b407857efa))
 
 ## [0.1.0-alpha.1](https://github.com/desoul-labs/soulhub-contracts/compare/v0.0.3...v0.1.0-alpha.1) (2023-03-08)
 
