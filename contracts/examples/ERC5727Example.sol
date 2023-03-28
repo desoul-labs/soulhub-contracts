@@ -20,10 +20,9 @@ contract ERC5727Example is
         string memory name,
         string memory symbol,
         address admin,
-        address[] memory voters,
         string memory baseTokenURI,
         string memory version
-    ) ERC5727Governance(name, symbol, admin, voters, version) {
+    ) ERC5727Governance(name, symbol, admin, version) {
         _baseTokenURI = baseTokenURI;
     }
 
@@ -80,26 +79,6 @@ contract ERC5727Example is
             slot,
             value
         );
-    }
-
-    function batchIssue(
-        address[] calldata to,
-        uint256 slot,
-        string calldata uri,
-        bytes calldata data
-    ) external virtual onlyAdmin {
-        uint256 next = totalSupply() + 1;
-        for (uint256 i = 0; i < to.length; i++) {
-            issue(
-                to[i],
-                next + i,
-                slot,
-                BurnAuth.IssuerOnly,
-                address(this),
-                data
-            );
-            _setTokenURI(next + i, uri);
-        }
     }
 
     function supportsInterface(

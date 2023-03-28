@@ -1,32 +1,30 @@
 import { ethers, run } from 'hardhat';
-import { ERC5727RegistryUpgradeable__factory } from '../typechain';
-import type {
-  BeaconProxy,
-  ERC5727ExampleUpgradeable,
-  ERC5727RegistryUpgradeable,
-  TransparentUpgradeableProxy,
-  UpgradeableBeacon,
+import {
+  type SoulHubUpgradeable,
+  SoulHubUpgradeable__factory,
+  type TransparentUpgradeableProxy,
+  type UpgradeableBeacon,
+  type ERC5727SBTUpgradeable,
 } from '../typechain';
 
-async function sleep(ms: number): Promise<void> {
-  await new Promise((resolve) => setTimeout(resolve, ms));
+async function verifyContract(address: string, constructorArguments: any[]): Promise<void> {
+  await new Promise((resolve) => setTimeout(resolve, 10000));
+  await run('verify:verify', {
+    address,
+    constructorArguments,
+  }).catch((error) => {
+    console.info(error);
+  });
 }
 
-async function deploySbt(): Promise<ERC5727ExampleUpgradeable> {
-  const sbtContract = await ethers.getContractFactory('ERC5727ExampleUpgradeable');
+async function deploySbt(): Promise<ERC5727SBTUpgradeable> {
+  const sbtContract = await ethers.getContractFactory('ERC5727SBTUpgradeable');
 
   const sbt = await sbtContract.deploy();
   await sbt.deployed();
   console.log('SBT contract deployed to:', sbt.address);
 
-  await sleep(10000);
-  await run('verify:verify', {
-    address: sbt.address,
-    constructorArguments: [],
-  }).catch((error) => {
-    console.info(error);
-  });
-
+  await verifyContract(sbt.address, []);
   return sbt;
 }
 
@@ -37,73 +35,34 @@ async function deployBeacon(implementation: string): Promise<UpgradeableBeacon> 
   await beacon.deployed();
   console.log('Beacon contract deployed to:', beacon.address);
 
-  await sleep(10000);
-  await run('verify:verify', {
-    address: beacon.address,
-    constructorArguments: [implementation],
-  }).catch((error) => {
-    console.info(error);
-  });
-
+  await verifyContract(beacon.address, [implementation]);
   return beacon;
 }
 
-async function deployBeaconProxy(beacon: string, initCode: string): Promise<BeaconProxy> {
-  const proxyContract = await ethers.getContractFactory('BeaconProxy');
-  const proxy = await proxyContract.deploy(beacon, initCode);
+async function deploySoulHub(): Promise<SoulHubUpgradeable> {
+  const soulHubContract = await ethers.getContractFactory('SoulHubUpgradeable');
+  const soulHub = await soulHubContract.deploy();
 
-  await proxy.deployed();
-  console.log('BeaconProxy contract deployed to:', proxy.address);
+  await soulHub.deployed();
+  console.log('SoulHub contract deployed to:', soulHub.address);
 
-  await sleep(10000);
-  await run('verify:verify', {
-    address: proxy.address,
-    constructorArguments: [beacon, initCode],
-  }).catch((error) => {
-    console.info(error);
-  });
-
-  return proxy;
+  await verifyContract(soulHub.address, []);
+  return soulHub;
 }
 
 async function deployTransparentProxy(
-  registry: string,
+  impl: string,
   admin: string,
   data: string,
 ): Promise<TransparentUpgradeableProxy> {
   const transparentProxyContract = await ethers.getContractFactory('TransparentUpgradeableProxy');
-  const transparentProxy = await transparentProxyContract.deploy(registry, admin, data);
+  const transparentProxy = await transparentProxyContract.deploy(impl, admin, data);
 
   await transparentProxy.deployed();
   console.log('TransparentUpgradeableProxy contract deployed to:', transparentProxy.address);
 
-  await sleep(10000);
-  await run('verify:verify', {
-    address: transparentProxy.address,
-    constructorArguments: [registry, admin, data],
-  }).catch((error) => {
-    console.info(error);
-  });
-
+  await verifyContract(transparentProxy.address, [impl, admin, data]);
   return transparentProxy;
-}
-
-async function deployRegistry(): Promise<ERC5727RegistryUpgradeable> {
-  const registryContract = await ethers.getContractFactory('ERC5727RegistryUpgradeable');
-  const registry = await registryContract.deploy();
-
-  await registry.deployed();
-  console.log('Registry contract deployed to:', registry.address);
-
-  await sleep(10000);
-  await run('verify:verify', {
-    address: registry.address,
-    constructorArguments: [],
-  }).catch((error) => {
-    console.info(error);
-  });
-
-  return registry;
 }
 
 async function main(): Promise<void> {
@@ -111,31 +70,20 @@ async function main(): Promise<void> {
   console.log('Deploying contracts with the account:', deployer.address);
   console.log('Network:', (await ethers.provider.getNetwork()).name);
 
-  const sbt = await deploySbt();
-  const beacon = await deployBeacon(sbt.address);
-  const callData = sbt.interface.encodeFunctionData('__ERC5727Example_init', [
-    'SoulHub SBT',
-    'SBT',
-    deployer.address,
-    [deployer.address],
-    'https://api.soularis.dev/',
-    'v1',
-  ]);
-  const beaconProxy = await deployBeaconProxy(beacon.address, callData);
+  const sbtImpl = await deploySbt();
+  const beacon = await deployBeacon(sbtImpl.address);
 
-  const registry = await deployRegistry();
-  const initData = registry.interface.encodeFunctionData('__ERC5727Registry_init', [
-    'SoulHub Registry',
-    '/',
-    'https://api.soularis.dev/',
-  ]);
-
-  const registryProxy = await deployTransparentProxy(registry.address, deployer.address, initData);
-  const registryProxyContract = ERC5727RegistryUpgradeable__factory.connect(
-    registryProxy.address,
-    deployer,
+  const soulHubImpl = await deploySoulHub();
+  const initData = SoulHubUpgradeable__factory.createInterface().encodeFunctionData(
+    '__SoulHub_init',
+    [beacon.address],
   );
-  await registryProxyContract.register(beaconProxy.address);
+  const soulHubProxy = await deployTransparentProxy(
+    soulHubImpl.address,
+    deployer.address,
+    initData,
+  );
+  console.log('SoulHub proxy address:', soulHubProxy.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

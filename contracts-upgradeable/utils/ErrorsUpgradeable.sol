@@ -46,3 +46,5 @@ error AlreadyClaimed();
 error RoleAlreadyGranted(address account, bytes32 role);
 
 error RoleNotGranted(address account, bytes32 role);
+
+error ExceedsMaxSupply(uint256 maxSupply);

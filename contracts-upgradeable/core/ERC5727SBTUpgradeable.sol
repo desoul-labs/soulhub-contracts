@@ -7,7 +7,7 @@ import "../ERC5727/ERC5727DelegateUpgradeable.sol";
 import "../ERC5727/ERC5727RecoveryUpgradeable.sol";
 import "../ERC5727/ERC5727ClaimableUpgradeable.sol";
 
-contract ERC5727ExampleUpgradeable is
+contract ERC5727SBTUpgradeable is
     ERC5727ClaimableUpgradeable,
     ERC5727RecoveryUpgradeable,
     ERC5727ExpirableUpgradeable,
@@ -15,8 +15,12 @@ contract ERC5727ExampleUpgradeable is
     ERC5727DelegateUpgradeable
 {
     string private _baseUri;
+    // slot -> max supply
+    mapping(uint256 => uint256) private _maxSupply;
+    // slot -> period
+    mapping(uint256 => uint64) private _expiration;
 
-    function __ERC5727Example_init(
+    function __ERC5727SBT_init(
         string memory name_,
         string memory symbol_,
         address admin_,
@@ -28,10 +32,10 @@ contract ERC5727ExampleUpgradeable is
         __ERC3525_init_unchained(18);
         __ERC5727_init_unchained(admin_);
         __ERC5727Governance_init_unchained(admin_);
-        __ERC5727Example_init_unchained(baseURI_);
+        __ERC5727SBT_init_unchained(baseURI_);
     }
 
-    function __ERC5727Example_init_unchained(
+    function __ERC5727SBT_init_unchained(
         string memory baseURI_
     ) internal onlyInitializing {
         _baseUri = baseURI_;
@@ -76,6 +80,19 @@ contract ERC5727ExampleUpgradeable is
         virtual
         override(ERC5727Upgradeable, ERC5727EnumerableUpgradeable)
     {
+        if (from == address(0)) {
+            if (
+                _maxSupply[slot] != 0 &&
+                tokenSupplyInSlot(slot) + 1 > _maxSupply[slot]
+            ) revert ExceedsMaxSupply(_maxSupply[slot]);
+            if (_expiration[slot] != 0) {
+                setExpiration(
+                    slot,
+                    uint64(block.timestamp) + _expiration[slot],
+                    true
+                );
+            }
+        }
         ERC5727EnumerableUpgradeable._beforeValueTransfer(
             from,
             to,
@@ -106,6 +123,35 @@ contract ERC5727ExampleUpgradeable is
             slot,
             value
         );
+    }
+
+    function setupSlot(
+        uint256 maxSupply,
+        uint64 expiration
+    ) external onlyAdmin {
+        uint256 slot = totalSupply() + 1;
+        _maxSupply[slot] = maxSupply;
+        _expiration[slot] = expiration;
+    }
+
+    function batchIssue(
+        address[] calldata to,
+        uint256 slot,
+        string calldata uri,
+        bytes calldata data
+    ) external virtual onlyAdmin {
+        uint256 next = totalSupply() + 1;
+        for (uint256 i = 0; i < to.length; i++) {
+            issue(
+                to[i],
+                next + i,
+                slot,
+                BurnAuth.IssuerOnly,
+                address(this),
+                data
+            );
+            _setTokenURI(next + i, uri);
+        }
     }
 
     function supportsInterface(
