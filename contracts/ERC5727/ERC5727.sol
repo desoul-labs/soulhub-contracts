@@ -10,6 +10,7 @@ import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 import "../ERC3525/ERC3525.sol";
 import "../ERC5192/interfaces/IERC5192.sol";
@@ -19,7 +20,7 @@ import "./interfaces/IERC5727Enumerable.sol";
 contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
     using EnumerableSet for EnumerableSet.UintSet;
     using EnumerableSet for EnumerableSet.AddressSet;
-    using SignatureChecker for address;
+    using ECDSA for bytes32;
 
     mapping(uint256 => address) internal _issuers;
     mapping(uint256 => address) internal _verifiers;
@@ -271,7 +272,7 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
         );
 
         address issuer = _issuers[tokenId];
-        result = issuer.isValidSignatureNow(digest, signature);
+        result = digest.recover(signature) == issuer;
 
         emit Verified(by, tokenId, result);
     }

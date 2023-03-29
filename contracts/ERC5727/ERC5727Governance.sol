@@ -171,6 +171,15 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
         data;
     }
 
+    function getApproval(
+        uint256 approvalId
+    ) public view virtual returns (IssueApproval memory) {
+        if (_approvals[approvalId].creator == address(0))
+            revert NotFound(approvalId);
+
+        return _approvals[approvalId];
+    }
+
     function approvalURI(
         uint256 approvalId
     ) public view virtual override returns (string memory) {

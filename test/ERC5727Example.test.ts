@@ -1052,6 +1052,42 @@ describe('ERC5727Test', function () {
         ERC5727ExampleContract.connect(admin).cancelSubscription(1),
       ).be.revertedWithCustomError(ERC5727ExampleContract, 'NotRenewable');
     });
+    it('only manager can cancel subscription', async function () {
+      const { getCoreContract, ERC5727ExampleContract, admin, tokenOwner1, operator1 } =
+        await loadFixture(deployTokenFixture);
+      const coreContract = getCoreContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      const time = Math.floor(Date.now() / 1000);
+      await ERC5727ExampleContract.connect(admin).setExpiration(1, time + 1000, true);
+      expect(await ERC5727ExampleContract.isRenewable(1)).equal(true);
+      await expect(ERC5727ExampleContract.connect(operator1).cancelSubscription(1)).be.reverted;
+      await ERC5727ExampleContract.connect(admin).cancelSubscription(1);
+    });
+    it('cancel subscription should clear expiration', async function () {
+      const { getCoreContract, ERC5727ExampleContract, admin, tokenOwner1, operator1 } =
+        await loadFixture(deployTokenFixture);
+      const coreContract = getCoreContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      const time = Math.floor(Date.now() / 1000);
+      await ERC5727ExampleContract.connect(admin).setExpiration(1, time + 1000, true);
+      expect(await ERC5727ExampleContract.isRenewable(1)).equal(true);
+      await expect(ERC5727ExampleContract.connect(operator1).cancelSubscription(1)).be.reverted;
+      await ERC5727ExampleContract.connect(admin).cancelSubscription(1);
+    });
     it('query if token is renewable', async function () {
       const { getCoreContract, ERC5727ExampleContract, admin, tokenOwner1 } = await loadFixture(
         deployTokenFixture,
@@ -1379,6 +1415,12 @@ describe('ERC5727Test', function () {
         `https://api.soularis.io/contracts/${contractAddress}/approvals/0`,
       );
     });
+    it('should revert on query approval uri if approval does not exist', async function () {
+      const { getGovernanceContract, admin, tokenOwner1 } = await loadFixture(deployTokenFixture);
+      const governanceContract = getGovernanceContract(admin);
+      await governanceContract.requestApproval(tokenOwner1.address, 1, 1, 1, 0, admin.address, []);
+      await expect(governanceContract.approvalURI(1)).be.reverted;
+    });
     it('only voter can issue approval', async function () {
       const { getGovernanceContract, admin, tokenOwner1, voter1, operator1 } = await loadFixture(
         deployTokenFixture,
@@ -1441,6 +1483,19 @@ describe('ERC5727Test', function () {
         governanceContract.requestApproval(tokenOwner1.address, 0, 1, 0, 0, admin.address, []),
       ).be.reverted;
     });
+    it('should revert on remove approval if approval is notpending', async function () {
+      const { getGovernanceContract, tokenOwner1, admin, voter1, voter2 } = await loadFixture(
+        deployTokenFixture,
+      );
+      const governanceContract = getGovernanceContract(admin);
+      const governanceContractVoter1 = getGovernanceContract(voter1);
+      await governanceContract.addVoter(voter1.address);
+      await governanceContract.addVoter(voter2.address);
+      await governanceContract.requestApproval(tokenOwner1.address, 1, 1, 1, 0, admin.address, []);
+      await governanceContract.voteApproval(0, true, []);
+      await governanceContractVoter1.voteApproval(0, true, []);
+      await expect(governanceContract.removeApprovalRequest(0)).be.reverted;
+    });
     it('issue approval should emit event correctly', async function () {
       const { getGovernanceContract, tokenOwner1, admin, voter1 } = await loadFixture(
         deployTokenFixture,
@@ -1452,6 +1507,15 @@ describe('ERC5727Test', function () {
       )
         .to.emit(governanceContract, 'ApprovalUpdate')
         .withArgs(anyValue, admin.address, 0);
+    });
+    it('query approval should return correct approval', async function () {
+      const { getGovernanceContract, tokenOwner1, admin, voter1 } = await loadFixture(
+        deployTokenFixture,
+      );
+      const governanceContract = getGovernanceContract(admin);
+      await governanceContract.addVoter(voter1.address);
+      await governanceContract.requestApproval(tokenOwner1.address, 1, 1, 1, 0, admin.address, []);
+      await governanceContract.getApproval(0);
     });
     it('only voter can vote for approval', async function () {
       const { getGovernanceContract, admin, tokenOwner1, voter1, operator1 } = await loadFixture(
@@ -1523,7 +1587,7 @@ describe('ERC5727Test', function () {
         .withArgs(0, admin.address, 2);
     });
   });
-  // describe('ERC5727Rcovery', function () {
+  // describe('ERC5727Recovery', function () {
   //   it('can recover tokens if signature is valid', async function () {
   //     const {
   //       getCoreContract,
@@ -1561,6 +1625,13 @@ describe('ERC5727Test', function () {
   //       from: tokenOwner1.address,
   //       recipient: operator1.address,
   //     });
+  //     const res = ethers.utils.verifyTypedData(
+  //       domain,
+  //       types,
+  //       { from: tokenOwner1.address, recipient: operator1.address },
+  //       signature,
+  //     );
+  //     console.log(res, tokenOwner1.address);
   //     console.log(signature, domain);
   //     await recoveryContract.recover(tokenOwner1.address, signature);
   //   });
