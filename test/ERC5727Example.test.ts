@@ -351,6 +351,33 @@ describe('ERC5727Test', function () {
       );
       await expect(coreContract.verifierOf(1)).be.reverted;
     });
+    it('query if token is locked', async function () {
+      const { getCoreContract, admin, tokenOwner1 } = await loadFixture(deployTokenFixture);
+      const coreContract = getCoreContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        10,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      expect(await coreContract.locked(10)).equal(true);
+    });
+    it('should revert on query if token is locked if token id is invaild', async function () {
+      const { getCoreContract, admin, tokenOwner1 } = await loadFixture(deployTokenFixture);
+      const coreContract = getCoreContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        10,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      expect(await coreContract.locked(10)).equal(true);
+      await expect(coreContract.locked(1)).be.reverted;
+    });
   });
 
   describe('ERC5727Delegate', function () {
@@ -1347,8 +1374,9 @@ describe('ERC5727Test', function () {
         await loadFixture(deployTokenFixture);
       const governanceContract = getGovernanceContract(admin);
       await governanceContract.requestApproval(tokenOwner1.address, 1, 1, 1, 0, admin.address, []);
+      const contractAddress: string = ERC5727ExampleContract.address.toLowerCase();
       expect(await governanceContract.approvalURI(0)).equal(
-        `https://api.soularis.io/contracts/${ERC5727ExampleContract.address.toLowerCase()}/approvals/0`,
+        `https://api.soularis.io/contracts/${contractAddress}/approvals/0`,
       );
     });
     it('only voter can issue approval', async function () {
@@ -1496,19 +1524,15 @@ describe('ERC5727Test', function () {
     });
   });
   // describe('ERC5727Rcovery', function () {
-  //   const domain = {
-  //     name: 'ERC5727Recovery',
-  //     version: '1',
-  //   };
-  //   const types = {
-  //     Recovery: [
-  //       { name: 'from', type: 'address' },
-  //       { name: 'recipient', type: 'address' },
-  //     ],
-  //   };
   //   it('can recover tokens if signature is valid', async function () {
-  //     const { getCoreContract, getRecoveryContract, admin, tokenOwner1, operator1 } =
-  //       await loadFixture(deployTokenFixture);
+  //     const {
+  //       getCoreContract,
+  //       getRecoveryContract,
+  //       admin,
+  //       tokenOwner1,
+  //       operator1,
+  //       ERC5727ExampleContract,
+  //     } = await loadFixture(deployTokenFixture);
   //     const coreContract = getCoreContract(admin);
   //     const recoveryContract = getRecoveryContract(operator1);
   //     await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
@@ -1519,11 +1543,25 @@ describe('ERC5727Test', function () {
   //       admin.address,
   //       [],
   //     );
+  //     const verifyingContract = ERC5727ExampleContract.address;
+  //     const chainId = (await ethers.provider.getNetwork()).chainId;
+  //     const domain = {
+  //       name: 'Soularis',
+  //       version: '1',
+  //       chainId,
+  //       verifyingContract,
+  //     };
+  //     const types = {
+  //       Recovery: [
+  //         { name: 'from', type: 'address' },
+  //         { name: 'recipient', type: 'address' },
+  //       ],
+  //     };
   //     const signature = await tokenOwner1._signTypedData(domain, types, {
   //       from: tokenOwner1.address,
   //       recipient: operator1.address,
   //     });
-  //     console.log(signature);
+  //     console.log(signature, domain);
   //     await recoveryContract.recover(tokenOwner1.address, signature);
   //   });
   // });
