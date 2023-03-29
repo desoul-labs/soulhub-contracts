@@ -1,17 +1,18 @@
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
 import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
+import { anyValue } from '@nomicfoundation/hardhat-chai-matchers/withArgs';
 import {
   type IERC5727,
   type ERC5727Example,
   type ERC5727Example__factory,
   type IERC5727Recovery,
   type IERC5727Enumerable,
-  type IERC5727Governance,
+  type ERC5727Governance,
   IERC5727__factory,
   IERC5727Recovery__factory,
   IERC5727Enumerable__factory,
-  IERC5727Governance__factory,
+  ERC5727Governance__factory,
 } from '../typechain';
 import { type SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { MerkleTree } from 'merkletreejs';
@@ -20,7 +21,7 @@ interface Fixture {
   getCoreContract: (signer: SignerWithAddress) => IERC5727;
   getRecoveryContract: (signer: SignerWithAddress) => IERC5727Recovery;
   getEnumerableContract: (signer: SignerWithAddress) => IERC5727Enumerable;
-  getGovernanceContract: (signer: SignerWithAddress) => IERC5727Governance;
+  getGovernanceContract: (signer: SignerWithAddress) => ERC5727Governance;
   ERC5727ExampleContract: ERC5727Example;
   admin: SignerWithAddress;
   tokenOwner1: SignerWithAddress;
@@ -64,8 +65,8 @@ describe('ERC5727Test', function () {
       IERC5727Recovery__factory.connect(ERC5727ExampleContract.address, signer);
     const getEnumerableContract = (signer: SignerWithAddress): IERC5727Enumerable =>
       IERC5727Enumerable__factory.connect(ERC5727ExampleContract.address, signer);
-    const getGovernanceContract = (signer: SignerWithAddress): IERC5727Governance =>
-      IERC5727Governance__factory.connect(ERC5727ExampleContract.address, signer);
+    const getGovernanceContract = (signer: SignerWithAddress): ERC5727Governance =>
+      ERC5727Governance__factory.connect(ERC5727ExampleContract.address, signer);
     await ERC5727ExampleContract.deployed();
     return {
       getCoreContract,
@@ -1204,7 +1205,210 @@ describe('ERC5727Test', function () {
       ).be.revertedWithCustomError(ERC5727ExampleContract, 'NullValue');
     });
   });
-  describe('ERC5727Governance', function () {});
+  describe('ERC5727Governance', function () {
+    it('admin should has voter role', async function () {
+      const { getGovernanceContract, admin } = await loadFixture(deployTokenFixture);
+      const governanceContract = getGovernanceContract(admin);
+      expect(await governanceContract.isVoter(admin.address)).equal(true);
+    });
+    it('only admin can add voter', async function () {
+      const { getGovernanceContract, admin, voter1, operator1 } = await loadFixture(
+        deployTokenFixture,
+      );
+      const governanceContract = getGovernanceContract(admin);
+      const governanceContractOperator = getGovernanceContract(operator1);
+      await expect(governanceContractOperator.addVoter(voter1.address)).be.reverted;
+      await governanceContract.addVoter(voter1.address);
+    });
+    it('only admin can remove voter', async function () {
+      const { getGovernanceContract, admin, voter1, operator1 } = await loadFixture(
+        deployTokenFixture,
+      );
+      const governanceContract = getGovernanceContract(admin);
+      const governanceContractOperator = getGovernanceContract(operator1);
+      await governanceContract.addVoter(voter1.address);
+      await expect(governanceContractOperator.removeVoter(voter1.address)).be.reverted;
+      await governanceContract.removeVoter(voter1.address);
+    });
+    it('add voter should set voter role correctly', async function () {
+      const { getGovernanceContract, admin, voter1 } = await loadFixture(deployTokenFixture);
+      const governanceContract = getGovernanceContract(admin);
+      await governanceContract.addVoter(voter1.address);
+      expect(await governanceContract.isVoter(voter1.address)).equal(true);
+    });
+    it('remove voter should remove voter role correctly', async function () {
+      const { getGovernanceContract, admin, voter1 } = await loadFixture(deployTokenFixture);
+      const governanceContract = getGovernanceContract(admin);
+      await governanceContract.addVoter(voter1.address);
+      await governanceContract.removeVoter(voter1.address);
+      expect(await governanceContract.isVoter(voter1.address)).equal(false);
+    });
+    it('query voter count should return correct count', async function () {
+      const { getGovernanceContract, admin, voter1 } = await loadFixture(deployTokenFixture);
+      const governanceContract = getGovernanceContract(admin);
+      expect(await governanceContract.voterCount()).equal(1);
+      await governanceContract.addVoter(voter1.address);
+      expect(await governanceContract.voterCount()).equal(2);
+    });
+    it('query voter by index should return correct voter', async function () {
+      const { getGovernanceContract, admin, voter1 } = await loadFixture(deployTokenFixture);
+      const governanceContract = getGovernanceContract(admin);
+      expect(await governanceContract.voterByIndex(0)).equal(admin.address);
+      await governanceContract.addVoter(voter1.address);
+      expect(await governanceContract.voterByIndex(1)).equal(voter1.address);
+    });
+    it('should revert query voter by index if index out of bounds', async function () {
+      const { getGovernanceContract, admin, voter1 } = await loadFixture(deployTokenFixture);
+      const governanceContract = getGovernanceContract(admin);
+      expect(await governanceContract.voterByIndex(0)).equal(admin.address);
+      await governanceContract.addVoter(voter1.address);
+      expect(await governanceContract.voterByIndex(1)).equal(voter1.address);
+      await expect(governanceContract.voterByIndex(2)).be.reverted;
+    });
+    it('only voter can issue approval', async function () {
+      const { getGovernanceContract, admin, tokenOwner1, voter1, operator1 } = await loadFixture(
+        deployTokenFixture,
+      );
+      const governanceContract = getGovernanceContract(admin);
+      const governanceContractVoter = getGovernanceContract(voter1);
+      const governanceContractOperator = getGovernanceContract(operator1);
+      await governanceContract.addVoter(voter1.address);
+      await governanceContract.requestApproval(tokenOwner1.address, 1, 1, 1, 0, admin.address, []);
+      await governanceContractVoter.requestApproval(
+        tokenOwner1.address,
+        1,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await expect(
+        governanceContractOperator.requestApproval(
+          tokenOwner1.address,
+          1,
+          1,
+          1,
+          0,
+          admin.address,
+          [],
+        ),
+      ).be.reverted;
+    });
+    it('should revert on issue approval if recipient is invaild', async function () {
+      const { getGovernanceContract, admin, voter1 } = await loadFixture(deployTokenFixture);
+      const governanceContract = getGovernanceContract(admin);
+      await governanceContract.addVoter(voter1.address);
+      await expect(
+        governanceContract.requestApproval(
+          ethers.constants.AddressZero,
+          1,
+          1,
+          1,
+          0,
+          admin.address,
+          [],
+        ),
+      ).be.reverted;
+    });
+    it('should revert on issue approval if slot or token id is invaild', async function () {
+      const { getGovernanceContract, tokenOwner1, admin, voter1 } = await loadFixture(
+        deployTokenFixture,
+      );
+      const governanceContract = getGovernanceContract(admin);
+      await governanceContract.addVoter(voter1.address);
+      await expect(
+        governanceContract.requestApproval(tokenOwner1.address, 0, 1, 1, 0, admin.address, []),
+      ).be.reverted;
+      await expect(
+        governanceContract.requestApproval(tokenOwner1.address, 1, 1, 0, 0, admin.address, []),
+      ).be.reverted;
+      await expect(
+        governanceContract.requestApproval(tokenOwner1.address, 0, 1, 0, 0, admin.address, []),
+      ).be.reverted;
+    });
+    it('issue approval should emit event correctly', async function () {
+      const { getGovernanceContract, tokenOwner1, admin, voter1 } = await loadFixture(
+        deployTokenFixture,
+      );
+      const governanceContract = getGovernanceContract(admin);
+      await governanceContract.addVoter(voter1.address);
+      await expect(
+        governanceContract.requestApproval(tokenOwner1.address, 1, 1, 1, 0, admin.address, []),
+      )
+        .to.emit(governanceContract, 'ApprovalUpdate')
+        .withArgs(anyValue, admin.address, 0);
+    });
+    it('only voter can vote for approval', async function () {
+      const { getGovernanceContract, admin, tokenOwner1, voter1, operator1 } = await loadFixture(
+        deployTokenFixture,
+      );
+      const governanceContract = getGovernanceContract(admin);
+      const governanceContractVoter = getGovernanceContract(voter1);
+      const governanceContractOperator = getGovernanceContract(operator1);
+      await governanceContract.requestApproval(tokenOwner1.address, 1, 1, 1, 0, admin.address, []);
+      await governanceContract.addVoter(voter1.address);
+      await governanceContractVoter.voteApproval(0, true, []);
+      await governanceContract.voteApproval(0, true, []);
+      await expect(governanceContractOperator.voteApproval(0, true, [])).be.reverted;
+    });
+    it('only creator can remove approval', async function () {
+      const { getGovernanceContract, admin, tokenOwner1, voter1, operator1 } = await loadFixture(
+        deployTokenFixture,
+      );
+      const governanceContract = getGovernanceContract(admin);
+      const governanceContractVoter = getGovernanceContract(voter1);
+      const governanceContractOperator = getGovernanceContract(operator1);
+      await governanceContract.requestApproval(tokenOwner1.address, 1, 1, 1, 0, admin.address, []);
+      await governanceContract.addVoter(voter1.address);
+      await expect(governanceContractVoter.removeApprovalRequest(0)).be.reverted;
+      await expect(governanceContractOperator.removeApprovalRequest(0)).be.reverted;
+      await governanceContract.removeApprovalRequest(0);
+    });
+    it('should revert on remove approval if approval id is invaild', async function () {
+      const { getGovernanceContract, admin } = await loadFixture(deployTokenFixture);
+      const governanceContract = getGovernanceContract(admin);
+      await expect(governanceContract.removeApprovalRequest(0)).be.reverted;
+    });
+    it('remove approval should emit event correctly', async function () {
+      const { getGovernanceContract, tokenOwner1, admin } = await loadFixture(deployTokenFixture);
+      const governanceContract = getGovernanceContract(admin);
+      await governanceContract.requestApproval(tokenOwner1.address, 1, 1, 1, 0, admin.address, []);
+      await expect(governanceContract.removeApprovalRequest(0))
+        .to.emit(governanceContract, 'ApprovalUpdate')
+        .withArgs(0, ethers.constants.AddressZero, 3);
+    });
+    it('vote approval should issue token correctly if approval is approved', async function () {
+      const { getGovernanceContract, admin, tokenOwner1, getCoreContract, voter1, voter2 } =
+        await loadFixture(deployTokenFixture);
+      const governanceContract = getGovernanceContract(admin);
+      const governanceContractVoter1 = getGovernanceContract(voter1);
+      const coreContract = getCoreContract(admin);
+      await governanceContract.requestApproval(tokenOwner1.address, 1, 1, 1, 0, admin.address, []);
+      await governanceContract.addVoter(voter1.address);
+      await governanceContract.addVoter(voter2.address);
+      await governanceContractVoter1.voteApproval(0, true, []);
+      await expect(governanceContract.voteApproval(0, true, []))
+        .to.emit(governanceContract, 'ApprovalUpdate')
+        .withArgs(0, admin.address, 1);
+      expect(await coreContract['balanceOf(address)'](tokenOwner1.address)).to.equal(1);
+      expect(await coreContract['balanceOf(uint256)'](1)).to.equal(1);
+    });
+    it('vote approval should reject approval if approval is rejected', async function () {
+      const { getGovernanceContract, admin, tokenOwner1, voter1, voter2 } = await loadFixture(
+        deployTokenFixture,
+      );
+      const governanceContract = getGovernanceContract(admin);
+      const governanceContractVoter1 = getGovernanceContract(voter1);
+      await governanceContract.requestApproval(tokenOwner1.address, 1, 1, 1, 0, admin.address, []);
+      await governanceContract.addVoter(voter1.address);
+      await governanceContract.addVoter(voter2.address);
+      await governanceContractVoter1.voteApproval(0, false, []);
+      await expect(governanceContract.voteApproval(0, false, []))
+        .to.emit(governanceContract, 'ApprovalUpdate')
+        .withArgs(0, admin.address, 2);
+    });
+  });
   // describe('ERC5727Rcovery', function () {
   //   const domain = {
   //     name: 'ERC5727Recovery',
