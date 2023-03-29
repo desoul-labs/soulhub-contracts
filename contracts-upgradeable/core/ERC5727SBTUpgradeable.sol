@@ -11,14 +11,17 @@ contract ERC5727SBTUpgradeable is
     ERC5727ClaimableUpgradeable,
     ERC5727RecoveryUpgradeable,
     ERC5727ExpirableUpgradeable,
-    ERC5727GovernanceUpgradeable,
-    ERC5727DelegateUpgradeable
+    ERC5727GovernanceUpgradeable
 {
+    using EnumerableSetUpgradeable for EnumerableSetUpgradeable.UintSet;
+
     string private _baseUri;
     // slot -> max supply
     mapping(uint256 => uint256) private _maxSupply;
     // slot -> period
     mapping(uint256 => uint64) private _expiration;
+    // slot -> burnAuth
+    mapping(uint256 => BurnAuth) private _burnAuth;
 
     function __ERC5727SBT_init(
         string memory name_,
@@ -85,12 +88,8 @@ contract ERC5727SBTUpgradeable is
                 _maxSupply[slot] != 0 &&
                 tokenSupplyInSlot(slot) + 1 > _maxSupply[slot]
             ) revert ExceedsMaxSupply(_maxSupply[slot]);
-            if (_expiration[slot] != 0) {
-                setExpiration(
-                    slot,
-                    uint64(block.timestamp) + _expiration[slot],
-                    true
-                );
+            if (ownerBalanceInSlot(to, slot) > 0) {
+                revert Forbidden();
             }
         }
         ERC5727EnumerableUpgradeable._beforeValueTransfer(
@@ -126,12 +125,18 @@ contract ERC5727SBTUpgradeable is
     }
 
     function setupSlot(
-        uint256 maxSupply,
-        uint64 expiration
+        BurnAuth burnAuth,
+        uint256 maxSupply
     ) external onlyAdmin {
-        uint256 slot = totalSupply() + 1;
+        uint256 slot = slotCount() + 1;
         _maxSupply[slot] = maxSupply;
-        _expiration[slot] = expiration;
+        _burnAuth[slot] = burnAuth;
+
+        _allSlots.add(slot);
+    }
+
+    function getMaxSupply(uint256 slot) external view returns (uint256) {
+        return _maxSupply[slot];
     }
 
     function batchIssue(
@@ -142,14 +147,7 @@ contract ERC5727SBTUpgradeable is
     ) external virtual onlyAdmin {
         uint256 next = totalSupply() + 1;
         for (uint256 i = 0; i < to.length; i++) {
-            issue(
-                to[i],
-                next + i,
-                slot,
-                BurnAuth.IssuerOnly,
-                address(this),
-                data
-            );
+            issue(to[i], next + i, slot, _burnAuth[slot], address(this), data);
             _setTokenURI(next + i, uri);
         }
     }
@@ -162,7 +160,6 @@ contract ERC5727SBTUpgradeable is
         virtual
         override(
             ERC5727GovernanceUpgradeable,
-            ERC5727DelegateUpgradeable,
             ERC5727ExpirableUpgradeable,
             ERC5727RecoveryUpgradeable,
             ERC5727ClaimableUpgradeable

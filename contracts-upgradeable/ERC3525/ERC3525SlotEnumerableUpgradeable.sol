@@ -15,7 +15,7 @@ abstract contract ERC3525SlotEnumerableUpgradeable is
 
     mapping(uint256 => EnumerableSetUpgradeable.UintSet) private _tokensInSlot;
 
-    EnumerableSetUpgradeable.UintSet private _allSlots;
+    EnumerableSetUpgradeable.UintSet internal _allSlots;
 
     function __ERC3525SlotEnumerable_init() internal onlyInitializing {
         __ERC3525SlotEnumerable_init_unchained();

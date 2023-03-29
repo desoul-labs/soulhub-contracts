@@ -62,7 +62,7 @@ abstract contract ERC5727EnumerableUpgradeable is
     function ownerBalanceInSlot(
         address owner,
         uint256 slot
-    ) external view returns (uint256) {
+    ) public view returns (uint256) {
         if (owner == address(0)) revert NullValue();
         if (!_slotExists(slot)) revert NotFound(slot);
 
