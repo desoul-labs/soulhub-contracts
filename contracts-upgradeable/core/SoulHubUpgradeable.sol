@@ -121,6 +121,7 @@ contract SoulHubUpgradeable is ERC721EnumerableUpgradeable {
 
         uint256 nextId = totalSupply() + 1;
         _members[organization].set(member, nextId);
+        _organizations[nextId] = organization;
         _safeMint(_msgSender(), nextId);
 
         emit MemberAdded(organization, member);
