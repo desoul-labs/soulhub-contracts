@@ -321,7 +321,6 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
         return
             interfaceId == type(IERC5727).interfaceId ||
             interfaceId == type(IERC5727Metadata).interfaceId ||
-            interfaceId == type(IERC5727Enumerable).interfaceId ||
             super.supportsInterface(interfaceId);
     }
 }

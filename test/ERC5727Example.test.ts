@@ -166,10 +166,10 @@ describe('ERC5727Test', function () {
     });
 
     it('should revert on transfer', async function () {
-      const { getCoreContract, admin, tokenOwner1, tokenOwner2 } = await loadFixture(
-        deployTokenFixture,
-      );
+      const { getCoreContract, admin, tokenOwner1, tokenOwner2, ERC5727ExampleContract } =
+        await loadFixture(deployTokenFixture);
       const coreContract = getCoreContract(admin);
+      const coreContractOwner1 = getCoreContract(tokenOwner1);
       await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
         tokenOwner1.address,
         1,
@@ -180,15 +180,45 @@ describe('ERC5727Test', function () {
       );
       await coreContract['issue(uint256,uint256,bytes)'](1, 100, []);
       expect(await coreContract.ownerOf(1)).equal(tokenOwner1.address);
+      expect(await coreContract['balanceOf(uint256)'](1)).equal(100);
       await expect(
-        coreContract['transferFrom(address,address,uint256)'](
+        coreContractOwner1['transferFrom(address,address,uint256)'](
           tokenOwner1.address,
           tokenOwner2.address,
           1,
         ),
-      ).be.reverted;
+      ).be.revertedWithCustomError(ERC5727ExampleContract, 'Soulbound');
+
+      expect(await coreContract.ownerOf(1)).equal(tokenOwner1.address);
+    });
+
+    it('should revert on transfer value', async function () {
+      const { getCoreContract, admin, tokenOwner1, tokenOwner2 } = await loadFixture(
+        deployTokenFixture,
+      );
+      const coreContract = getCoreContract(admin);
+      const coreContractOwner1 = getCoreContract(tokenOwner1);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        1,
+        admin.address,
+        [],
+      );
+      await coreContract['issue(uint256,uint256,bytes)'](1, 100, []);
+      expect(await coreContract.ownerOf(1)).equal(tokenOwner1.address);
+      expect(await coreContract['balanceOf(uint256)'](1)).equal(100);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner2.address,
+        2,
+        1,
+        1,
+        admin.address,
+        [],
+      );
       await expect(
-        coreContract['transferFrom(uint256,address,uint256)'](1, tokenOwner2.address, 100),
+        coreContractOwner1['transferFrom(uint256,address,uint256)'](1, tokenOwner2.address, 100),
       ).be.reverted;
       expect(await coreContract.ownerOf(1)).equal(tokenOwner1.address);
     });
@@ -422,6 +452,7 @@ describe('ERC5727Test', function () {
       await ERC5727ExampleContract.connect(operator1)[
         'issue(address,uint256,uint256,uint8,address,bytes)'
       ](tokenOwner1.address, 2, 1, 0, admin.address, []);
+      expect(await ERC5727ExampleContract.ownerOf(2)).equal(tokenOwner1.address);
     });
 
     it('should revert if operator is already delegated', async function () {
@@ -1520,6 +1551,11 @@ describe('ERC5727Test', function () {
       await governanceContract.requestApproval(tokenOwner1.address, 1, 1, 1, 0, admin.address, []);
       await governanceContract.getApproval(0);
     });
+    it('should revert on query approval if approval does not exist', async function () {
+      const { getGovernanceContract, admin } = await loadFixture(deployTokenFixture);
+      const governanceContract = getGovernanceContract(admin);
+      await expect(governanceContract.getApproval(0)).be.reverted;
+    });
     it('only voter can vote for approval', async function () {
       const { getGovernanceContract, admin, tokenOwner1, voter1, operator1 } = await loadFixture(
         deployTokenFixture,
@@ -1615,6 +1651,8 @@ describe('ERC5727Test', function () {
       expect(await ERC5727ExampleContract.supportsInterface('0xd5358140')).equal(true);
       // AccessControlEnumerable
       expect(await ERC5727ExampleContract.supportsInterface('0x5a05180f')).equal(true);
+      // Metadata
+      expect(await ERC5727ExampleContract.supportsInterface('0x00000000')).equal(true);
     });
     it('should return false on query invaild interface', async function () {
       const { ERC5727ExampleContract } = await loadFixture(deployTokenFixture);
