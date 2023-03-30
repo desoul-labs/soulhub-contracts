@@ -1587,6 +1587,23 @@ describe('ERC5727Test', function () {
         .withArgs(0, admin.address, 2);
     });
   });
+  describe('ERC5727Example', function () {
+    it('supports interface', async function () {
+      const { ERC5727ExampleContract } = await loadFixture(deployTokenFixture);
+      // recovery
+      expect(await ERC5727ExampleContract.supportsInterface('0x379f4e66')).equal(true);
+      // claimable
+      expect(await ERC5727ExampleContract.supportsInterface('0xf84dc77f')).equal(true);
+      // enumerable
+      expect(await ERC5727ExampleContract.supportsInterface('0x217d8ec4')).equal(true);
+      // delegate
+      expect(await ERC5727ExampleContract.supportsInterface('0x2e9d93de')).equal(true);
+      // governance
+      expect(await ERC5727ExampleContract.supportsInterface('0xa01c94b5')).equal(true);
+      // expirable
+      expect(await ERC5727ExampleContract.supportsInterface('0x806f015a')).equal(true);
+    });
+  });
   // describe('ERC5727Recovery', function () {
   //   it('can recover tokens if signature is valid', async function () {
   //     const {
@@ -1607,7 +1624,7 @@ describe('ERC5727Test', function () {
   //       admin.address,
   //       [],
   //     );
-  //     const verifyingContract = ERC5727ExampleContract.address;
+  //     const verifyingContract = ERC5727ExampleContract.address.toLocaleLowerCase();
   //     const chainId = (await ethers.provider.getNetwork()).chainId;
   //     const domain = {
   //       name: 'Soularis',
