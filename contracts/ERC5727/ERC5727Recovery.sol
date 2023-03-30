@@ -21,7 +21,7 @@ abstract contract ERC5727Recovery is IERC5727Recovery, ERC5727Enumerable {
         if (from == recipient) revert MethodNotAllowed(recipient);
 
         bytes32 digest = _hashTypedDataV4(
-            keccak256(abi.encodePacked(_RECOVERY_TYPEHASH, from, recipient))
+            keccak256(abi.encode(_RECOVERY_TYPEHASH, from, recipient))
         );
         if (digest.recover(signature) != from) revert Forbidden();
 

@@ -40,7 +40,7 @@ abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
         address owner,
         uint256 index
     ) public view virtual override returns (uint256) {
-        if (index < ERC721.balanceOf(owner))
+        if (index >= ERC721.balanceOf(owner))
             revert IndexOutOfBounds(index, ERC721.balanceOf(owner));
         return _ownedTokens[owner].at(index);
     }

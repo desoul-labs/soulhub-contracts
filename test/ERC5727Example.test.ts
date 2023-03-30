@@ -1604,53 +1604,53 @@ describe('ERC5727Test', function () {
       expect(await ERC5727ExampleContract.supportsInterface('0x806f015a')).equal(true);
     });
   });
-  // describe('ERC5727Recovery', function () {
-  //   it('can recover tokens if signature is valid', async function () {
-  //     const {
-  //       getCoreContract,
-  //       getRecoveryContract,
-  //       admin,
-  //       tokenOwner1,
-  //       operator1,
-  //       ERC5727ExampleContract,
-  //     } = await loadFixture(deployTokenFixture);
-  //     const coreContract = getCoreContract(admin);
-  //     const recoveryContract = getRecoveryContract(operator1);
-  //     await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
-  //       tokenOwner1.address,
-  //       1,
-  //       1,
-  //       1,
-  //       admin.address,
-  //       [],
-  //     );
-  //     const verifyingContract = ERC5727ExampleContract.address.toLocaleLowerCase();
-  //     const chainId = (await ethers.provider.getNetwork()).chainId;
-  //     const domain = {
-  //       name: 'Soularis',
-  //       version: '1',
-  //       chainId,
-  //       verifyingContract,
-  //     };
-  //     const types = {
-  //       Recovery: [
-  //         { name: 'from', type: 'address' },
-  //         { name: 'recipient', type: 'address' },
-  //       ],
-  //     };
-  //     const signature = await tokenOwner1._signTypedData(domain, types, {
-  //       from: tokenOwner1.address,
-  //       recipient: operator1.address,
-  //     });
-  //     const res = ethers.utils.verifyTypedData(
-  //       domain,
-  //       types,
-  //       { from: tokenOwner1.address, recipient: operator1.address },
-  //       signature,
-  //     );
-  //     console.log(res, tokenOwner1.address);
-  //     console.log(signature, domain);
-  //     await recoveryContract.recover(tokenOwner1.address, signature);
-  //   });
-  // });
+  describe('ERC5727Recovery', function () {
+    it('can recover tokens if signature is valid', async function () {
+      const {
+        getCoreContract,
+        getRecoveryContract,
+        admin,
+        tokenOwner1,
+        operator1,
+        ERC5727ExampleContract,
+      } = await loadFixture(deployTokenFixture);
+      const coreContract = getCoreContract(admin);
+      const recoveryContract = getRecoveryContract(operator1);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        1,
+        admin.address,
+        [],
+      );
+      const verifyingContract = ERC5727ExampleContract.address.toLocaleLowerCase();
+      const chainId = (await ethers.provider.getNetwork()).chainId;
+      const domain = {
+        name: 'Soularis',
+        version: '1',
+        chainId,
+        verifyingContract,
+      };
+      const types = {
+        Recovery: [
+          { name: 'from', type: 'address' },
+          { name: 'recipient', type: 'address' },
+        ],
+      };
+      const signature = await tokenOwner1._signTypedData(domain, types, {
+        from: tokenOwner1.address,
+        recipient: operator1.address,
+      });
+      const res = ethers.utils.verifyTypedData(
+        domain,
+        types,
+        { from: tokenOwner1.address, recipient: operator1.address },
+        signature,
+      );
+      console.log(res, tokenOwner1.address);
+      console.log(signature, domain);
+      await recoveryContract.recover(tokenOwner1.address, signature);
+    });
+  });
 });
