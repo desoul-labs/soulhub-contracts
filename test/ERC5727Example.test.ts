@@ -178,6 +178,7 @@ describe('ERC5727Test', function () {
         admin.address,
         [],
       );
+      await coreContract['issue(uint256,uint256,bytes)'](1, 100, []);
       expect(await coreContract.ownerOf(1)).equal(tokenOwner1.address);
       await expect(
         coreContract['transferFrom(address,address,uint256)'](
@@ -418,6 +419,9 @@ describe('ERC5727Test', function () {
       );
       await ERC5727ExampleContract.connect(admin).delegate(operator1.address, 1);
       expect(await ERC5727ExampleContract.isOperatorFor(operator1.address, 1)).equal(true);
+      await ERC5727ExampleContract.connect(operator1)[
+        'issue(address,uint256,uint256,uint8,address,bytes)'
+      ](tokenOwner1.address, 2, 1, 0, admin.address, []);
     });
 
     it('should revert if operator is already delegated', async function () {
@@ -1416,10 +1420,9 @@ describe('ERC5727Test', function () {
       );
     });
     it('should revert on query approval uri if approval does not exist', async function () {
-      const { getGovernanceContract, admin, tokenOwner1 } = await loadFixture(deployTokenFixture);
+      const { getGovernanceContract, admin } = await loadFixture(deployTokenFixture);
       const governanceContract = getGovernanceContract(admin);
-      await governanceContract.requestApproval(tokenOwner1.address, 1, 1, 1, 0, admin.address, []);
-      await expect(governanceContract.approvalURI(1)).be.reverted;
+      await expect(governanceContract.approvalURI(0)).be.reverted;
     });
     it('only voter can issue approval', async function () {
       const { getGovernanceContract, admin, tokenOwner1, voter1, operator1 } = await loadFixture(
@@ -1483,7 +1486,7 @@ describe('ERC5727Test', function () {
         governanceContract.requestApproval(tokenOwner1.address, 0, 1, 0, 0, admin.address, []),
       ).be.reverted;
     });
-    it('should revert on remove approval if approval is notpending', async function () {
+    it('should revert on remove approval if approval is not pending', async function () {
       const { getGovernanceContract, tokenOwner1, admin, voter1, voter2 } = await loadFixture(
         deployTokenFixture,
       );
@@ -1602,6 +1605,20 @@ describe('ERC5727Test', function () {
       expect(await ERC5727ExampleContract.supportsInterface('0xa01c94b5')).equal(true);
       // expirable
       expect(await ERC5727ExampleContract.supportsInterface('0x806f015a')).equal(true);
+      // ERC3225
+      expect(await ERC5727ExampleContract.supportsInterface('0xd5358140')).equal(true);
+      // ERC165
+      expect(await ERC5727ExampleContract.supportsInterface('0x01ffc9a7')).equal(true);
+      // ERC5727
+      expect(await ERC5727ExampleContract.supportsInterface('0x7125bdf9')).equal(true);
+      // ERC3225
+      expect(await ERC5727ExampleContract.supportsInterface('0xd5358140')).equal(true);
+      // AccessControlEnumerable
+      expect(await ERC5727ExampleContract.supportsInterface('0x5a05180f')).equal(true);
+    });
+    it('should return false on query invaild interface', async function () {
+      const { ERC5727ExampleContract } = await loadFixture(deployTokenFixture);
+      expect(await ERC5727ExampleContract.supportsInterface('0xd0d0d9d9')).equal(false);
     });
   });
   describe('ERC5727Recovery', function () {
@@ -1642,15 +1659,48 @@ describe('ERC5727Test', function () {
         from: tokenOwner1.address,
         recipient: operator1.address,
       });
-      const res = ethers.utils.verifyTypedData(
-        domain,
-        types,
-        { from: tokenOwner1.address, recipient: operator1.address },
-        signature,
-      );
-      console.log(res, tokenOwner1.address);
-      console.log(signature, domain);
       await recoveryContract.recover(tokenOwner1.address, signature);
+    });
+    it('can recover tokens if signature is valid', async function () {
+      const {
+        getCoreContract,
+        getRecoveryContract,
+        admin,
+        tokenOwner1,
+        operator1,
+        ERC5727ExampleContract,
+      } = await loadFixture(deployTokenFixture);
+      const coreContract = getCoreContract(admin);
+      const recoveryContract = getRecoveryContract(operator1);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        1,
+        admin.address,
+        [],
+      );
+      const verifyingContract = ERC5727ExampleContract.address.toLocaleLowerCase();
+      const chainId = (await ethers.provider.getNetwork()).chainId;
+      const domain = {
+        name: 'Soularis',
+        version: '1',
+        chainId,
+        verifyingContract,
+      };
+      const types = {
+        Recovery: [
+          { name: 'from', type: 'address' },
+          { name: 'recipient', type: 'address' },
+        ],
+      };
+      const signature = await tokenOwner1._signTypedData(domain, types, {
+        from: tokenOwner1.address,
+        recipient: operator1.address,
+      });
+      await recoveryContract.recover(tokenOwner1.address, signature);
+      expect(await coreContract['balanceOf(address)'](operator1.address)).equal(1);
+      expect(await coreContract['balanceOf(address)'](tokenOwner1.address)).equal(0);
     });
   });
 });

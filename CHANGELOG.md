@@ -4,27 +4,25 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [0.2.1-alpha.1](https://github.com/desoul-labs/soulhub-contracts/compare/v0.2.0-alpha.1...v0.2.1-alpha.1) (2023-03-29)
 
-
 ### Features
 
-* add core contract test ([fdfc056](https://github.com/desoul-labs/soulhub-contracts/commit/fdfc05639b29480c748be3416ec82f4f82ae65b2))
-* add ERC5727Delegate test ([f46b4cd](https://github.com/desoul-labs/soulhub-contracts/commit/f46b4cd1b45a291dae29f00033c8af77beb248da))
-* add query methods; prevent duplicated sbt ([e44eec0](https://github.com/desoul-labs/soulhub-contracts/commit/e44eec08314b4a0ae90164cd1a5de1750b847051))
-* add test ERC5727Enumerable ([fea04bd](https://github.com/desoul-labs/soulhub-contracts/commit/fea04bd0e2fde79a97a8db90591a6f853f948d54))
-* test Expirable & Claimable ([3d9b71f](https://github.com/desoul-labs/soulhub-contracts/commit/3d9b71fe6a591859204fb6bc409b8a99cf22d2e6))
-* update ERC5727Governance test ([5e8fbdb](https://github.com/desoul-labs/soulhub-contracts/commit/5e8fbdba56ca39585f4d60758d861d41f7e35794))
-* update test ([6c2cd5b](https://github.com/desoul-labs/soulhub-contracts/commit/6c2cd5bc4827104a478279cf1d22ecd766345cbf))
-* update test ([79a7093](https://github.com/desoul-labs/soulhub-contracts/commit/79a70932d676c2a6f4053f31d5aea1d337248c2c))
-
+- add core contract test ([fdfc056](https://github.com/desoul-labs/soulhub-contracts/commit/fdfc05639b29480c748be3416ec82f4f82ae65b2))
+- add ERC5727Delegate test ([f46b4cd](https://github.com/desoul-labs/soulhub-contracts/commit/f46b4cd1b45a291dae29f00033c8af77beb248da))
+- add query methods; prevent duplicated sbt ([e44eec0](https://github.com/desoul-labs/soulhub-contracts/commit/e44eec08314b4a0ae90164cd1a5de1750b847051))
+- add test ERC5727Enumerable ([fea04bd](https://github.com/desoul-labs/soulhub-contracts/commit/fea04bd0e2fde79a97a8db90591a6f853f948d54))
+- test Expirable & Claimable ([3d9b71f](https://github.com/desoul-labs/soulhub-contracts/commit/3d9b71fe6a591859204fb6bc409b8a99cf22d2e6))
+- update ERC5727Governance test ([5e8fbdb](https://github.com/desoul-labs/soulhub-contracts/commit/5e8fbdba56ca39585f4d60758d861d41f7e35794))
+- update test ([6c2cd5b](https://github.com/desoul-labs/soulhub-contracts/commit/6c2cd5bc4827104a478279cf1d22ecd766345cbf))
+- update test ([79a7093](https://github.com/desoul-labs/soulhub-contracts/commit/79a70932d676c2a6f4053f31d5aea1d337248c2c))
 
 ### Bug Fixes
 
-* fix ERC5727Example code size ([8348d65](https://github.com/desoul-labs/soulhub-contracts/commit/8348d65c3fe87db316b8ce479530b0d70ba3505d))
-* fix ERC5727Recovery ([35b6809](https://github.com/desoul-labs/soulhub-contracts/commit/35b68090adb290a9e3f79fa7ab00b3119246c22b))
-* fix typo; format test title; fix merkle node inputs ([9b64c0f](https://github.com/desoul-labs/soulhub-contracts/commit/9b64c0fa27dd8e90da6f8f2ca84e6f7f58e98be3))
-* fix vairable name ([b1c6a8e](https://github.com/desoul-labs/soulhub-contracts/commit/b1c6a8e82c52e17fb20c5146165f5333f2ac088d))
-* onlyManger Expirable ([76f9468](https://github.com/desoul-labs/soulhub-contracts/commit/76f9468ee558b13928ac6040a76c0e237ffc2381))
-* remove package_lock.json ([fb48654](https://github.com/desoul-labs/soulhub-contracts/commit/fb4865459240baf5448d068055cdeb4bcb20bace))
+- fix ERC5727Example code size ([8348d65](https://github.com/desoul-labs/soulhub-contracts/commit/8348d65c3fe87db316b8ce479530b0d70ba3505d))
+- fix ERC5727Recovery ([35b6809](https://github.com/desoul-labs/soulhub-contracts/commit/35b68090adb290a9e3f79fa7ab00b3119246c22b))
+- fix typo; format test title; fix merkle node inputs ([9b64c0f](https://github.com/desoul-labs/soulhub-contracts/commit/9b64c0fa27dd8e90da6f8f2ca84e6f7f58e98be3))
+- fix vairable name ([b1c6a8e](https://github.com/desoul-labs/soulhub-contracts/commit/b1c6a8e82c52e17fb20c5146165f5333f2ac088d))
+- onlyManger Expirable ([76f9468](https://github.com/desoul-labs/soulhub-contracts/commit/76f9468ee558b13928ac6040a76c0e237ffc2381))
+- remove package_lock.json ([fb48654](https://github.com/desoul-labs/soulhub-contracts/commit/fb4865459240baf5448d068055cdeb4bcb20bace))
 
 ## [0.2.0-alpha.1](https://github.com/desoul-labs/soulhub-contracts/compare/v0.1.0-alpha.1...v0.2.0-alpha.1) (2023-03-27)
 
