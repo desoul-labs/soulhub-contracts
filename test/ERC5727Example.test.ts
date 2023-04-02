@@ -193,11 +193,11 @@ describe('ERC5727Test', function () {
     });
 
     it('should revert on transfer value', async function () {
-      const { getCoreContract, admin, tokenOwner1, tokenOwner2 } = await loadFixture(
-        deployTokenFixture,
-      );
+      const { getCoreContract, admin, tokenOwner1, tokenOwner2, ERC5727ExampleContract } =
+        await loadFixture(deployTokenFixture);
       const coreContract = getCoreContract(admin);
       const coreContractOwner1 = getCoreContract(tokenOwner1);
+      const coreContractOwner2 = getCoreContract(tokenOwner2);
       await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
         tokenOwner1.address,
         1,
@@ -209,17 +209,11 @@ describe('ERC5727Test', function () {
       await coreContract['issue(uint256,uint256,bytes)'](1, 100, []);
       expect(await coreContract.ownerOf(1)).equal(tokenOwner1.address);
       expect(await coreContract['balanceOf(uint256)'](1)).equal(100);
-      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
-        tokenOwner2.address,
-        2,
-        1,
-        1,
-        admin.address,
-        [],
-      );
+      await coreContractOwner1['approve(uint256,address,uint256)'](1, tokenOwner2.address, 100);
       await expect(
-        coreContractOwner1['transferFrom(uint256,address,uint256)'](1, tokenOwner2.address, 100),
-      ).be.reverted;
+        coreContractOwner2['transferFrom(uint256,address,uint256)'](1, tokenOwner2.address, 50),
+      ).revertedWithCustomError(ERC5727ExampleContract, 'Soulbound');
+      expect(await coreContract['balanceOf(uint256)'](1)).equal(100);
       expect(await coreContract.ownerOf(1)).equal(tokenOwner1.address);
     });
 

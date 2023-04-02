@@ -81,6 +81,14 @@ abstract contract ERC3525SlotEnumerable is ERC3525, IERC3525SlotEnumerable {
             _tokensInSlot[slot].add(toTokenId);
         }
 
+        super._beforeValueTransfer(
+            from,
+            to,
+            fromTokenId,
+            toTokenId,
+            slot,
+            value
+        );
         value;
     }
 
