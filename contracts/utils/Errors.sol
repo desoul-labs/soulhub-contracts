@@ -43,6 +43,6 @@ error NotClaimable();
 
 error AlreadyClaimed();
 
-error RoleAlreadyGranted(address account, bytes32 role);
+error RoleAlreadyGranted(address account, string role);
 
 error RoleNotGranted(address account, bytes32 role);

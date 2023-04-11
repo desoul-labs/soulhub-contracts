@@ -1,1 +1,0 @@
-# soularis-typechain

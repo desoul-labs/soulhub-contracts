@@ -271,13 +271,10 @@ describe('ERC5727Test', function () {
         admin.address,
         [],
       );
-      const burnRoleFor1 = ethers.utils.hexZeroPad(ethers.utils.hexlify(2 ^ 10), 32);
-      expect(
-        await ERC5727ExampleContract.connect(admin).hasRole(burnRoleFor1, admin.address),
-      ).equal(true);
-      expect(
-        await ERC5727ExampleContract.connect(admin).hasRole(burnRoleFor1, tokenOwner1.address),
-      ).equal(false);
+      expect(await ERC5727ExampleContract.connect(admin).owner()).equal(admin.address);
+      expect(await ERC5727ExampleContract.connect(admin).hasBurnRole(tokenOwner1.address, 1)).equal(
+        false,
+      );
       const coreContractOwner1 = getCoreContract(tokenOwner1);
       await expect(coreContractOwner1['revoke(uint256,bytes)'](10, [])).be.reverted;
       await coreContract['revoke(uint256,bytes)'](10, []);
@@ -337,13 +334,8 @@ describe('ERC5727Test', function () {
         [],
       );
       await coreContract['issue(uint256,uint256,bytes)'](10, 100, []);
-      const burnRoleFor1 = ethers.utils.hexZeroPad(ethers.utils.hexlify(2 ^ 10), 32);
-      expect(
-        await ERC5727ExampleContract.connect(admin).hasRole(burnRoleFor1, admin.address),
-      ).equal(true);
-      expect(
-        await ERC5727ExampleContract.connect(admin).hasRole(burnRoleFor1, tokenOwner1.address),
-      ).equal(false);
+      expect(await ERC5727ExampleContract.hasBurnRole(admin.address, 10)).equal(true);
+      expect(await ERC5727ExampleContract.hasBurnRole(tokenOwner1.address, 10)).equal(false);
       const coreContractOwner1 = getCoreContract(tokenOwner1);
       expect(await coreContract['balanceOf(uint256)'](10)).equal(100);
       await expect(coreContractOwner1['revoke(uint256,uint256,bytes)'](10, 50, [])).be.reverted;
@@ -1643,8 +1635,6 @@ describe('ERC5727Test', function () {
       expect(await ERC5727ExampleContract.supportsInterface('0x7125bdf9')).equal(true);
       // ERC3225
       expect(await ERC5727ExampleContract.supportsInterface('0xd5358140')).equal(true);
-      // AccessControlEnumerable
-      expect(await ERC5727ExampleContract.supportsInterface('0x5a05180f')).equal(true);
       // Metadata
       expect(await ERC5727ExampleContract.supportsInterface('0x00000000')).equal(true);
     });

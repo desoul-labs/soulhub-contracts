@@ -5,11 +5,11 @@ import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/IERC721MetadataUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/AccessControlEnumerableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/cryptography/SignatureCheckerUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 import "../ERC3525/ERC3525Upgradeable.sol";
 import "../ERC5192/interfaces/IERC5192Upgradeable.sol";
@@ -18,7 +18,7 @@ import "./interfaces/IERC5727EnumerableUpgradeable.sol";
 
 contract ERC5727Upgradeable is
     EIP712Upgradeable,
-    AccessControlEnumerableUpgradeable,
+    OwnableUpgradeable,
     ERC3525Upgradeable,
     IERC5727MetadataUpgradeable
 {
@@ -34,8 +34,8 @@ contract ERC5727Upgradeable is
     mapping(uint256 => address) internal _slotVerifiers;
     mapping(uint256 => BurnAuth) internal _slotBurnAuths;
 
-    bytes32 public constant MINTER_ROLE = bytes32(uint256(0x01));
-    bytes32 public constant BURNER_ROLE = bytes32(uint256(0x02));
+    mapping(uint256 => mapping(address => bool)) internal _minterRole;
+    mapping(uint256 => mapping(address => bool)) internal _burnerRole;
 
     bytes32 private constant _TOKEN_TYPEHASH =
         keccak256(
@@ -43,8 +43,7 @@ contract ERC5727Upgradeable is
         );
 
     modifier onlyAdmin() {
-        if (!hasRole(DEFAULT_ADMIN_ROLE, _msgSender()))
-            revert Unauthorized(_msgSender());
+        if (owner() != _msgSender()) revert Unauthorized(_msgSender());
         _;
     }
 
@@ -81,7 +80,8 @@ contract ERC5727Upgradeable is
     function __ERC5727_init_unchained(
         address admin_
     ) internal onlyInitializing {
-        _setupRole(DEFAULT_ADMIN_ROLE, admin_);
+        __Ownable_init_unchained();
+        transferOwnership(admin_);
     }
 
     function verifierOf(
@@ -144,11 +144,11 @@ contract ERC5727Upgradeable is
         _verifiers[tokenId] = verifier;
 
         if (auth == BurnAuth.IssuerOnly || auth == BurnAuth.Both) {
-            _grantRole(BURNER_ROLE ^ bytes32(tokenId), from);
+            _burnerRole[tokenId][from] = true;
             _approve(from, tokenId);
         }
         if (auth == BurnAuth.OwnerOnly || auth == BurnAuth.Both) {
-            _grantRole(BURNER_ROLE ^ bytes32(tokenId), to);
+            _burnerRole[tokenId][to] = true;
         }
 
         emit Issued(from, to, tokenId, auth);
@@ -215,16 +215,14 @@ contract ERC5727Upgradeable is
         address from,
         uint256 tokenId
     ) internal view virtual returns (bool) {
-        return hasRole(BURNER_ROLE ^ bytes32(tokenId), from);
+        return _burnerRole[tokenId][from];
     }
 
     function _checkMintAuth(
         address from,
         uint256 slot
     ) internal view virtual returns (bool) {
-        return
-            hasRole(DEFAULT_ADMIN_ROLE, from) ||
-            hasRole(MINTER_ROLE ^ bytes32(slot), from);
+        return (owner() == from) || _minterRole[slot][from];
     }
 
     function _burn(uint256 tokenId) internal virtual override {
@@ -328,11 +326,7 @@ contract ERC5727Upgradeable is
         public
         view
         virtual
-        override(
-            IERC165Upgradeable,
-            ERC3525Upgradeable,
-            AccessControlEnumerableUpgradeable
-        )
+        override(IERC165Upgradeable, ERC3525Upgradeable)
         returns (bool)
     {
         return

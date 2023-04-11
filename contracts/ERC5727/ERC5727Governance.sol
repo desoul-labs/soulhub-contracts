@@ -34,6 +34,7 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
 
     Counters.Counter private _approvalRequestCount;
     mapping(uint256 => IssueApproval) private _approvals;
+    mapping(address => bool) private _voterRole;
 
     constructor(
         string memory name_,
@@ -42,7 +43,7 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
         string memory version_
     ) ERC5727(name_, symbol_, admin_, version_) {
         _voters.add(admin_);
-        _setupRole(VOTER_ROLE, admin_);
+        _voterRole[admin_] = true;
     }
 
     function requestApproval(
@@ -94,18 +95,17 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
 
     function addVoter(address newVoter) public virtual onlyAdmin {
         if (newVoter == address(0)) revert NullValue();
-        if (hasRole(VOTER_ROLE, newVoter))
-            revert RoleAlreadyGranted(newVoter, VOTER_ROLE);
+        if (_voterRole[newVoter]) revert RoleAlreadyGranted(newVoter, "voter");
 
         _voters.add(newVoter);
-        _setupRole(VOTER_ROLE, newVoter);
+        _voterRole[newVoter] = true;
     }
 
     function removeVoter(address voter) public virtual onlyAdmin {
         if (voter == address(0)) revert NullValue();
-        if (!_voters.contains(voter)) revert RoleNotGranted(voter, VOTER_ROLE);
+        if (!_voters.contains(voter)) revert RoleNotGranted(voter, "voter");
 
-        _revokeRole(VOTER_ROLE, voter);
+        _voterRole[voter] = false;
         _voters.remove(voter);
     }
 
@@ -120,7 +120,7 @@ abstract contract ERC5727Governance is IERC5727Governance, ERC5727 {
     }
 
     function isVoter(address voter) public view virtual returns (bool) {
-        return hasRole(VOTER_ROLE, voter);
+        return _voterRole[voter];
     }
 
     function voteApproval(
