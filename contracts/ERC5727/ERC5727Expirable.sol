@@ -13,7 +13,7 @@ abstract contract ERC5727Expirable is IERC5727Expirable, ERC5727 {
 
     modifier onlyManager(uint256 tokenId) {
         if (
-            _msgSender() != _issuers[tokenId] ||
+            _msgSender() != _issuers[tokenId] &&
             _msgSender() != ownerOf(tokenId)
         ) revert Unauthorized(_msgSender());
         _;

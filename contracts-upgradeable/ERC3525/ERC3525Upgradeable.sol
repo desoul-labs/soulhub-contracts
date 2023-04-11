@@ -267,6 +267,7 @@ contract ERC3525Upgradeable is
         uint256 tokenId,
         uint256 value
     ) internal virtual {
+        if (ownerOf(tokenId) == operator) return;
         uint256 currentAllowance = ERC3525Upgradeable.allowance(
             tokenId,
             operator

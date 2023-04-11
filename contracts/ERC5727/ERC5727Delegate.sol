@@ -11,9 +11,9 @@ abstract contract ERC5727Delegate is IERC5727Delegate, ERC5727 {
     ) external virtual override onlyAdmin {
         if (operator == address(0) || slot == 0) revert NullValue();
         if (isOperatorFor(operator, slot))
-            revert RoleAlreadyGranted(operator, MINTER_ROLE ^ bytes32(slot));
+            revert RoleAlreadyGranted(operator, "minter");
 
-        _grantRole(MINTER_ROLE ^ bytes32(slot), operator);
+        _minterRole[slot][operator] = true;
         emit Delegate(operator, slot);
     }
 
@@ -23,9 +23,9 @@ abstract contract ERC5727Delegate is IERC5727Delegate, ERC5727 {
     ) external virtual override onlyAdmin {
         if (operator == address(0) || slot == 0) revert NullValue();
         if (!isOperatorFor(operator, slot))
-            revert RoleNotGranted(operator, MINTER_ROLE ^ bytes32(slot));
+            revert RoleNotGranted(operator, "minter");
 
-        _revokeRole(MINTER_ROLE ^ bytes32(slot), operator);
+        _minterRole[slot][operator] = false;
         emit UnDelegate(operator, slot);
     }
 
@@ -35,7 +35,7 @@ abstract contract ERC5727Delegate is IERC5727Delegate, ERC5727 {
     ) public view virtual override returns (bool) {
         if (operator == address(0) || slot == 0) revert NullValue();
 
-        return hasRole(MINTER_ROLE ^ bytes32(slot), operator);
+        return _minterRole[slot][operator];
     }
 
     function supportsInterface(

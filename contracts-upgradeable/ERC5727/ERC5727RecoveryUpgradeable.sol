@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts-upgradeable/utils/cryptography/SignatureCheckerUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/cryptography/ECDSAUpgradeable.sol";
 
 import "./ERC5727EnumerableUpgradeable.sol";
 import "./interfaces/IERC5727RecoveryUpgradeable.sol";
@@ -10,7 +10,7 @@ abstract contract ERC5727RecoveryUpgradeable is
     IERC5727RecoveryUpgradeable,
     ERC5727EnumerableUpgradeable
 {
-    using SignatureCheckerUpgradeable for address;
+    using ECDSAUpgradeable for bytes32;
 
     bytes32 private constant _RECOVERY_TYPEHASH =
         keccak256("Recovery(address from,address recipient)");
@@ -30,9 +30,9 @@ abstract contract ERC5727RecoveryUpgradeable is
         if (from == recipient) revert MethodNotAllowed(recipient);
 
         bytes32 digest = _hashTypedDataV4(
-            keccak256(abi.encodePacked(_RECOVERY_TYPEHASH, from, recipient))
+            keccak256(abi.encode(_RECOVERY_TYPEHASH, from, recipient))
         );
-        if (!from.isValidSignatureNow(digest, signature)) revert Forbidden();
+        if (digest.recover(signature) != from) revert Forbidden();
 
         uint256 balance = balanceOf(from);
         for (uint256 i = 0; i < balance; ) {

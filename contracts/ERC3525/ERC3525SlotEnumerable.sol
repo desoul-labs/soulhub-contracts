@@ -12,7 +12,7 @@ abstract contract ERC3525SlotEnumerable is ERC3525, IERC3525SlotEnumerable {
 
     mapping(uint256 => EnumerableSet.UintSet) private _tokensInSlot;
 
-    EnumerableSet.UintSet private _allSlots;
+    EnumerableSet.UintSet internal _allSlots;
 
     function slotCount() public view virtual override returns (uint256) {
         return _allSlots.length();
@@ -81,6 +81,14 @@ abstract contract ERC3525SlotEnumerable is ERC3525, IERC3525SlotEnumerable {
             _tokensInSlot[slot].add(toTokenId);
         }
 
+        super._beforeValueTransfer(
+            from,
+            to,
+            fromTokenId,
+            toTokenId,
+            slot,
+            value
+        );
         value;
     }
 

@@ -47,14 +47,29 @@ abstract contract ERC5727Claimable is IERC5727Claimable, ERC5727 {
         if (_claimed[to].contains(slot)) revert AlreadyClaimed();
 
         bytes32 node = keccak256(
-            abi.encodePacked(to, tokenId, amount, slot, burnAuth, data)
+            abi.encodePacked(
+                to,
+                tokenId,
+                amount,
+                slot,
+                burnAuth,
+                verifier,
+                data
+            )
         );
-        if (!proof.verify(merkelRoot, node)) revert Unauthorized(to);
+        if (!proof.verifyCalldata(merkelRoot, node)) revert Unauthorized(to);
 
         _issue(_slotIssuers[slot], to, tokenId, slot, burnAuth, verifier);
         _issue(_slotIssuers[slot], tokenId, amount);
 
         _claimed[to].add(slot);
+    }
+
+    function isClaimed(
+        address to,
+        uint256 slot
+    ) external view virtual returns (bool) {
+        return _claimed[to].contains(slot);
     }
 
     function supportsInterface(

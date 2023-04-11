@@ -10,16 +10,18 @@ import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "../ERC3525/ERC3525.sol";
 import "../ERC5192/interfaces/IERC5192.sol";
 import "./interfaces/IERC5727Metadata.sol";
 import "./interfaces/IERC5727Enumerable.sol";
 
-contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
+contract ERC5727 is EIP712, Ownable, ERC3525, IERC5727Metadata {
     using EnumerableSet for EnumerableSet.UintSet;
     using EnumerableSet for EnumerableSet.AddressSet;
-    using SignatureChecker for address;
+    using ECDSA for bytes32;
 
     mapping(uint256 => address) internal _issuers;
     mapping(uint256 => address) internal _verifiers;
@@ -29,8 +31,8 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
     mapping(uint256 => address) internal _slotVerifiers;
     mapping(uint256 => BurnAuth) internal _slotBurnAuths;
 
-    bytes32 public constant MINTER_ROLE = bytes32(uint256(0x01));
-    bytes32 public constant BURNER_ROLE = bytes32(uint256(0x02));
+    mapping(uint256 => mapping(address => bool)) internal _minterRole;
+    mapping(uint256 => mapping(address => bool)) internal _burnerRole;
 
     bytes32 private constant _TOKEN_TYPEHASH =
         keccak256(
@@ -38,8 +40,7 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
         );
 
     modifier onlyAdmin() {
-        if (!hasRole(DEFAULT_ADMIN_ROLE, _msgSender()))
-            revert Unauthorized(_msgSender());
+        if (owner() != _msgSender()) revert Unauthorized(_msgSender());
         _;
     }
 
@@ -66,8 +67,8 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
         string memory symbol_,
         address admin_,
         string memory version_
-    ) ERC3525(name_, symbol_, 18) EIP712(name_, version_) {
-        _setupRole(DEFAULT_ADMIN_ROLE, admin_);
+    ) ERC3525(name_, symbol_, 18) EIP712(name_, version_) Ownable() {
+        transferOwnership(admin_);
     }
 
     function verifierOf(
@@ -130,11 +131,11 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
         _verifiers[tokenId] = verifier;
 
         if (auth == BurnAuth.IssuerOnly || auth == BurnAuth.Both) {
-            _grantRole(BURNER_ROLE ^ bytes32(tokenId), from);
+            _burnerRole[tokenId][from] = true;
             _approve(from, tokenId);
         }
         if (auth == BurnAuth.OwnerOnly || auth == BurnAuth.Both) {
-            _grantRole(BURNER_ROLE ^ bytes32(tokenId), to);
+            _burnerRole[tokenId][to] = true;
         }
 
         emit Issued(from, to, tokenId, auth);
@@ -201,16 +202,28 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
         address from,
         uint256 tokenId
     ) internal view virtual returns (bool) {
-        return hasRole(BURNER_ROLE ^ bytes32(tokenId), from);
+        return _burnerRole[tokenId][from];
     }
 
     function _checkMintAuth(
         address from,
         uint256 slot
     ) internal view virtual returns (bool) {
-        return
-            hasRole(DEFAULT_ADMIN_ROLE, from) ||
-            hasRole(MINTER_ROLE ^ bytes32(slot), from);
+        return owner() == from || _minterRole[slot][from];
+    }
+
+    function hasMintRole(
+        address from,
+        uint256 tokenId
+    ) external view virtual returns (bool) {
+        return _minterRole[tokenId][from];
+    }
+
+    function hasBurnRole(
+        address from,
+        uint256 tokenId
+    ) external view virtual returns (bool) {
+        return _burnerRole[tokenId][from];
     }
 
     function _burn(uint256 tokenId) internal virtual override {
@@ -271,7 +284,7 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
         );
 
         address issuer = _issuers[tokenId];
-        result = issuer.isValidSignatureNow(digest, signature);
+        result = digest.recover(signature) == issuer;
 
         emit Verified(by, tokenId, result);
     }
@@ -310,17 +323,10 @@ contract ERC5727 is EIP712, AccessControlEnumerable, ERC3525, IERC5727Metadata {
 
     function supportsInterface(
         bytes4 interfaceId
-    )
-        public
-        view
-        virtual
-        override(IERC165, ERC3525, AccessControlEnumerable)
-        returns (bool)
-    {
+    ) public view virtual override(IERC165, ERC3525) returns (bool) {
         return
             interfaceId == type(IERC5727).interfaceId ||
             interfaceId == type(IERC5727Metadata).interfaceId ||
-            interfaceId == type(IERC5727Enumerable).interfaceId ||
             super.supportsInterface(interfaceId);
     }
 }

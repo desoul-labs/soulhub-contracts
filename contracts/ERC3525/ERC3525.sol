@@ -249,6 +249,7 @@ contract ERC3525 is IERC3525, IERC3525Metadata, ERC721Enumerable {
         uint256 tokenId,
         uint256 value
     ) internal virtual {
+        if (ownerOf(tokenId) == operator) return;
         uint256 currentAllowance = ERC3525.allowance(tokenId, operator);
         if (
             !_isApprovedOrOwner(operator, tokenId) &&

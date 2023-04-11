@@ -31,7 +31,7 @@ abstract contract ERC5727GovernanceUpgradeable is
         address verifier;
     }
 
-    bytes32 public constant VOTER_ROLE = bytes32(uint256(0x04));
+    mapping(address => bool) internal _voterRole;
 
     EnumerableSetUpgradeable.AddressSet private _voters;
 
@@ -55,7 +55,7 @@ abstract contract ERC5727GovernanceUpgradeable is
         address admin_
     ) internal onlyInitializing {
         _voters.add(admin_);
-        _setupRole(VOTER_ROLE, admin_);
+        _voterRole[admin_] = true;
     }
 
     function requestApproval(
@@ -107,18 +107,17 @@ abstract contract ERC5727GovernanceUpgradeable is
 
     function addVoter(address newVoter) public virtual onlyAdmin {
         if (newVoter == address(0)) revert NullValue();
-        if (hasRole(VOTER_ROLE, newVoter))
-            revert RoleAlreadyGranted(newVoter, VOTER_ROLE);
+        if (_voterRole[newVoter]) revert RoleAlreadyGranted(newVoter, "voter");
 
         _voters.add(newVoter);
-        _setupRole(VOTER_ROLE, newVoter);
+        _voterRole[newVoter] = true;
     }
 
     function removeVoter(address voter) public virtual onlyAdmin {
         if (voter == address(0)) revert NullValue();
-        if (!_voters.contains(voter)) revert RoleNotGranted(voter, VOTER_ROLE);
+        if (!_voters.contains(voter)) revert RoleNotGranted(voter, "voter");
 
-        _revokeRole(VOTER_ROLE, voter);
+        _voterRole[voter] = false;
         _voters.remove(voter);
     }
 
@@ -133,7 +132,7 @@ abstract contract ERC5727GovernanceUpgradeable is
     }
 
     function isVoter(address voter) public view virtual returns (bool) {
-        return hasRole(VOTER_ROLE, voter);
+        return _voterRole[voter];
     }
 
     function voteApproval(
@@ -182,6 +181,15 @@ abstract contract ERC5727GovernanceUpgradeable is
         }
 
         data;
+    }
+
+    function getApproval(
+        uint256 approvalId
+    ) public view virtual returns (IssueApproval memory) {
+        if (_approvals[approvalId].creator == address(0))
+            revert NotFound(approvalId);
+
+        return _approvals[approvalId];
     }
 
     function approvalURI(

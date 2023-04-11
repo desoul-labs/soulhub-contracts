@@ -2,12 +2,15 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableMapUpgradeable.sol";
 
 import "../ERC721/ERC721EnumerableUpgradeable.sol";
 import "../proxy/BeaconProxy.sol";
 import "../proxy/UpgradeableBeacon.sol";
 
 contract SoulHubUpgradeable is ERC721EnumerableUpgradeable {
+    using EnumerableMapUpgradeable for EnumerableMapUpgradeable.AddressToUintMap;
+
     event OrganizationCreated(
         address indexed creator,
         address indexed organization
@@ -16,7 +19,8 @@ contract SoulHubUpgradeable is ERC721EnumerableUpgradeable {
     event MemberRemoved(address indexed organization, address indexed member);
 
     mapping(uint256 => address) private _organizations;
-    mapping(address => mapping(address => uint256)) private _members;
+    mapping(address => EnumerableMapUpgradeable.AddressToUintMap)
+        private _members;
 
     UpgradeableBeacon private _beacon;
 
@@ -67,7 +71,7 @@ contract SoulHubUpgradeable is ERC721EnumerableUpgradeable {
 
         uint256 nextId = totalSupply() + 1;
         _organizations[nextId] = address(proxy);
-        _members[address(proxy)][_msgSender()] = nextId;
+        _members[address(proxy)].set(_msgSender(), nextId);
         _safeMint(_msgSender(), nextId);
 
         return address(proxy);
@@ -83,14 +87,26 @@ contract SoulHubUpgradeable is ERC721EnumerableUpgradeable {
         address organization,
         address member
     ) public view returns (bool) {
-        return _members[organization][member] > 0;
+        return _members[organization].get(member) > 0;
     }
 
     function tokenOfMember(
         address organization,
         address member
     ) public view returns (uint256) {
-        return _members[organization][member];
+        return _members[organization].get(member);
+    }
+
+    function getMembers(
+        address organization
+    ) external view returns (address[] memory) {
+        uint256 length = _members[organization].length();
+        address[] memory members = new address[](length);
+        for (uint256 i = 0; i < length; i++) {
+            (address member, ) = _members[organization].at(i);
+            members[i] = member;
+        }
+        return members;
     }
 
     function addMember(address organization, address member) external {
@@ -104,7 +120,8 @@ contract SoulHubUpgradeable is ERC721EnumerableUpgradeable {
         );
 
         uint256 nextId = totalSupply() + 1;
-        _members[organization][member] = nextId;
+        _members[organization].set(member, nextId);
+        _organizations[nextId] = organization;
         _safeMint(_msgSender(), nextId);
 
         emit MemberAdded(organization, member);
@@ -121,7 +138,7 @@ contract SoulHubUpgradeable is ERC721EnumerableUpgradeable {
         );
 
         uint256 tokenId = tokenOfMember(organization, member);
-        delete _members[organization][member];
+        _members[organization].remove(member);
         _burn(tokenId);
 
         emit MemberRemoved(organization, member);
