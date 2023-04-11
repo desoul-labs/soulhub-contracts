@@ -213,6 +213,9 @@ describe('ERC5727Test', function () {
       await expect(
         coreContractOwner2['transferFrom(uint256,address,uint256)'](1, tokenOwner2.address, 50),
       ).revertedWithCustomError(ERC5727ExampleContract, 'Soulbound');
+      await expect(
+        coreContractOwner1['transferFrom(uint256,address,uint256)'](1, tokenOwner2.address, 50),
+      ).revertedWithCustomError(ERC5727ExampleContract, 'Soulbound');
       expect(await coreContract['balanceOf(uint256)'](1)).equal(100);
       expect(await coreContract.ownerOf(1)).equal(tokenOwner1.address);
     });
