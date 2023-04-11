@@ -220,6 +220,28 @@ describe('ERC5727Test', function () {
       expect(await coreContract.ownerOf(1)).equal(tokenOwner1.address);
     });
 
+    it('should revert on approve if unauthorized', async function () {
+      const { getCoreContract, admin, tokenOwner1, tokenOwner2, operator1 } = await loadFixture(
+        deployTokenFixture,
+      );
+      const coreContract = getCoreContract(admin);
+      const coreContractOwner1 = getCoreContract(tokenOwner1);
+      const coreContractOwner2 = getCoreContract(tokenOwner2);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        1,
+        admin.address,
+        [],
+      );
+      await coreContract['issue(uint256,uint256,bytes)'](1, 100, []);
+      await expect(
+        coreContractOwner2['approve(uint256,address,uint256)'](1, operator1.address, 100),
+      ).reverted;
+      await coreContractOwner1['approve(uint256,address,uint256)'](1, operator1.address, 100);
+    });
+
     it('should set burnAuth correctly', async function () {
       const { getCoreContract, admin, tokenOwner1 } = await loadFixture(deployTokenFixture);
       const coreContract = getCoreContract(admin);
@@ -438,6 +460,8 @@ describe('ERC5727Test', function () {
       );
       await ERC5727ExampleContract.connect(admin).delegate(operator1.address, 1);
       expect(await ERC5727ExampleContract.isOperatorFor(operator1.address, 1)).equal(true);
+      expect(await ERC5727ExampleContract.isOperatorFor(operator1.address, 2)).equal(false);
+      expect(await ERC5727ExampleContract.hasMintRole(operator1.address, 1)).equal(true);
       await ERC5727ExampleContract.connect(operator1)[
         'issue(address,uint256,uint256,uint8,address,bytes)'
       ](tokenOwner1.address, 2, 1, 0, admin.address, []);
