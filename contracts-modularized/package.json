@@ -1,0 +1,21 @@
+{
+  "name": "@desoul-labs/soulhub-contracts-upgradeable",
+  "version": "0.2.1-alpha.1",
+  "description": "SoulHub Contracts",
+  "homepage": "https://github.com/desoul-labs/soulhub-contracts#readme",
+  "bugs": {
+    "url": "https://github.com/desoul-labs/soulhub-contracts/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+git@github.com:desoul-labs/soulhub-contracts.git"
+  },
+  "author": "Austin Zhu",
+  "files": [
+    "**/*.sol",
+    "README.md"
+  ],
+  "publishConfig": {
+    "@desoul-labs:registry": "https://npm.pkg.github.com"
+  }
+}

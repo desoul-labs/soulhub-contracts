@@ -2,3 +2,4 @@ packages:
   - contracts
   - typechain
   - contracts-upgradeable
+  - contracts-modularized
