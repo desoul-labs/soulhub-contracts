@@ -14,6 +14,7 @@
   "scripts": {
     "compile": "NODE_ENV=development hardhat compile",
     "compile:upgradeable": "NODE_ENV=development UPGRADEABLE=1 hardhat compile",
+    "compile:modularized": "NODE_ENV=development MODULARIZED=1 hardhat compile",
     "deploy:chapel": "hardhat run scripts/deploy.ts --network chapel",
     "deploy:goerli": "hardhat run scripts/deploy.ts --network goerli",
     "deploy:hardhat": "hardhat run scripts/deploy.ts --network hardhat",

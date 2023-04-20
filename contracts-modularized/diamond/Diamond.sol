@@ -11,8 +11,8 @@ pragma solidity ^0.8.0;
 import {LibDiamond} from "./libraries/LibDiamond.sol";
 import {IDiamondCut} from "./interfaces/IDiamondCut.sol";
 import {IDiamondLoupe} from "./interfaces/IDiamondLoupe.sol";
-import {IERC173} from "./interfaces/IERC173.sol";
-import {IERC165} from "./interfaces/IERC165.sol";
+import {IERC173} from "../ERC173/interfaces/IERC173.sol";
+import {IERC165Upgradeable} from "../ERC165/interfaces/IERC165Upgradeable.sol";
 
 // When no function exists for function called
 error FunctionNotFound(bytes4 _functionSelector);

@@ -3,8 +3,6 @@ pragma solidity ^0.8.0;
 
 import {LibDiamond} from "../diamond/libraries/LibDiamond.sol";
 import {IERC173} from "./interfaces/IERC173.sol";
-import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 
 contract OwnershipFacet is IERC173 {
     function transferOwnership(address _newOwner) external override {

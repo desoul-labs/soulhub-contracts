@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts-upgradeable/utils/introspection/IERC165Upgradeable.sol";
-
 /// @title ERC-173 Contract Ownership Standard
 ///  Note: the ERC-165 identifier for this interface is 0x7f5828d0
 /* is ERC165 */
-interface IERC173 is IERC165Upgradeable {
+interface IERC173 {
     /// @dev This emits when ownership of a contract changes.
     event OwnershipTransferred(
         address indexed previousOwner,
