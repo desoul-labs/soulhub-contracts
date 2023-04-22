@@ -55,7 +55,7 @@ import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
  * ====
  */
 
-bytes32 constant INIT_POSITION = keccak256("com.mycompany.projectx.mystruct");
+bytes32 constant INIT_POSITION = keccak256("diamond.initializable.storage");
 
 struct InitStruct {
     uint8 _initialized;

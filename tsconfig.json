@@ -25,6 +25,6 @@
     "strictPropertyInitialization": false,
     "typeRoots": ["./node_modules/@types"]
   },
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "test/utils.js"],
   "exclude": ["node_modules", "typechain-types"]
 }
