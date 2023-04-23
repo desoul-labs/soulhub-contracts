@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol";
 
 library LibERC721Storage {
     using AddressUpgradeable for address;
@@ -29,6 +30,48 @@ library LibERC721Storage {
     }
 
     function s() internal pure returns (ERC721Storage storage ds) {
+        bytes32 position = DIAMOND_STORAGE_POSITION;
+        assembly {
+            ds.slot := position
+        }
+    }
+}
+
+library LibERC721PausableStorage {
+    bytes32 constant DIAMOND_STORAGE_POSITION =
+        keccak256("diamond.erc721Pausable.storage");
+
+    struct ERC721PausableStorage {
+        bool _paused;
+    }
+
+    function s() internal pure returns (ERC721PausableStorage storage ds) {
+        bytes32 position = DIAMOND_STORAGE_POSITION;
+        assembly {
+            ds.slot := position
+        }
+    }
+}
+
+library LibERC721EnumerableUpgradeableStorage {
+    using EnumerableSetUpgradeable for EnumerableSetUpgradeable.UintSet;
+    using EnumerableSetUpgradeable for EnumerableSetUpgradeable.AddressSet;
+
+    bytes32 constant DIAMOND_STORAGE_POSITION =
+        keccak256("diamond.erc721Enumerable.storage");
+
+    struct LibERC721EnumerableUpgradeableStorage {
+        // Mapping from owner to list of owned token IDs
+        mapping(address => EnumerableSetUpgradeable.UintSet) _ownedTokens;
+        EnumerableSetUpgradeable.UintSet _allTokens;
+        EnumerableSetUpgradeable.AddressSet _allOwners;
+    }
+
+    function s()
+        internal
+        pure
+        returns (LibERC721EnumerableUpgradeableStorage storage ds)
+    {
         bytes32 position = DIAMOND_STORAGE_POSITION;
         assembly {
             ds.slot := position

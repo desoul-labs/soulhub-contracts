@@ -5,6 +5,7 @@ pragma solidity ^0.8.0;
 
 import "../ContextUpgradeable/ContextUpgradeable.sol";
 import "../Initializable/Initializable.sol";
+import "../Storage/ERC721Storage.sol";
 
 /**
  * @dev Contract module which allows children to implement an emergency stop
@@ -26,8 +27,6 @@ abstract contract PausableUpgradeable is Initializable, ContextUpgradeable {
      */
     event Unpaused(address account);
 
-    bool private _paused;
-
     /**
      * @dev Initializes the contract in unpaused state.
      */
@@ -36,7 +35,7 @@ abstract contract PausableUpgradeable is Initializable, ContextUpgradeable {
     }
 
     function __Pausable_init_unchained() internal onlyInitializing {
-        _paused = false;
+        LibERC721PausableStorage.s()._paused = false;
     }
 
     /**
@@ -67,7 +66,7 @@ abstract contract PausableUpgradeable is Initializable, ContextUpgradeable {
      * @dev Returns true if the contract is paused, and false otherwise.
      */
     function paused() public view virtual returns (bool) {
-        return _paused;
+        return LibERC721PausableStorage.s()._paused;
     }
 
     /**
@@ -92,7 +91,7 @@ abstract contract PausableUpgradeable is Initializable, ContextUpgradeable {
      * - The contract must not be paused.
      */
     function _pause() internal virtual whenNotPaused {
-        _paused = true;
+        LibERC721PausableStorage.s()._paused = true;
         emit Paused(_msgSender());
     }
 
@@ -104,7 +103,7 @@ abstract contract PausableUpgradeable is Initializable, ContextUpgradeable {
      * - The contract must be paused.
      */
     function _unpause() internal virtual whenPaused {
-        _paused = false;
+        LibERC721PausableStorage.s()._paused = false;
         emit Unpaused(_msgSender());
     }
 

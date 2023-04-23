@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "./interfaces/IERC721EnumerableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol";
+import "../Storage/ERC721Storage.sol";
 
 import "./ERC721Upgradeable.sol";
 
@@ -17,13 +18,6 @@ abstract contract ERC721EnumerableUpgradeable is
 {
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.UintSet;
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.AddressSet;
-
-    // Mapping from owner to list of owned token IDs
-    mapping(address => EnumerableSetUpgradeable.UintSet) private _ownedTokens;
-
-    EnumerableSetUpgradeable.UintSet private _allTokens;
-
-    EnumerableSetUpgradeable.AddressSet private _allOwners;
 
     function __ERC721Enumerable_init() internal onlyInitializing {
         __ERC721Enumerable_init_unchained();
@@ -57,14 +51,17 @@ abstract contract ERC721EnumerableUpgradeable is
     ) public view virtual override returns (uint256) {
         if (index >= ERC721Upgradeable.balanceOf(owner))
             revert IndexOutOfBounds(index, ERC721Upgradeable.balanceOf(owner));
-        return _ownedTokens[owner].at(index);
+        return
+            LibERC721EnumerableUpgradeableStorage.s()._ownedTokens[owner].at(
+                index
+            );
     }
 
     /**
      * @dev See {IERC721Enumerable-totalSupply}.
      */
     function totalSupply() public view virtual override returns (uint256) {
-        return _allTokens.length();
+        return LibERC721EnumerableUpgradeableStorage.s()._allTokens.length();
     }
 
     /**
@@ -78,7 +75,7 @@ abstract contract ERC721EnumerableUpgradeable is
                 index,
                 ERC721EnumerableUpgradeable.totalSupply()
             );
-        return _allTokens.at(index);
+        return LibERC721EnumerableUpgradeableStorage.s()._allTokens.at(index);
     }
 
     /**
@@ -100,12 +97,14 @@ abstract contract ERC721EnumerableUpgradeable is
         uint256 tokenId = firstTokenId;
 
         if (from == address(0)) {
-            _allTokens.add(tokenId);
+            LibERC721EnumerableUpgradeableStorage.s()._allTokens.add(tokenId);
         } else if (from != to) {
-            _ownedTokens[from].remove(tokenId);
+            LibERC721EnumerableUpgradeableStorage.s()._ownedTokens[from].remove(
+                tokenId
+            );
         }
         if (to != address(0) && balanceOf(to) == 0) {
-            _allOwners.add(to);
+            LibERC721EnumerableUpgradeableStorage.s()._allOwners.add(to);
         }
     }
 
@@ -120,12 +119,16 @@ abstract contract ERC721EnumerableUpgradeable is
         uint256 tokenId = firstTokenId;
 
         if (to == address(0)) {
-            _allTokens.remove(tokenId);
+            LibERC721EnumerableUpgradeableStorage.s()._allTokens.remove(
+                tokenId
+            );
         } else if (to != from) {
-            _ownedTokens[to].add(tokenId);
+            LibERC721EnumerableUpgradeableStorage.s()._ownedTokens[to].add(
+                tokenId
+            );
         }
         if (from != address(0) && balanceOf(from) == 0) {
-            _allOwners.remove(from);
+            LibERC721EnumerableUpgradeableStorage.s()._allOwners.remove(from);
         }
     }
 }
