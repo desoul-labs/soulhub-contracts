@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "./IERC3525Upgradeable.sol";
-import "../../ERC721/interfaces/IERC721EnumerableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/IERC721EnumerableUpgradeable.sol";
 
 /**
  * @title ERC-3525 Semi-Fungible Token Standard, optional extension for slot enumeration

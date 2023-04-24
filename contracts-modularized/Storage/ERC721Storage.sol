@@ -60,7 +60,7 @@ library LibERC721EnumerableUpgradeableStorage {
     bytes32 constant DIAMOND_STORAGE_POSITION =
         keccak256("diamond.erc721Enumerable.storage");
 
-    struct LibERC721EnumerableUpgradeableStorage {
+    struct ERC721EnumerableUpgradeableStorage {
         // Mapping from owner to list of owned token IDs
         mapping(address => EnumerableSetUpgradeable.UintSet) _ownedTokens;
         EnumerableSetUpgradeable.UintSet _allTokens;
@@ -70,7 +70,7 @@ library LibERC721EnumerableUpgradeableStorage {
     function s()
         internal
         pure
-        returns (LibERC721EnumerableUpgradeableStorage storage ds)
+        returns (ERC721EnumerableUpgradeableStorage storage ds)
     {
         bytes32 position = DIAMOND_STORAGE_POSITION;
         assembly {
