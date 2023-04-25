@@ -219,6 +219,20 @@ contract ERC5727UpgradeableDS is
         return (owner() == from) || _minterRole[slot][from];
     }
 
+    function hasMintRole(
+        address from,
+        uint256 tokenId
+    ) external view virtual returns (bool) {
+        return _minterRole[tokenId][from];
+    }
+
+    function hasBurnRole(
+        address from,
+        uint256 tokenId
+    ) external view virtual returns (bool) {
+        return _burnerRole[tokenId][from];
+    }
+
     function _burn(uint256 tokenId) internal virtual override {
         super._burn(tokenId);
 
