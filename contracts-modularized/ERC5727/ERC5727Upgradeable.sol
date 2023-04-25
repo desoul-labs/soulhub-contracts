@@ -13,7 +13,7 @@ import "./interfaces/IERC5727MetadataUpgradeable.sol";
 import "./interfaces/IERC5727EnumerableUpgradeable.sol";
 import "../ERC173/ERC173Upgradeable.sol";
 
-contract ERC5727Upgradeable is
+contract ERC5727UpgradeableDS is
     EIP712Upgradeable,
     ERC173Upgradeable,
     ERC3525UpgradeableDS,
