@@ -12,27 +12,17 @@ import "../ERC3525/ERC3525UpgradeableDS.sol";
 import "./interfaces/IERC5727MetadataUpgradeable.sol";
 import "./interfaces/IERC5727EnumerableUpgradeable.sol";
 import "../ERC173/ERC173Upgradeable.sol";
+import "../Storage/ERC5727Storage.sol";
 
 contract ERC5727UpgradeableDS is
-    EIP712Upgradeable,
     ERC173Upgradeable,
+    EIP712Upgradeable,
     ERC3525UpgradeableDS,
     IERC5727MetadataUpgradeable
 {
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.UintSet;
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.AddressSet;
     using SignatureCheckerUpgradeable for address;
-
-    mapping(uint256 => address) internal _issuers;
-    mapping(uint256 => address) internal _verifiers;
-    mapping(uint256 => BurnAuth) internal _burnAuths;
-    mapping(uint256 => bool) internal _unlocked;
-
-    mapping(uint256 => address) internal _slotVerifiers;
-    mapping(uint256 => BurnAuth) internal _slotBurnAuths;
-
-    mapping(uint256 => mapping(address => bool)) internal _minterRole;
-    mapping(uint256 => mapping(address => bool)) internal _burnerRole;
 
     bytes32 private constant _TOKEN_TYPEHASH =
         keccak256(
@@ -57,7 +47,7 @@ contract ERC5727UpgradeableDS is
     }
 
     modifier onlyIssuer(uint256 tokenId) {
-        if (_msgSender() != _issuers[tokenId])
+        if (_msgSender() != LibERC5727Storage.s()._issuers[tokenId])
             revert Unauthorized(_msgSender());
         _;
     }
@@ -81,7 +71,7 @@ contract ERC5727UpgradeableDS is
     function verifierOf(
         uint256 tokenId
     ) public view virtual override returns (address) {
-        address verifier = _verifiers[tokenId];
+        address verifier = LibERC5727Storage.s()._verifiers[tokenId];
         if (verifier == address(0)) revert NotFound(tokenId);
 
         return verifier;
@@ -90,7 +80,7 @@ contract ERC5727UpgradeableDS is
     function issuerOf(
         uint256 tokenId
     ) public view virtual override returns (address) {
-        address issuer = _issuers[tokenId];
+        address issuer = LibERC5727Storage.s()._issuers[tokenId];
         if (issuer == address(0)) revert NotFound(tokenId);
 
         return issuer;
@@ -133,16 +123,16 @@ contract ERC5727UpgradeableDS is
     ) internal virtual {
         _mint(to, tokenId, slot);
 
-        _issuers[tokenId] = from;
-        _burnAuths[tokenId] = auth;
-        _verifiers[tokenId] = verifier;
+        LibERC5727Storage.s()._issuers[tokenId] = from;
+        LibERC5727Storage.s()._burnAuths[tokenId] = auth;
+        LibERC5727Storage.s()._verifiers[tokenId] = verifier;
 
         if (auth == BurnAuth.IssuerOnly || auth == BurnAuth.Both) {
-            _burnerRole[tokenId][from] = true;
+            LibERC5727Storage.s()._burnerRole[tokenId][from] = true;
             _approve(from, tokenId);
         }
         if (auth == BurnAuth.OwnerOnly || auth == BurnAuth.Both) {
-            _burnerRole[tokenId][to] = true;
+            LibERC5727Storage.s()._burnerRole[tokenId][to] = true;
         }
 
         emit Issued(from, to, tokenId, auth);
@@ -159,7 +149,7 @@ contract ERC5727UpgradeableDS is
     ) internal virtual {
         _mint(tokenId, amount);
 
-        BurnAuth auth = _burnAuths[tokenId];
+        BurnAuth auth = LibERC5727Storage.s()._burnAuths[tokenId];
 
         if (auth == BurnAuth.IssuerOnly || auth == BurnAuth.Both) {
             _approve(tokenId, from, amount);
@@ -194,7 +184,7 @@ contract ERC5727UpgradeableDS is
     ) public view virtual override returns (bool) {
         _requireMinted(tokenId);
 
-        return !_unlocked[tokenId];
+        return !LibERC5727Storage.s()._unlocked[tokenId];
     }
 
     function burnAuth(
@@ -202,43 +192,44 @@ contract ERC5727UpgradeableDS is
     ) public view virtual override returns (BurnAuth) {
         _requireMinted(tokenId);
 
-        return _burnAuths[tokenId];
+        return LibERC5727Storage.s()._burnAuths[tokenId];
     }
 
     function _checkBurnAuth(
         address from,
         uint256 tokenId
     ) internal view virtual returns (bool) {
-        return _burnerRole[tokenId][from];
+        return LibERC5727Storage.s()._burnerRole[tokenId][from];
     }
 
     function _checkMintAuth(
         address from,
         uint256 slot
     ) internal view virtual returns (bool) {
-        return (owner() == from) || _minterRole[slot][from];
+        return
+            (owner() == from) || LibERC5727Storage.s()._minterRole[slot][from];
     }
 
     function hasMintRole(
         address from,
         uint256 tokenId
     ) external view virtual returns (bool) {
-        return _minterRole[tokenId][from];
+        return LibERC5727Storage.s()._minterRole[tokenId][from];
     }
 
     function hasBurnRole(
         address from,
         uint256 tokenId
     ) external view virtual returns (bool) {
-        return _burnerRole[tokenId][from];
+        return LibERC5727Storage.s()._burnerRole[tokenId][from];
     }
 
     function _burn(uint256 tokenId) internal virtual override {
         super._burn(tokenId);
 
-        delete _issuers[tokenId];
-        delete _verifiers[tokenId];
-        delete _burnAuths[tokenId];
+        delete LibERC5727Storage.s()._issuers[tokenId];
+        delete LibERC5727Storage.s()._verifiers[tokenId];
+        delete LibERC5727Storage.s()._burnAuths[tokenId];
     }
 
     function _revoke(address from, uint256 tokenId) internal virtual {
@@ -290,7 +281,7 @@ contract ERC5727UpgradeableDS is
             )
         );
 
-        address issuer = _issuers[tokenId];
+        address issuer = LibERC5727Storage.s()._issuers[tokenId];
         result = issuer.isValidSignatureNow(digest, signature);
 
         emit Verified(by, tokenId, result);
@@ -302,8 +293,11 @@ contract ERC5727UpgradeableDS is
         uint256 firstTokenId,
         uint256 batchSize
     ) internal virtual override {
-        if (from != address(0) && to != address(0) && !_unlocked[firstTokenId])
-            revert Soulbound();
+        if (
+            from != address(0) &&
+            to != address(0) &&
+            !LibERC5727Storage.s()._unlocked[firstTokenId]
+        ) revert Soulbound();
 
         super._beforeTokenTransfer(from, to, firstTokenId, batchSize);
     }

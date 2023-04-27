@@ -333,9 +333,19 @@ describe('ERC5727Modularized', function () {
         admin.address,
         [],
       );
-      expect(await coreContract['balanceOf(address)'](tokenOwner1.address)).equal(1);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        11,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      expect(await coreContract['balanceOf(address)'](tokenOwner1.address)).equal(2);
+      expect(await coreContract.slotOf(10)).be.equal(1);
       await coreContract['revoke(uint256,bytes)'](10, []);
-      expect(await coreContract['balanceOf(address)'](tokenOwner1.address)).equal(0);
+      expect(await coreContract.slotOf(10)).be.equal(0);
+      expect(await coreContract['balanceOf(address)'](tokenOwner1.address)).equal(1);
     });
 
     it('should decrease token balance if amount is revoked', async function () {
