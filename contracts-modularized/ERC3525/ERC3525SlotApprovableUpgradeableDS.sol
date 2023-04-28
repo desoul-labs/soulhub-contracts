@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "./ERC3525UpgradeableDS.sol";
 import "./interfaces/IERC3525SlotApprovableUpgradeable.sol";
-import "../Storage/ERC3525Storage.sol";
+import "./ERC3525Storage.sol";
 
 abstract contract ERC3525SlotApprovableUpgradeableDS is
     ERC3525UpgradeableDS,

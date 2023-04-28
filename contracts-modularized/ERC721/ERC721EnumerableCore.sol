@@ -5,42 +5,33 @@ import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/IERC721Enume
 import "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol";
 import "./ERC721Storage.sol";
 
-import "./ERC721Upgradeable.sol";
+import "./ERC721Core.sol";
 
 /**
  * @dev This implements an optional extension of {ERC721} defined in the EIP that adds
  * enumerability of all the token ids in the contract as well as all token ids owned by each
  * account.
  */
-abstract contract ERC721EnumerableUpgradeable is
-    ERC721Upgradeable,
-    IERC721EnumerableUpgradeable
-{
+contract ERC721EnumerableCore is ERC721Core {
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.UintSet;
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.AddressSet;
-
-    function __ERC721Enumerable_init() internal onlyInitializing {
-        __ERC721Enumerable_init_unchained();
-    }
-
-    function __ERC721Enumerable_init_unchained() internal onlyInitializing {}
 
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(
-        bytes4 interfaceId
-    )
-        public
-        view
-        virtual
-        override(IERC165Upgradeable, ERC721Upgradeable)
-        returns (bool)
-    {
-        return
-            interfaceId == type(IERC721EnumerableUpgradeable).interfaceId ||
-            super.supportsInterface(interfaceId);
-    }
+    // function supportsInterface(
+    //     bytes4 interfaceId
+    // )
+    //     public
+    //     view
+    //     virtual
+    //     override(IERC165Upgradeable, ERC721Upgradeable)
+    //     returns (bool)
+    // {
+    //     return
+    //         interfaceId == type(IERC721EnumerableUpgradeable).interfaceId ||
+    //         super.supportsInterface(interfaceId);
+    // }
 
     /**
      * @dev See {IERC721Enumerable-tokenOfOwnerByIndex}.
@@ -48,9 +39,9 @@ abstract contract ERC721EnumerableUpgradeable is
     function tokenOfOwnerByIndex(
         address owner,
         uint256 index
-    ) public view virtual override returns (uint256) {
-        if (index >= ERC721Upgradeable.balanceOf(owner))
-            revert IndexOutOfBounds(index, ERC721Upgradeable.balanceOf(owner));
+    ) internal view returns (uint256) {
+        if (index >= ERC721Core.balanceOf(owner))
+            revert IndexOutOfBounds(index, ERC721Core.balanceOf(owner));
         return
             LibERC721EnumerableUpgradeableStorage.s()._ownedTokens[owner].at(
                 index
@@ -60,21 +51,16 @@ abstract contract ERC721EnumerableUpgradeable is
     /**
      * @dev See {IERC721Enumerable-totalSupply}.
      */
-    function totalSupply() public view virtual override returns (uint256) {
+    function totalSupply() internal view returns (uint256) {
         return LibERC721EnumerableUpgradeableStorage.s()._allTokens.length();
     }
 
     /**
      * @dev See {IERC721Enumerable-tokenByIndex}.
      */
-    function tokenByIndex(
-        uint256 index
-    ) public view virtual override returns (uint256) {
-        if (index >= ERC721EnumerableUpgradeable.totalSupply())
-            revert IndexOutOfBounds(
-                index,
-                ERC721EnumerableUpgradeable.totalSupply()
-            );
+    function tokenByIndex(uint256 index) internal view returns (uint256) {
+        if (index >= ERC721EnumerableCore.totalSupply())
+            revert IndexOutOfBounds(index, ERC721EnumerableCore.totalSupply());
         return LibERC721EnumerableUpgradeableStorage.s()._allTokens.at(index);
     }
 

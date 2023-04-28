@@ -7,8 +7,8 @@ import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 import "../ERC721/ERC721EnumerableUpgradeable.sol";
 import "./interfaces/IERC3525Upgradeable.sol";
 import "./interfaces/IERC3525MetadataUpgradeable.sol";
-import "../Storage/ERC3525Storage.sol";
-import "../Storage/ERC721Storage.sol";
+import "./ERC3525Storage.sol";
+import "../ERC721/ERC721Storage.sol";
 
 contract ERC3525UpgradeableDS is
     IERC3525Upgradeable,

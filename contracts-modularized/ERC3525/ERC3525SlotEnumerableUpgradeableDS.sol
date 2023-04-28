@@ -6,7 +6,7 @@ import "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableMapUpgradeab
 
 import "./ERC3525UpgradeableDS.sol";
 import "./interfaces/IERC3525SlotEnumerableUpgradeable.sol";
-import "../Storage/ERC3525Storage.sol";
+import "./ERC3525Storage.sol";
 
 abstract contract ERC3525SlotEnumerableUpgradeableDS is
     ERC3525UpgradeableDS,

@@ -65,7 +65,7 @@ abstract contract PausableUpgradeable is Initializable, ContextUpgradeable {
     /**
      * @dev Returns true if the contract is paused, and false otherwise.
      */
-    function paused() public view virtual returns (bool) {
+    function paused() internal view returns (bool) {
         return LibERC721PausableStorage.s()._paused;
     }
 

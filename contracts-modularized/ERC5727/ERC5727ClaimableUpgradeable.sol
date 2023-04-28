@@ -5,7 +5,7 @@ import "@openzeppelin/contracts-upgradeable/utils/cryptography/MerkleProofUpgrad
 
 import "./ERC5727Upgradeable.sol";
 import "./interfaces/IERC5727ClaimableUpgradeable.sol";
-import "../Storage/ERC5727ClaimableStorage.sol";
+import "./ERC5727ClaimableStorage.sol";
 
 abstract contract ERC5727ClaimableUpgradeable is
     IERC5727ClaimableUpgradeable,
@@ -87,19 +87,5 @@ abstract contract ERC5727ClaimableUpgradeable is
         uint256 slot
     ) public view virtual returns (bool) {
         return LibERC5727ClaimableStorage.s()._claimed[to].contains(slot);
-    }
-
-    function supportsInterface(
-        bytes4 interfaceId
-    )
-        public
-        view
-        virtual
-        override(IERC165Upgradeable, ERC5727UpgradeableDS)
-        returns (bool)
-    {
-        return
-            interfaceId == type(IERC5727ClaimableUpgradeable).interfaceId ||
-            super.supportsInterface(interfaceId);
     }
 }

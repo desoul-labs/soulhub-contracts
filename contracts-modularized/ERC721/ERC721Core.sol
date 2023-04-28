@@ -18,57 +18,38 @@ import "../utils/ErrorsUpgradeable.sol";
  * {ERC721Enumerable}.
  */
 
-contract ERC721Upgradeable is
-    ContextUpgradeable,
-    ERC165Upgradeable,
-    IERC721Upgradeable,
-    IERC721MetadataUpgradeable
-{
+contract ERC721Core is ContextUpgradeable {
     using AddressUpgradeable for address;
     using StringsUpgradeable for uint256;
 
     /**
-     * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
+     * @dev Emitted when `tokenId` token is transferred from `from` to `to`.
      */
-    function __ERC721_init(
-        string memory name_,
-        string memory symbol_
-    ) internal onlyInitializing {
-        __ERC721_init_unchained(name_, symbol_);
-    }
-
-    function __ERC721_init_unchained(
-        string memory name_,
-        string memory symbol_
-    ) internal onlyInitializing {
-        LibERC721Storage.s()._name = name_;
-        LibERC721Storage.s()._symbol = symbol_;
-    }
+    event Transfer(
+        address indexed from,
+        address indexed to,
+        uint256 indexed tokenId
+    );
 
     /**
-     * @dev See {IERC165-supportsInterface}.
+     * @dev Emitted when `owner` enables `approved` to manage the `tokenId` token.
      */
-    function supportsInterface(
-        bytes4 interfaceId
-    )
-        public
-        view
-        virtual
-        override(ERC165Upgradeable, IERC165Upgradeable)
-        returns (bool)
-    {
-        return
-            interfaceId == type(IERC721Upgradeable).interfaceId ||
-            interfaceId == type(IERC721MetadataUpgradeable).interfaceId ||
-            super.supportsInterface(interfaceId);
-    }
+    event Approval(
+        address indexed owner,
+        address indexed approved,
+        uint256 indexed tokenId
+    );
 
     /**
-     * @dev See {IERC721-balanceOf}.
+     * @dev Emitted when `owner` enables or disables (`approved`) `operator` to manage all of its assets.
      */
-    function balanceOf(
-        address owner
-    ) public view virtual override returns (uint256) {
+    event ApprovalForAll(
+        address indexed owner,
+        address indexed operator,
+        bool approved
+    );
+
+    function balanceOf(address owner) internal view virtual returns (uint256) {
         if (owner == address(0)) revert NullValue();
         return LibERC721Storage.s()._balances[owner];
     }
@@ -76,9 +57,7 @@ contract ERC721Upgradeable is
     /**
      * @dev See {IERC721-ownerOf}.
      */
-    function ownerOf(
-        uint256 tokenId
-    ) public view virtual override returns (address) {
+    function ownerOf(uint256 tokenId) internal view virtual returns (address) {
         address owner = _ownerOf(tokenId);
         if (owner == address(0)) revert NotFound(tokenId);
         return owner;
@@ -87,14 +66,14 @@ contract ERC721Upgradeable is
     /**
      * @dev See {IERC721Metadata-name}.
      */
-    function name() public view virtual override returns (string memory) {
+    function name() internal view virtual returns (string memory) {
         return LibERC721Storage.s()._name;
     }
 
     /**
      * @dev See {IERC721Metadata-symbol}.
      */
-    function symbol() public view virtual override returns (string memory) {
+    function symbol() internal view virtual returns (string memory) {
         return LibERC721Storage.s()._symbol;
     }
 
@@ -103,7 +82,7 @@ contract ERC721Upgradeable is
      */
     function tokenURI(
         uint256 tokenId
-    ) public view virtual override returns (string memory) {
+    ) internal view virtual returns (string memory) {
         _requireMinted(tokenId);
 
         string memory _tokenURI = LibERC721Storage.s()._tokenURIs[tokenId];
@@ -148,8 +127,8 @@ contract ERC721Upgradeable is
     /**
      * @dev See {IERC721-approve}.
      */
-    function approve(address to, uint256 tokenId) public virtual override {
-        address owner = ERC721Upgradeable.ownerOf(tokenId);
+    function approve(address to, uint256 tokenId) internal virtual {
+        address owner = ERC721Core.ownerOf(tokenId);
         if (to == owner) revert MethodNotAllowed(owner);
 
         if (_msgSender() != owner && !isApprovedForAll(owner, _msgSender()))
@@ -163,20 +142,10 @@ contract ERC721Upgradeable is
      */
     function getApproved(
         uint256 tokenId
-    ) public view virtual override returns (address) {
+    ) internal view virtual returns (address) {
         _requireMinted(tokenId);
 
         return LibERC721Storage.s()._tokenApprovals[tokenId];
-    }
-
-    /**
-     * @dev See {IERC721-setApprovalForAll}.
-     */
-    function setApprovalForAll(
-        address operator,
-        bool approved
-    ) public virtual override {
-        _setApprovalForAll(_msgSender(), operator, approved);
     }
 
     /**
@@ -185,7 +154,7 @@ contract ERC721Upgradeable is
     function isApprovedForAll(
         address owner,
         address operator
-    ) public view virtual override returns (bool) {
+    ) internal view returns (bool) {
         return LibERC721Storage.s()._operatorApprovals[owner][operator];
     }
 
@@ -196,7 +165,7 @@ contract ERC721Upgradeable is
         address from,
         address to,
         uint256 tokenId
-    ) public virtual override {
+    ) internal virtual {
         if (!_isApprovedOrOwner(_msgSender(), tokenId))
             revert Unauthorized(_msgSender());
 
@@ -210,7 +179,7 @@ contract ERC721Upgradeable is
         address from,
         address to,
         uint256 tokenId
-    ) public virtual override {
+    ) internal virtual {
         safeTransferFrom(from, to, tokenId, "");
     }
 
@@ -222,7 +191,7 @@ contract ERC721Upgradeable is
         address to,
         uint256 tokenId,
         bytes memory data
-    ) public virtual override {
+    ) internal virtual {
         if (!_isApprovedOrOwner(_msgSender(), tokenId))
             revert Unauthorized(_msgSender());
         _safeTransfer(from, to, tokenId, data);
@@ -287,7 +256,7 @@ contract ERC721Upgradeable is
         address spender,
         uint256 tokenId
     ) internal view virtual returns (bool) {
-        address owner = ERC721Upgradeable.ownerOf(tokenId);
+        address owner = ERC721Core.ownerOf(tokenId);
         return (spender == owner ||
             isApprovedForAll(owner, spender) ||
             getApproved(tokenId) == spender);
@@ -369,12 +338,12 @@ contract ERC721Upgradeable is
      * Emits a {Transfer} event.
      */
     function _burn(uint256 tokenId) internal virtual {
-        address owner = ERC721Upgradeable.ownerOf(tokenId);
+        address owner = ERC721Core.ownerOf(tokenId);
 
         _beforeTokenTransfer(owner, address(0), tokenId, 1);
 
         // Update ownership in case tokenId was transferred by `_beforeTokenTransfer` hook
-        owner = ERC721Upgradeable.ownerOf(tokenId);
+        owner = ERC721Core.ownerOf(tokenId);
 
         // Clear approvals
         delete LibERC721Storage.s()._tokenApprovals[tokenId];
@@ -411,15 +380,13 @@ contract ERC721Upgradeable is
         address to,
         uint256 tokenId
     ) internal virtual {
-        if (ERC721Upgradeable.ownerOf(tokenId) != from)
-            revert Unauthorized(from);
+        if (ERC721Core.ownerOf(tokenId) != from) revert Unauthorized(from);
         if (to == address(0)) revert BadReceiver(to);
 
         _beforeTokenTransfer(from, to, tokenId, 1);
 
         // Check that tokenId was not transferred by `_beforeTokenTransfer` hook
-        if (ERC721Upgradeable.ownerOf(tokenId) != from)
-            revert Unauthorized(from);
+        if (ERC721Core.ownerOf(tokenId) != from) revert Unauthorized(from);
 
         // Clear approvals from the previous owner
         delete LibERC721Storage.s()._tokenApprovals[tokenId];
@@ -447,7 +414,7 @@ contract ERC721Upgradeable is
      */
     function _approve(address to, uint256 tokenId) internal virtual {
         LibERC721Storage.s()._tokenApprovals[tokenId] = to;
-        emit Approval(ERC721Upgradeable.ownerOf(tokenId), to, tokenId);
+        emit Approval(ERC721Core.ownerOf(tokenId), to, tokenId);
     }
 
     /**
