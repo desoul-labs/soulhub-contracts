@@ -2,8 +2,9 @@
 pragma solidity ^0.8.0;
 
 import "./IERC5727Upgradeable.sol";
+import "../../ERC5484/interfaces/IERC5484Upgradeable.sol";
 
-interface IERC5727ClaimableUpgradeable is IERC5727Upgradeable {
+interface IERC5727ClaimableUpgradeable {
     /**
      * @notice Emitted when a token is claimed by `to`.
      * @param to The new owner of the token
@@ -28,7 +29,7 @@ interface IERC5727ClaimableUpgradeable is IERC5727Upgradeable {
         uint256 tokenId,
         uint256 amount,
         uint256 slot,
-        BurnAuth burnAuth,
+        IERC5484Upgradeable.BurnAuth burnAuth,
         address verifier,
         bytes calldata data,
         bytes32[] calldata proof

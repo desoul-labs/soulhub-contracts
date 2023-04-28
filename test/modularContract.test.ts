@@ -6,12 +6,15 @@ import {
   type DiamondInit__factory,
   type Diamond,
   type ERC5727UpgradeableDS,
+  type ERC5727ClaimableUpgradeableDS,
   ERC5727UpgradeableDS__factory,
+  ERC5727ClaimableUpgradeableDS__factory,
 } from '../typechain';
 import { FacetCutAction, getSelectors, remove } from './utils';
-
+import { MerkleTree } from 'merkletreejs';
 interface Fixture {
   getCoreContract: (signer: SignerWithAddress) => ERC5727UpgradeableDS;
+  getClaimableContract: (signer: SignerWithAddress) => ERC5727ClaimableUpgradeableDS;
   diamond: Diamond;
   admin: SignerWithAddress;
   tokenOwner1: SignerWithAddress;
@@ -28,6 +31,20 @@ interface FacetCuts {
   functionSelectors: string[];
 }
 
+interface ClaimData {
+  to: string;
+  tokenId: number;
+  amount: number;
+  slot: number;
+  burnAuth: number;
+  verifier: string;
+  data: string | [];
+}
+interface MerkleTreeStore {
+  root: string;
+  proofs: Record<string, string[]>;
+}
+
 describe('ERC5727Modularized', function () {
   async function deployDiamondFixture(): Promise<Fixture> {
     const [admin, tokenOwner1, tokenOwner2, voter1, voter2, operator1, operator2] =
@@ -35,7 +52,12 @@ describe('ERC5727Modularized', function () {
     const diamondInitFactory: DiamondInit__factory = await ethers.getContractFactory('DiamondInit');
     const diamondInit = await diamondInitFactory.deploy();
     console.log(diamondInit.address);
-    const FacetNames = ['DiamondCutFacet', 'DiamondLoupeFacet', 'ERC5727UpgradeableDS'];
+    const FacetNames = [
+      'DiamondCutFacet',
+      'DiamondLoupeFacet',
+      'ERC5727UpgradeableDS',
+      'ERC5727ClaimableUpgradeableDS',
+    ];
     // The `facetCuts` variable is the FacetCut[] that contains the functions to add during diamond deployment
     const facetCuts: FacetCuts[] = [];
     for (const FacetName of FacetNames) {
@@ -80,8 +102,11 @@ describe('ERC5727Modularized', function () {
     console.log('Diamond deployed: ', diamond.address);
     const getCoreContract = (signer: SignerWithAddress): ERC5727UpgradeableDS =>
       ERC5727UpgradeableDS__factory.connect(diamond.address, signer);
+    const getClaimableContract = (signer: SignerWithAddress): ERC5727ClaimableUpgradeableDS =>
+      ERC5727ClaimableUpgradeableDS__factory.connect(diamond.address, signer);
     return {
       getCoreContract,
+      getClaimableContract,
       diamond,
       admin,
       tokenOwner1,
@@ -435,6 +460,273 @@ describe('ERC5727Modularized', function () {
       );
       expect(await coreContract.locked(10)).equal(true);
       await expect(coreContract.locked(1)).be.reverted;
+    });
+  });
+  describe('Claimable', function () {
+    function createMerkleTree(data: ClaimData[]): MerkleTreeStore {
+      const leafNodes = data.map((d) =>
+        ethers.utils.solidityKeccak256(
+          ['address', 'uint256', 'uint256', 'uint256', 'uint8', 'address', 'bytes'],
+          Object.values(d),
+        ),
+      );
+      const merkletree = new MerkleTree(leafNodes, ethers.utils.keccak256, { sortPairs: true });
+      const root: string = merkletree.getHexRoot();
+      const proofs: Record<string, string[]> = {};
+      for (let i = 0; i < data.length; i++) {
+        proofs[data[i].to] = merkletree.getHexProof(leafNodes[i]);
+      }
+      return {
+        root,
+        proofs,
+      };
+    }
+
+    it('only admin can set claim events', async function () {
+      const { getClaimableContract, admin, tokenOwner1, tokenOwner2, operator1 } =
+        await loadFixture(deployDiamondFixture);
+      const claimableContract = getClaimableContract(admin);
+      const { root } = createMerkleTree([
+        {
+          to: tokenOwner1.address,
+          tokenId: 1,
+          amount: 1,
+          slot: 1,
+          burnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+        {
+          to: tokenOwner2.address,
+          tokenId: 2,
+          amount: 1,
+          slot: 1,
+          burnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+      ]);
+      await claimableContract.connect(admin).setClaimEvent(admin.address, 1, root);
+      await expect(claimableContract.connect(operator1).setClaimEvent(operator1.address, 1, root))
+        .be.reverted;
+    });
+
+    it('should revert if claim event is already set for a slot', async function () {
+      const { getClaimableContract, admin, tokenOwner1, tokenOwner2, operator1 } =
+        await loadFixture(deployDiamondFixture);
+      const claimableContract = getClaimableContract(admin);
+      const { root } = createMerkleTree([
+        {
+          to: tokenOwner1.address,
+          tokenId: 1,
+          amount: 1,
+          slot: 1,
+          burnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+        {
+          to: tokenOwner2.address,
+          tokenId: 2,
+          amount: 1,
+          slot: 1,
+          burnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+      ]);
+      await claimableContract.connect(admin).setClaimEvent(ethers.constants.AddressZero, 1, root);
+      await expect(claimableContract.connect(admin).setClaimEvent(operator1.address, 1, root)).be
+        .reverted;
+    });
+
+    it('should claim if account is eligible', async function () {
+      const { getClaimableContract, admin, tokenOwner1, tokenOwner2 } = await loadFixture(
+        deployDiamondFixture,
+      );
+      const claimableContract = getClaimableContract(admin);
+      const { root, proofs } = createMerkleTree([
+        {
+          to: tokenOwner1.address,
+          tokenId: 1,
+          amount: 1,
+          slot: 1,
+          burnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+        {
+          to: tokenOwner2.address,
+          tokenId: 2,
+          amount: 1,
+          slot: 1,
+          burnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+      ]);
+      await claimableContract.connect(admin).setClaimEvent(admin.address, 1, root);
+      await claimableContract
+        .connect(tokenOwner1)
+        .claim(tokenOwner1.address, 1, 1, 1, 0, admin.address, [], proofs[tokenOwner1.address]);
+      await claimableContract
+        .connect(tokenOwner2)
+        .claim(tokenOwner2.address, 2, 1, 1, 0, admin.address, [], proofs[tokenOwner2.address]);
+    });
+
+    it('should increase balances after claim', async function () {
+      const { getClaimableContract, getCoreContract, admin, tokenOwner1, tokenOwner2 } =
+        await loadFixture(deployDiamondFixture);
+      const claimableContract = getClaimableContract(admin);
+      const coreContract = getCoreContract(admin);
+      const { root, proofs } = createMerkleTree([
+        {
+          to: tokenOwner1.address,
+          tokenId: 1,
+          amount: 1,
+          slot: 1,
+          burnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+        {
+          to: tokenOwner2.address,
+          tokenId: 2,
+          amount: 1,
+          slot: 1,
+          burnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+      ]);
+      await claimableContract.connect(admin).setClaimEvent(admin.address, 1, root);
+      await claimableContract
+        .connect(tokenOwner1)
+        .claim(tokenOwner1.address, 1, 1, 1, 0, admin.address, [], proofs[tokenOwner1.address]);
+      await claimableContract
+        .connect(tokenOwner2)
+        .claim(tokenOwner2.address, 2, 1, 1, 0, admin.address, [], proofs[tokenOwner2.address]);
+      expect(await coreContract['balanceOf(uint256)'](1)).equal(1);
+      expect(await coreContract['balanceOf(address)'](tokenOwner1.address)).equal(1);
+      expect(await coreContract['balanceOf(uint256)'](2)).equal(1);
+      expect(await coreContract['balanceOf(address)'](tokenOwner2.address)).equal(1);
+    });
+
+    it('revert if claimer already claimed', async function () {
+      const { getClaimableContract, getCoreContract, admin, tokenOwner1, tokenOwner2 } =
+        await loadFixture(deployDiamondFixture);
+      const claimableContract = getClaimableContract(admin);
+      const coreContract = getCoreContract(admin);
+      const claimableContractOwner1 = getClaimableContract(tokenOwner1);
+      const { root, proofs } = createMerkleTree([
+        {
+          to: tokenOwner1.address,
+          tokenId: 1,
+          amount: 1,
+          slot: 1,
+          burnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+        {
+          to: tokenOwner2.address,
+          tokenId: 2,
+          amount: 1,
+          slot: 1,
+          burnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+      ]);
+      await claimableContract.setClaimEvent(admin.address, 1, root);
+      await claimableContract
+        .connect(tokenOwner1)
+        .claim(tokenOwner1.address, 1, 1, 1, 0, admin.address, [], proofs[tokenOwner1.address]);
+      expect(await coreContract['balanceOf(uint256)'](1)).equal(1);
+      expect(await coreContract['balanceOf(address)'](tokenOwner1.address)).equal(1);
+      await expect(
+        claimableContractOwner1.claim(
+          tokenOwner1.address,
+          1,
+          1,
+          1,
+          0,
+          admin.address,
+          [],
+          proofs[tokenOwner1.address],
+        ),
+      ).be.reverted;
+    });
+    it('query if a slot is claimed', async function () {
+      const { getClaimableContract, admin, tokenOwner1, tokenOwner2 } = await loadFixture(
+        deployDiamondFixture,
+      );
+      const claimableContract = getClaimableContract(admin);
+      const { root, proofs } = createMerkleTree([
+        {
+          to: tokenOwner1.address,
+          tokenId: 1,
+          amount: 1,
+          slot: 1,
+          burnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+        {
+          to: tokenOwner2.address,
+          tokenId: 2,
+          amount: 1,
+          slot: 1,
+          burnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+      ]);
+      await claimableContract.setClaimEvent(admin.address, 1, root);
+      expect(await claimableContract.isClaimed(tokenOwner1.address, 1)).equal(false);
+      await claimableContract
+        .connect(tokenOwner1)
+        .claim(tokenOwner1.address, 1, 1, 1, 0, admin.address, [], proofs[tokenOwner1.address]);
+      expect(await claimableContract.isClaimed(tokenOwner1.address, 1)).equal(true);
+    });
+    it('revert if claimer is not eligible', async function () {
+      const { getClaimableContract, admin, tokenOwner1, tokenOwner2, operator1 } =
+        await loadFixture(deployDiamondFixture);
+      const claimableContract = getClaimableContract(admin);
+      const claimableContractOperator1 = getClaimableContract(operator1);
+      const { root, proofs } = createMerkleTree([
+        {
+          to: tokenOwner1.address,
+          tokenId: 1,
+          amount: 1,
+          slot: 1,
+          burnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+        {
+          to: tokenOwner2.address,
+          tokenId: 2,
+          amount: 1,
+          slot: 1,
+          burnAuth: 0,
+          verifier: admin.address,
+          data: [],
+        },
+      ]);
+      await claimableContract.setClaimEvent(admin.address, 1, root);
+      await expect(
+        claimableContractOperator1.claim(
+          tokenOwner1.address,
+          1,
+          1,
+          1,
+          0,
+          admin.address,
+          [],
+          proofs[tokenOwner1.address],
+        ),
+      ).be.reverted;
     });
   });
 });

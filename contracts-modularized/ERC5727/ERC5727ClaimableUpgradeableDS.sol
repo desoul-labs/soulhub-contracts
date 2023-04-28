@@ -3,13 +3,14 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts-upgradeable/utils/cryptography/MerkleProofUpgradeable.sol";
 
-import "./ERC5727Upgradeable.sol";
 import "./interfaces/IERC5727ClaimableUpgradeable.sol";
 import "./ERC5727ClaimableStorage.sol";
+import "../ERC5484/interfaces/IERC5484Upgradeable.sol";
+import "./ERC5727Core.sol";
 
-abstract contract ERC5727ClaimableUpgradeable is
+contract ERC5727ClaimableUpgradeableDS is
     IERC5727ClaimableUpgradeable,
-    ERC5727UpgradeableDS
+    ERC5727Core
 {
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.UintSet;
     using MerkleProofUpgradeable for bytes32[];
@@ -39,7 +40,7 @@ abstract contract ERC5727ClaimableUpgradeable is
         uint256 tokenId,
         uint256 amount,
         uint256 slot,
-        BurnAuth burnAuth,
+        IERC5484Upgradeable.BurnAuth burnAuth,
         address verifier,
         bytes calldata data,
         bytes32[] calldata proof
