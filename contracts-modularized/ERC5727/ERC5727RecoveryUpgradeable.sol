@@ -7,10 +7,8 @@ import "./ERC5727EnumerableCore.sol";
 import "./interfaces/IERC5727RecoveryUpgradeable.sol";
 import "./ERC5727Storage.sol";
 
-abstract contract ERC5727RecoveryUpgradeable is
-    IERC5727RecoveryUpgradeable,
-    ERC5727EnumerableCore
-{
+abstract contract ERC5727RecoveryUpgradeable is ERC5727EnumerableCore {
+    event Recovered(address indexed from, address indexed to);
     using ECDSAUpgradeable for bytes32;
 
     bytes32 private constant _RECOVERY_TYPEHASH =
@@ -22,10 +20,7 @@ abstract contract ERC5727RecoveryUpgradeable is
 
     function __ERC5727Recovery_init_unchained() internal onlyInitializing {}
 
-    function recover(
-        address from,
-        bytes memory signature
-    ) public virtual override {
+    function recover(address from, bytes memory signature) public virtual {
         if (from == address(0)) revert NullValue();
         address recipient = _msgSender();
         if (from == recipient) revert MethodNotAllowed(recipient);
