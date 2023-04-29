@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/IERC721MetadataUpgradeable.sol";
-import "../ContextUpgradeable/ContextUpgradeable.sol";
+import "../utils/ContextUpgradeable.sol";
 import "../ERC165/ERC165UpgradeableDS.sol";
 import "./ERC721Storage.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721ReceiverUpgradeable.sol";

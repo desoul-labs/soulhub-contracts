@@ -3,7 +3,7 @@
 
 pragma solidity ^0.8.0;
 
-import "../ContextUpgradeable/ContextUpgradeable.sol";
+import "../utils/ContextUpgradeable.sol";
 import "../utils/Initializable.sol";
 import "./ERC721Storage.sol";
 
