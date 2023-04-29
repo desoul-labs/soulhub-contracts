@@ -16,7 +16,7 @@ import "./ERC721Storage.sol";
  * the functions of your contract. Note that they will not be pausable by
  * simply including this module, only once the modifiers are put in place.
  */
-abstract contract PausableUpgradeable is Initializable, ContextUpgradeable {
+abstract contract PausableUpgradeableCore is Initializable, ContextUpgradeable {
     /**
      * @dev Emitted when the pause is triggered by `account`.
      */
