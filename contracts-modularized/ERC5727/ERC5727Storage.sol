@@ -26,6 +26,7 @@ library LibERC5727Storage {
         mapping(uint256 => IERC5484Upgradeable.BurnAuth) _slotBurnAuths;
         mapping(uint256 => mapping(address => bool)) _minterRole;
         mapping(uint256 => mapping(address => bool)) _burnerRole;
+        mapping(uint256 => bool) _revoked;
     }
 
     function s() internal pure returns (ERC5727Storage storage ds) {

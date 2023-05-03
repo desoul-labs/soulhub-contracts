@@ -93,7 +93,6 @@ describe('ERC5727Modularized', function () {
       init: diamondInit.address,
       initCalldata: functionCall,
     };
-
     // deploy Diamond
     const Diamond = await ethers.getContractFactory('Diamond');
     console.log(Diamond);
@@ -104,6 +103,8 @@ describe('ERC5727Modularized', function () {
       ERC5727UpgradeableDS__factory.connect(diamond.address, signer);
     const getClaimableContract = (signer: SignerWithAddress): ERC5727ClaimableUpgradeableDS =>
       ERC5727ClaimableUpgradeableDS__factory.connect(diamond.address, signer);
+    const coreContract = getCoreContract(admin);
+    await coreContract.ERC5727_init('soulhub', 'SOUL', admin.address, '1');
     return {
       getCoreContract,
       getClaimableContract,

@@ -52,12 +52,12 @@ contract ERC5727UpgradeableDS is
         _;
     }
 
-    function __ERC5727_init(
+    function ERC5727_init(
         string memory name_,
         string memory symbol_,
         address admin_,
         string memory version_
-    ) internal onlyInitializing {
+    ) external initializer {
         __EIP712_init_unchained(name_, version_);
         __ERC721_init_unchained(name_, symbol_);
         __ERC3525_init_unchained(18);
