@@ -162,7 +162,7 @@ contract ERC5727UpgradeableDS is
     ) public payable virtual override onlyBurner(tokenId) {
         _requireMinted(tokenId);
 
-        _revoke(_msgSender(), tokenId, balanceOf(tokenId));
+        _revoke(_msgSender(), tokenId);
 
         data;
     }
@@ -233,9 +233,14 @@ contract ERC5727UpgradeableDS is
     }
 
     function _revoke(address from, uint256 tokenId) internal virtual {
-        _burn(tokenId);
-
+        LibERC5727Storage.s()._revoked[tokenId] = true;
         emit Revoked(from, tokenId);
+    }
+
+    function isRevoked(uint256 tokenId) public view virtual returns (bool) {
+        _requireMinted(tokenId);
+
+        return LibERC5727Storage.s()._revoked[tokenId];
     }
 
     function _revoke(
