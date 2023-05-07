@@ -226,8 +226,7 @@ contract ERC5727Core is EIP712Upgradeable, ERC3525Core {
     }
 
     function _revoke(address from, uint256 tokenId) internal virtual {
-        _burn(tokenId);
-
+        LibERC5727Storage.s()._revoked[tokenId] = true;
         emit Revoked(from, tokenId);
     }
 
@@ -291,7 +290,6 @@ contract ERC5727Core is EIP712Upgradeable, ERC3525Core {
             to != address(0) &&
             !LibERC5727Storage.s()._unlocked[firstTokenId]
         ) revert Soulbound();
-
         super._beforeTokenTransfer(from, to, firstTokenId, batchSize);
     }
 

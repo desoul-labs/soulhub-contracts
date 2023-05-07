@@ -27,6 +27,7 @@ contract ERC5727 is EIP712, Ownable, ERC3525, IERC5727Metadata {
     mapping(uint256 => address) internal _verifiers;
     mapping(uint256 => BurnAuth) internal _burnAuths;
     mapping(uint256 => bool) internal _unlocked;
+    mapping(uint256 => bool) internal _revoked;
 
     mapping(uint256 => address) internal _slotVerifiers;
     mapping(uint256 => BurnAuth) internal _slotBurnAuths;
@@ -182,6 +183,12 @@ contract ERC5727 is EIP712, Ownable, ERC3525, IERC5727Metadata {
         data;
     }
 
+    function isRevoked(uint256 tokenId) public view virtual returns (bool) {
+        _requireMinted(tokenId);
+
+        return _revoked[tokenId];
+    }
+
     function locked(
         uint256 tokenId
     ) public view virtual override returns (bool) {
@@ -235,7 +242,7 @@ contract ERC5727 is EIP712, Ownable, ERC3525, IERC5727Metadata {
     }
 
     function _revoke(address from, uint256 tokenId) internal virtual {
-        _burn(tokenId);
+        _revoked[tokenId] = true;
 
         emit Revoked(from, tokenId);
     }
