@@ -7,7 +7,7 @@ import "./ERC5727EnumerableCore.sol";
 import "./interfaces/IERC5727RecoveryUpgradeable.sol";
 import "./ERC5727Storage.sol";
 
-abstract contract ERC5727RecoveryUpgradeable is ERC5727EnumerableCore {
+contract ERC5727RecoveryUpgradeableDS is ERC5727EnumerableCore {
     event Recovered(address indexed from, address indexed to);
     using ECDSAUpgradeable for bytes32;
 

@@ -19,9 +19,7 @@ contract ERC5727GovernanceUpgradeableDS is
         _;
     }
 
-    function __ERC5727Governance_init_unchained(
-        address admin_
-    ) internal onlyInitializing {
+    function init(address admin_) external initializer {
         LibERC5727GovernanceStorage.s()._voters.add(admin_);
         LibERC5727GovernanceStorage.s()._voterRole[admin_] = true;
     }

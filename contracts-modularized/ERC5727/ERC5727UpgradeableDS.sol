@@ -52,7 +52,7 @@ contract ERC5727UpgradeableDS is
         _;
     }
 
-    function ERC5727_init(
+    function init(
         string memory name_,
         string memory symbol_,
         address admin_,
@@ -336,7 +336,9 @@ contract ERC5727UpgradeableDS is
         override(IERC165Upgradeable, ERC3525UpgradeableDS)
         returns (bool)
     {
+        LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
         return
+            ds.supportedInterfaces[interfaceId] ||
             interfaceId == type(IERC5727Upgradeable).interfaceId ||
             interfaceId == type(IERC5727MetadataUpgradeable).interfaceId ||
             interfaceId == type(IERC5727EnumerableUpgradeable).interfaceId ||

@@ -5,7 +5,7 @@ import "./interfaces/IERC5727DelegateUpgradeable.sol";
 import "./ERC5727Core.sol";
 import "./ERC5727Storage.sol";
 
-abstract contract ERC5727DelegateUpgradeableDS is
+contract ERC5727DelegateUpgradeableDS is
     IERC5727DelegateUpgradeable,
     ERC5727Core
 {

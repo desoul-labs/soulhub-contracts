@@ -31,6 +31,7 @@
     "prepare": "husky install",
     "release": "standard-version",
     "test": "NODE_ENV=development hardhat test",
+    "test:modularized": "NODE_ENV=development hardhat test test/modularContract.test.ts",
     "test:coverage": "NODE_ENV=development hardhat coverage --testfiles 'test/*.ts'",
     "typechain": "NODE_ENV=development hardhat typechain"
   },
