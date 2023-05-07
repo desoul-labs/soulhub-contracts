@@ -32,7 +32,7 @@
     "release": "standard-version",
     "test": "NODE_ENV=development hardhat test",
     "test:modularized": "NODE_ENV=development hardhat test test/modularContract.test.ts",
-    "test:coverage": "compile & compile:moudlarized & NODE_ENV=development hardhat coverage --testfiles 'test/*.ts'",
+    "test:coverage": "pnpm run compile && pnpm run compile:modularized && NODE_ENV=development hardhat coverage --testfiles 'test/*.ts'",
     "typechain": "NODE_ENV=development hardhat typechain"
   },
   "lint-staged": {
