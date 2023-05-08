@@ -224,14 +224,6 @@ contract ERC5727UpgradeableDS is
         return LibERC5727Storage.s()._burnerRole[tokenId][from];
     }
 
-    function _burn(uint256 tokenId) internal virtual override {
-        super._burn(tokenId);
-
-        delete LibERC5727Storage.s()._issuers[tokenId];
-        delete LibERC5727Storage.s()._verifiers[tokenId];
-        delete LibERC5727Storage.s()._burnAuths[tokenId];
-    }
-
     function _revoke(address from, uint256 tokenId) internal virtual {
         LibERC5727Storage.s()._revoked[tokenId] = true;
         emit Revoked(from, tokenId);
