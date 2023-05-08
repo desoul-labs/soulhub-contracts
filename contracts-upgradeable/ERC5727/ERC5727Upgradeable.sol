@@ -232,14 +232,6 @@ contract ERC5727Upgradeable is
         return (owner() == from) || _minterRole[slot][from];
     }
 
-    function _burn(uint256 tokenId) internal virtual override {
-        super._burn(tokenId);
-
-        delete _issuers[tokenId];
-        delete _verifiers[tokenId];
-        delete _burnAuths[tokenId];
-    }
-
     function _revoke(address from, uint256 tokenId) internal virtual {
         _revoked[tokenId] = true;
 

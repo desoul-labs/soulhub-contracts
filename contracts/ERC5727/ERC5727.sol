@@ -233,14 +233,6 @@ contract ERC5727 is EIP712, Ownable, ERC3525, IERC5727Metadata {
         return _burnerRole[tokenId][from];
     }
 
-    function _burn(uint256 tokenId) internal virtual override {
-        super._burn(tokenId);
-
-        delete _issuers[tokenId];
-        delete _verifiers[tokenId];
-        delete _burnAuths[tokenId];
-    }
-
     function _revoke(address from, uint256 tokenId) internal virtual {
         _revoked[tokenId] = true;
 
