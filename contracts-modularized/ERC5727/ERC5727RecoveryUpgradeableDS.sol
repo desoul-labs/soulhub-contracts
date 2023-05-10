@@ -45,18 +45,4 @@ contract ERC5727RecoveryUpgradeableDS is ERC5727EnumerableCore {
 
         emit Recovered(from, recipient);
     }
-
-    // function supportsInterface(
-    //     bytes4 interfaceId
-    // )
-    //     public
-    //     view
-    //     virtual
-    //     override(IERC165Upgradeable, ERC5727EnumerableUpgradeable)
-    //     returns (bool)
-    // {
-    //     return
-    //         interfaceId == type(IERC5727RecoveryUpgradeable).interfaceId ||
-    //         super.supportsInterface(interfaceId);
-    // }
 }

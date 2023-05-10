@@ -107,7 +107,7 @@ describe('ERC5727Modularized', function () {
     const ERC5727InitCall = IERC5727.encodeFunctionData('init', [
       'soulhub',
       'SOUL',
-      admin.address,
+      'https://api.soularis.io/contracts/',
       '1',
     ]);
     const ERC5727GovernanceInitCall = IERC5727Governance.encodeFunctionData('init', [
@@ -844,18 +844,18 @@ describe('ERC5727Modularized', function () {
       await governanceContract.addVoter(voter1.address);
       await expect(governanceContract.addVoter(voter1.address)).be.reverted;
     });
-    // it('query approval uri should return correct uri', async function () {
-    //   const { getGovernanceContract, admin, tokenOwner1, getCoreContract } = await loadFixture(
-    //     deployDiamondFixture,
-    //   );
-    //   const governanceContract = getGovernanceContract(admin);
-    //   const coreContract = getCoreContract(admin);
-    //   await governanceContract.requestApproval(tokenOwner1.address, 1, 1, 1, 0, admin.address, []);
-    //   const contractAddress: string = coreContract.address.toLowerCase();
-    //   expect(await governanceContract.approvalURI(0)).equal(
-    //     `https://api.soularis.io/contracts/${contractAddress}/approvals/0`,
-    //   );
-    // });
+    it('query approval uri should return correct uri', async function () {
+      const { getGovernanceContract, admin, tokenOwner1, getCoreContract } = await loadFixture(
+        deployDiamondFixture,
+      );
+      const governanceContract = getGovernanceContract(admin);
+      const coreContract = getCoreContract(admin);
+      await governanceContract.requestApproval(tokenOwner1.address, 1, 1, 1, 0, admin.address, []);
+      const contractAddress: string = coreContract.address.toLowerCase();
+      expect(await governanceContract.approvalURI(0)).equal(
+        `https://api.soularis.io/contracts/${contractAddress}/approvals/0`,
+      );
+    });
     it('should revert on query approval uri if approval does not exist', async function () {
       const { getGovernanceContract, admin } = await loadFixture(deployDiamondFixture);
       const governanceContract = getGovernanceContract(admin);

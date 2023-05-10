@@ -32,17 +32,20 @@ contract ERC721Upgradeable is
      */
     function __ERC721_init(
         string memory name_,
-        string memory symbol_
+        string memory symbol_,
+        string memory baseUri_
     ) internal onlyInitializing {
-        __ERC721_init_unchained(name_, symbol_);
+        __ERC721_init_unchained(name_, symbol_, baseUri_);
     }
 
     function __ERC721_init_unchained(
         string memory name_,
-        string memory symbol_
+        string memory symbol_,
+        string memory baseUri_
     ) internal onlyInitializing {
         LibERC721Storage.s()._name = name_;
         LibERC721Storage.s()._symbol = symbol_;
+        LibERC721Storage.s()._baseUri = baseUri_;
     }
 
     /**
@@ -142,7 +145,7 @@ contract ERC721Upgradeable is
      * by default, can be overridden in child contracts.
      */
     function _baseURI() internal view virtual returns (string memory) {
-        return "";
+        return LibERC721Storage.s()._baseUri;
     }
 
     /**

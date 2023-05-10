@@ -121,7 +121,7 @@ contract ERC721Core is ContextUpgradeable {
      * by default, can be overridden in child contracts.
      */
     function _baseURI() internal view virtual returns (string memory) {
-        return "";
+        return LibERC721Storage.s()._baseUri;
     }
 
     /**

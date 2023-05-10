@@ -20,15 +20,6 @@ contract ERC3525UpgradeableDS is
     using StringsUpgradeable for uint256;
     using EnumerableMapUpgradeable for EnumerableMapUpgradeable.AddressToUintMap;
 
-    function __ERC3525_init(
-        string memory name_,
-        string memory symbol_,
-        uint8 decimals_
-    ) internal onlyInitializing {
-        __ERC721_init_unchained(name_, symbol_);
-        __ERC3525_init_unchained(decimals_);
-    }
-
     function __ERC3525_init_unchained(
         uint8 decimals_
     ) internal onlyInitializing {

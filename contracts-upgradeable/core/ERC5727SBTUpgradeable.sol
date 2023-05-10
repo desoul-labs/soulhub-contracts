@@ -48,16 +48,6 @@ contract ERC5727SBTUpgradeable is
         return _baseUri;
     }
 
-    function _burn(
-        uint256 tokenId
-    )
-        internal
-        virtual
-        override(ERC5727Upgradeable, ERC5727EnumerableUpgradeable)
-    {
-        super._burn(tokenId);
-    }
-
     function _beforeTokenTransfer(
         address from,
         address to,

@@ -64,10 +64,6 @@ contract ERC5727Core is EIP712Upgradeable, ERC3525Core {
         owner_ = LibDiamond.contractOwner();
     }
 
-    function __ERC5727_init_unchained(
-        address admin_
-    ) internal onlyInitializing {}
-
     function verifierOf(
         uint256 tokenId
     ) internal view virtual returns (address) {

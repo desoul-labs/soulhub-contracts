@@ -19,6 +19,7 @@ library LibERC721Storage {
         string _name;
         // Token symbol
         string _symbol;
+        string _baseUri;
         // Mapping from token ID to owner address
         mapping(uint256 => address) _owners;
         // Mapping owner address to token count

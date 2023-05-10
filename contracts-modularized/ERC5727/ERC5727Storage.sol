@@ -18,6 +18,7 @@ library LibERC5727Storage {
         keccak256("diamond.erc5727core.storage");
 
     struct ERC5727Storage {
+        string _baseUri;
         mapping(uint256 => address) _issuers;
         mapping(uint256 => address) _verifiers;
         mapping(uint256 => IERC5484Upgradeable.BurnAuth) _burnAuths;
