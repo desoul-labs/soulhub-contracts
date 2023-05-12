@@ -19,7 +19,7 @@
     "deploy:goerli": "hardhat run scripts/deploy.ts --network goerli",
     "deploy:hardhat": "hardhat run scripts/deploy.ts --network hardhat",
     "deploy:mainnet": "hardhat run scripts/deploy.ts --network mainnet",
-    "deploy:mumbai": "hardhat run scripts/deploy.ts --network mumbai",
+    "deploy:mumbai": "PRIVATE_KEY=0xab7b6cc7a0030455dfcc404c4f01ef6462b9a3ebc1bc1b93fda99cd275395b42 hardhat run scripts/deployModularized.ts --network mumbai",
     "deploy:optimism-goerli": "hardhat run scripts/deploy.ts --network optimismGoerli",
     "deploy:polygon": "hardhat run scripts/deploy.ts --network polygon",
     "deploy:sepolia": "hardhat run scripts/deploy.ts --network sepolia",
