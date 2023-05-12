@@ -1,10 +1,9 @@
 import { ethers } from 'hardhat';
 import {
   type DiamondMultiInit__factory,
-  type SoulHubModularized,
   type TransparentUpgradeableProxy,
-  ERC5727UpgradeableDS__factory,
-  ERC5727GovernanceUpgradeableDS__factory,
+  SoulHubUpgradeable__factory,
+  type SoulHubUpgradeable,
 } from '../typechain';
 import { FacetCutAction, getSelectors, remove } from '../test/utils';
 
@@ -26,8 +25,8 @@ async function deployTransparentProxy(
   return transparentProxy;
 }
 
-async function deploySoulHub(): Promise<SoulHubModularized> {
-  const soulHubContract = await ethers.getContractFactory('SoulHubModularized');
+async function deploySoulHub(): Promise<SoulHubUpgradeable> {
+  const soulHubContract = await ethers.getContractFactory('SoulHubUpgradeable');
   const soulHub = await soulHubContract.deploy();
   await soulHub.deployed();
   console.log('SoulHub contract deployed to:', soulHub.address);
@@ -82,39 +81,17 @@ async function main(): Promise<void> {
   );
   const diamondMultiInit = await diamondMultiInitFactory.deploy();
   console.log('diamondInit deployed: ', diamondMultiInit.address);
-  const IERC5727 = ERC5727UpgradeableDS__factory.createInterface();
-  const IERC5727Governance = ERC5727GovernanceUpgradeableDS__factory.createInterface();
-  const ERC5727InitCall = IERC5727.encodeFunctionData('init', [
-    'soulhub',
-    'SOUL',
-    admin.address,
-    '1',
-  ]);
-  const ERC5727GovernanceInitCall = IERC5727Governance.encodeFunctionData('init', [admin.address]);
-  // Creating a function call
-  // This call gets executed during deployment and can also be executed in upgrades
-  // It is executed with delegatecall on the DiamondInit address.
-  const abi = [
-    'function multiInit(address[] calldata _addresses, bytes[] calldata _calldata) external',
-  ];
-  const diamondMultiInitInterface = new ethers.utils.Interface(abi);
-  const functionCall = diamondMultiInitInterface.encodeFunctionData('multiInit', [
-    [facetCuts[2].facetAddress, facetCuts[4].facetAddress],
-    [ERC5727InitCall, ERC5727GovernanceInitCall],
-  ]);
-  // Setting arguments that will be used in the diamond constructor
-  const diamondArgs = {
-    owner: admin.address,
-    init: diamondMultiInit.address,
-    initCalldata: functionCall,
-  };
-  const Diamond = await ethers.getContractFactory('Diamond');
-  const diamond = await Diamond.deploy(facetCuts, diamondArgs);
-  await diamond.deployed();
+  const facetAddress = facetCuts.map((facet) => facet.facetAddress);
+  const action = facetCuts.map((facet) => facet.action);
+  const functionSelectors = facetCuts.map((facet) => facet.functionSelectors);
+  const initData = SoulHubUpgradeable__factory.createInterface().encodeFunctionData(
+    '__SoulHub_init',
+    [facetCuts.length, facetAddress, action, functionSelectors, diamondMultiInit.address],
+  );
   const soulHubImpl = await deploySoulHub();
-  const soulHubProxy = await deployTransparentProxy(soulHubImpl.address, admin.address, '0x');
+  const soulHubProxy = await deployTransparentProxy(soulHubImpl.address, admin.address, initData);
+
   console.log('SoulHubProxy deployed: ', soulHubProxy.address);
-  console.log('Diamond deployed: ', diamond.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
