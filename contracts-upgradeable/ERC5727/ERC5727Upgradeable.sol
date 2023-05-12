@@ -30,6 +30,7 @@ contract ERC5727Upgradeable is
     mapping(uint256 => address) internal _verifiers;
     mapping(uint256 => BurnAuth) internal _burnAuths;
     mapping(uint256 => bool) internal _unlocked;
+    mapping(uint256 => bool) internal _revoked;
 
     mapping(uint256 => address) internal _slotVerifiers;
     mapping(uint256 => BurnAuth) internal _slotBurnAuths;
@@ -195,6 +196,12 @@ contract ERC5727Upgradeable is
         data;
     }
 
+    function isRevoked(uint256 tokenId) public view virtual returns (bool) {
+        _requireMinted(tokenId);
+
+        return _revoked[tokenId];
+    }
+
     function locked(
         uint256 tokenId
     ) public view virtual override returns (bool) {
@@ -225,16 +232,8 @@ contract ERC5727Upgradeable is
         return (owner() == from) || _minterRole[slot][from];
     }
 
-    function _burn(uint256 tokenId) internal virtual override {
-        super._burn(tokenId);
-
-        delete _issuers[tokenId];
-        delete _verifiers[tokenId];
-        delete _burnAuths[tokenId];
-    }
-
     function _revoke(address from, uint256 tokenId) internal virtual {
-        _burn(tokenId);
+        _revoked[tokenId] = true;
 
         emit Revoked(from, tokenId);
     }

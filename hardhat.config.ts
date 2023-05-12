@@ -20,7 +20,12 @@ const config: HardhatUserConfig = {
     },
   },
   paths: {
-    sources: process.env.UPGRADEABLE === '1' ? './contracts-upgradeable' : './contracts',
+    sources:
+      process.env.MODULARIZED === '1'
+        ? './contracts-modularized'
+        : process.env.UPGRADEABLE === '1'
+        ? './contracts-upgradeable'
+        : './contracts',
   },
   ...(process.env.PRIVATE_KEY ? { networks } : { defaultNetwork: 'hardhat' }),
   typechain: {

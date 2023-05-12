@@ -312,8 +312,10 @@ describe('ERC5727Test', function () {
       await expect(coreContract['revoke(uint256,uint256,bytes)'](100, 0, [])).be.reverted;
     });
 
-    it('should decrease account balance if token is revoked', async function () {
-      const { getCoreContract, admin, tokenOwner1 } = await loadFixture(deployTokenFixture);
+    it('should set revoked if token is revoked', async function () {
+      const { getCoreContract, admin, tokenOwner1, ERC5727ExampleContract } = await loadFixture(
+        deployTokenFixture,
+      );
       const coreContract = getCoreContract(admin);
       await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
         tokenOwner1.address,
@@ -323,9 +325,8 @@ describe('ERC5727Test', function () {
         admin.address,
         [],
       );
-      expect(await coreContract['balanceOf(address)'](tokenOwner1.address)).equal(1);
       await coreContract['revoke(uint256,bytes)'](10, []);
-      expect(await coreContract['balanceOf(address)'](tokenOwner1.address)).equal(0);
+      expect(await ERC5727ExampleContract.isRevoked(10)).equal(true);
     });
 
     it('should decrease token balance if amount is revoked', async function () {

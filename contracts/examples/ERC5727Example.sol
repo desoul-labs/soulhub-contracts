@@ -30,12 +30,6 @@ contract ERC5727Example is
         return _baseTokenURI;
     }
 
-    function _burn(
-        uint256 tokenId
-    ) internal virtual override(ERC5727, ERC5727Enumerable) {
-        super._burn(tokenId);
-    }
-
     function _beforeTokenTransfer(
         address from,
         address to,

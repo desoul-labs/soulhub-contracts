@@ -76,6 +76,9 @@ jobs:
       - name: Compile
         run: pnpm run compile
 
+      - name: Compile modularized
+        run: pnpm run compile:modularized
+
   test:
     runs-on: ubuntu-latest
     needs: [compile]

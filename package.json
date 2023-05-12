@@ -14,6 +14,7 @@
   "scripts": {
     "compile": "NODE_ENV=development hardhat compile",
     "compile:upgradeable": "NODE_ENV=development UPGRADEABLE=1 hardhat compile",
+    "compile:modularized": "NODE_ENV=development MODULARIZED=1 hardhat compile",
     "deploy:chapel": "hardhat run scripts/deploy.ts --network chapel",
     "deploy:goerli": "hardhat run scripts/deploy.ts --network goerli",
     "deploy:hardhat": "hardhat run scripts/deploy.ts --network hardhat",
@@ -30,7 +31,8 @@
     "prepare": "husky install",
     "release": "standard-version",
     "test": "NODE_ENV=development hardhat test",
-    "test:coverage": "NODE_ENV=development hardhat coverage --testfiles 'test/*.ts'",
+    "test:modularized": "NODE_ENV=development hardhat test test/modularContract.test.ts",
+    "test:coverage": "pnpm run compile && pnpm run compile:modularized && NODE_ENV=development hardhat coverage --testfiles 'test/*.ts'",
     "typechain": "NODE_ENV=development hardhat typechain"
   },
   "lint-staged": {

@@ -90,12 +90,6 @@ abstract contract ERC5727Enumerable is
         super._beforeTokenTransfer(from, to, firstTokenId, batchSize);
     }
 
-    function _burn(
-        uint256 tokenId
-    ) internal virtual override(ERC3525, ERC5727) {
-        ERC5727._burn(tokenId);
-    }
-
     function _beforeValueTransfer(
         address from,
         address to,

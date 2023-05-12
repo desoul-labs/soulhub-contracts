@@ -20,7 +20,7 @@ contract ERC5727ExampleUpgradeable is
         string memory name_,
         string memory symbol_,
         address admin_,
-        string memory baseURI_,
+        string memory baseUri_,
         string memory version_
     ) public initializer {
         __EIP712_init_unchained(name_, version_);
@@ -28,7 +28,7 @@ contract ERC5727ExampleUpgradeable is
         __ERC3525_init_unchained(18);
         __ERC5727_init_unchained(admin_);
         __ERC5727Governance_init_unchained(admin_);
-        __ERC5727Example_init_unchained(baseURI_);
+        __ERC5727Example_init_unchained(baseUri_);
     }
 
     function __ERC5727Example_init_unchained(
@@ -39,16 +39,6 @@ contract ERC5727ExampleUpgradeable is
 
     function _baseURI() internal view virtual override returns (string memory) {
         return _baseUri;
-    }
-
-    function _burn(
-        uint256 tokenId
-    )
-        internal
-        virtual
-        override(ERC5727Upgradeable, ERC5727EnumerableUpgradeable)
-    {
-        super._burn(tokenId);
     }
 
     function _beforeTokenTransfer(
