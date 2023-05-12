@@ -3,6 +3,7 @@ import {
   type DiamondMultiInit__factory,
   type TransparentUpgradeableProxy,
   SoulHubUpgradeable__factory,
+  type SoulHubUpgradeable,
 } from '../typechain';
 import { FacetCutAction, getSelectors, remove } from '../test/utils';
 
@@ -24,7 +25,7 @@ async function deployTransparentProxy(
   return transparentProxy;
 }
 
-async function deploySoulHub(): Promise<SoulHubModularized> {
+async function deploySoulHub(): Promise<SoulHubUpgradeable> {
   const soulHubContract = await ethers.getContractFactory('SoulHubUpgradeable');
   const soulHub = await soulHubContract.deploy();
   await soulHub.deployed();
