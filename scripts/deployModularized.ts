@@ -1,6 +1,8 @@
 import { ethers } from 'hardhat';
 import {
   type DiamondMultiInit__factory,
+  type SoulHubModularized,
+  type TransparentUpgradeableProxy,
   ERC5727UpgradeableDS__factory,
   ERC5727GovernanceUpgradeableDS__factory,
 } from '../typechain';
@@ -10,6 +12,26 @@ interface FacetCuts {
   facetAddress: string;
   action: number;
   functionSelectors: string[];
+}
+
+async function deployTransparentProxy(
+  impl: string,
+  admin: string,
+  data: string,
+): Promise<TransparentUpgradeableProxy> {
+  const transparentProxyContract = await ethers.getContractFactory('TransparentUpgradeableProxy');
+  const transparentProxy = await transparentProxyContract.deploy(impl, admin, data);
+  await transparentProxy.deployed();
+  console.log('TransparentUpgradeableProxy contract deployed to:', transparentProxy.address);
+  return transparentProxy;
+}
+
+async function deploySoulHub(): Promise<SoulHubModularized> {
+  const soulHubContract = await ethers.getContractFactory('SoulHubModularized');
+  const soulHub = await soulHubContract.deploy();
+  await soulHub.deployed();
+  console.log('SoulHub contract deployed to:', soulHub.address);
+  return soulHub;
 }
 
 async function deployFacets(): Promise<FacetCuts[]> {
@@ -89,6 +111,9 @@ async function main(): Promise<void> {
   const Diamond = await ethers.getContractFactory('Diamond');
   const diamond = await Diamond.deploy(facetCuts, diamondArgs);
   await diamond.deployed();
+  const soulHubImpl = await deploySoulHub();
+  const soulHubProxy = await deployTransparentProxy(soulHubImpl.address, admin.address, '0x');
+  console.log('SoulHubProxy deployed: ', soulHubProxy.address);
   console.log('Diamond deployed: ', diamond.address);
 }
 
