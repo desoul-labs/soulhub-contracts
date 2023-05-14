@@ -97,3 +97,28 @@ jobs:
         run: pnpm publish --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+  publish-contracts-modularized:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: contracts-modularized
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 7
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          registry-url: https://npm.pkg.github.com/
+          cache: 'pnpm'
+
+      - name: Publish
+        run: pnpm publish --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
