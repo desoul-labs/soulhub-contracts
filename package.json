@@ -19,7 +19,7 @@
     "deploy:goerli": "hardhat run scripts/deploy.ts --network goerli",
     "deploy:hardhat": "hardhat run scripts/deploy.ts --network hardhat",
     "deploy:mainnet": "hardhat run scripts/deploy.ts --network mainnet",
-    "deploy:mumbai": "hardhat run scripts/deploy.ts --network mumbai",
+    "deploy:mumbai": "hardhat run scripts/deployModularized.ts --network mumbai",
     "deploy:optimism-goerli": "hardhat run scripts/deploy.ts --network optimismGoerli",
     "deploy:polygon": "hardhat run scripts/deploy.ts --network polygon",
     "deploy:sepolia": "hardhat run scripts/deploy.ts --network sepolia",
