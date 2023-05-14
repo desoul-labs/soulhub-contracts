@@ -39,7 +39,7 @@ jobs:
         run: pnpm install
 
       - name: Compile
-        run: pnpm run compile:upgradeable
+        run: pnpm run compile:modularized
 
       - name: Publish
         run: pnpm --filter=./typechain publish --no-git-checks
