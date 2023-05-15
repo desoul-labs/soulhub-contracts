@@ -4,10 +4,9 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [0.3.2](https://github.com/desoul-labs/soulhub-contracts/compare/v0.3.1...v0.3.2) (2023-05-15)
 
-
 ### Bug Fixes
 
-* fix init contract ([ee8694b](https://github.com/desoul-labs/soulhub-contracts/commit/ee8694b0b2ced6b2ddd837a9fe8229454e1eb5ab))
+- fix init contract ([ee8694b](https://github.com/desoul-labs/soulhub-contracts/commit/ee8694b0b2ced6b2ddd837a9fe8229454e1eb5ab))
 
 ### [0.3.1](https://github.com/desoul-labs/soulhub-contracts/compare/v0.3.0...v0.3.1) (2023-05-15)
 

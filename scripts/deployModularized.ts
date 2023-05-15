@@ -44,6 +44,7 @@ async function deployFacets(): Promise<FacetCuts[]> {
     'ERC5727ExpirableUpgradeableDS',
     'ERC5727EnumerableUpgradeableDS',
     'ERC5727DelegateUpgradeableDS',
+    'ERC5727SlotSettableUpgradeableDS',
   ];
   // The `facetCuts` variable is the FacetCut[] that contains the functions to add during diamond deployment
   let allSelectors: string[] = [];
@@ -72,7 +73,7 @@ async function deployFacets(): Promise<FacetCuts[]> {
   return facetCuts;
 }
 async function main(): Promise<void> {
-  const [admin, owner] = await ethers.getSigners();
+  const [admin] = await ethers.getSigners();
   console.log('Deploying contracts with the account:', admin.address);
   console.log('Network:', (await ethers.provider.getNetwork()).name);
   const facetCuts = await deployFacets();
@@ -94,8 +95,8 @@ async function main(): Promise<void> {
   const soulHubProxy = await deployTransparentProxy(soulHubImpl.address, admin.address, initData);
 
   console.log('SoulHubProxy deployed: ', soulHubProxy.address);
-  const soulHubProxyContract = SoulHubUpgradeable__factory.connect(soulHubProxy.address, owner);
-  await soulHubProxyContract.createOrganization('1q23');
+  // const soulHubProxyContract = SoulHubUpgradeable__factory.connect(soulHubProxy.address, owner);
+  // await soulHubProxyContract.createOrganization('1q23');
 }
 
 // We recommend this pattern to be able to use async/await everywhere
