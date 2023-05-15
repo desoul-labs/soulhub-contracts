@@ -82,7 +82,7 @@ contract SoulHubUpgradeable is ERC721EnumerableUpgradeable {
         string memory name
     ) external payable returns (address) {
         bytes memory coreInitData = abi.encodeWithSignature(
-            "init(string,string,string,string)",
+            "init(string,string,address,string,string)",
             name,
             name,
             _msgSender(),
@@ -93,10 +93,16 @@ contract SoulHubUpgradeable is ERC721EnumerableUpgradeable {
             "init(address)",
             _msgSender()
         );
+        address[] memory facetAddress = new address[](2);
+        bytes[] memory facetData = new bytes[](2);
+        facetAddress[0] = _initDiamondCut[2].facetAddress;
+        facetAddress[1] = _initDiamondCut[4].facetAddress;
+        facetData[0] = coreInitData;
+        facetData[1] = governanceInitData;
         bytes memory multiInitData = abi.encodeWithSignature(
-            "multiInit(address[], bytes[])",
-            [_initDiamondCut[2].facetAddress, _initDiamondCut[4].facetAddress],
-            [coreInitData, governanceInitData]
+            "multiInit(address[],bytes[])",
+            facetAddress,
+            facetData
         );
         DiamondArgs memory _args = DiamondArgs({
             owner: _msgSender(),

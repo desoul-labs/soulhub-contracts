@@ -107,6 +107,7 @@ describe('ERC5727Modularized', function () {
     const ERC5727InitCall = IERC5727.encodeFunctionData('init', [
       'soulhub',
       'SOUL',
+      admin.address,
       'https://api.soularis.io/contracts/',
       '1',
     ]);

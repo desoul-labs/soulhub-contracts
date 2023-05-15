@@ -89,9 +89,13 @@ async function main(): Promise<void> {
     [facetCuts.length, facetAddress, action, functionSelectors, diamondMultiInit.address],
   );
   const soulHubImpl = await deploySoulHub();
+  await soulHubImpl.deployed();
+  console.log('soulHubImpl deployed', soulHubImpl.address);
   const soulHubProxy = await deployTransparentProxy(soulHubImpl.address, admin.address, initData);
 
   console.log('SoulHubProxy deployed: ', soulHubProxy.address);
+  // const soulHubProxyContract = SoulHubUpgradeable__factory.connect(soulHubProxy.address, owner);
+  // await soulHubProxyContract.createOrganization("1q23");
 }
 
 // We recommend this pattern to be able to use async/await everywhere
