@@ -11,9 +11,9 @@ function getSelectors(contract: Contract): string[] {
     }
     return acc;
   }, []);
-  selectors.contract = contract;
-  selectors.remove = remove;
-  selectors.get = get;
+  // selectors.contract = contract;
+  // selectors.remove = remove;
+  // selectors.get = get;
   return selectors;
 }
 
@@ -42,20 +42,20 @@ function remove(_this: any, existSelectors: any): string[] {
 
 // used with getSelectors to get selectors from an array of selectors
 // functionNames argument is an array of function signatures
-function get(this: any, functionNames: any): string[] {
-  const selectors = this.filter((v: string) => {
-    for (const functionName of functionNames) {
-      if (v === this.contract.interface.getSighash(functionName)) {
-        return true;
-      }
-    }
-    return false;
-  });
-  selectors.contract = this.contract;
-  selectors.remove = this.remove;
-  selectors.get = this.get;
-  return selectors;
-}
+// function get(this: any, functionNames: any): string[] {
+//   const selectors = this.filter((v: string) => {
+//     for (const functionName of functionNames) {
+//       if (v === this.contract.interface.getSighash(functionName)) {
+//         return true;
+//       }
+//     }
+//     return false;
+//   });
+//   selectors.contract = this.contract;
+//   selectors.remove = this.remove;
+//   selectors.get = this.get;
+//   return selectors;
+// }
 
 // remove selectors using an array of signatures
 function removeSelectors(selectors: any[], signatures: any[]): string[] {
