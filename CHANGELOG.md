@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.2-beta.1](https://github.com/desoul-labs/soulhub-contracts/compare/v0.3.2...v0.3.2-beta.1) (2023-05-15)
+
+
+### Features
+
+* add ERC5727SlotSettable ([fd1b945](https://github.com/desoul-labs/soulhub-contracts/commit/fd1b945e8619ede4a2ae37e4b4e508988926829e))
+
+
+### Bug Fixes
+
+* fix deploy script ([e2ac68d](https://github.com/desoul-labs/soulhub-contracts/commit/e2ac68d7032bf4ca8bcde186dc57532bd320b38e))
+
 ### [0.3.2](https://github.com/desoul-labs/soulhub-contracts/compare/v0.3.1...v0.3.2) (2023-05-15)
 
 ### Bug Fixes
