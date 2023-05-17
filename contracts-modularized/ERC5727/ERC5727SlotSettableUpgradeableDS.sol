@@ -9,6 +9,23 @@ import "../ERC3525/ERC3525Storage.sol";
 contract ERC5727SlotSettableUpgradeableDS is ERC5727EnumerableUpgradeableDS {
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.UintSet;
 
+    function init(
+        string memory name_,
+        string memory symbol_,
+        address admin_,
+        string memory baseUri_,
+        string memory version_
+    ) external virtual override initializer {
+        __EIP712_init_unchained(name_, version_);
+        __ERC721_init_unchained(name_, symbol_, baseUri_);
+        __ERC3525_init_unchained(18);
+        __ERC5727_init_unchained(admin_);
+        __ERC5727Enumerable_init_unchained();
+        __ERC5727SlotSettable_init_unchained();
+    }
+
+    function __ERC5727SlotSettable_init_unchained() internal onlyInitializing {}
+
     function _beforeTokenTransfer(
         address from,
         address to,
@@ -26,6 +43,14 @@ contract ERC5727SlotSettableUpgradeableDS is ERC5727EnumerableUpgradeableDS {
         uint256 slot,
         uint256 value
     ) internal virtual override(ERC5727EnumerableUpgradeableDS) {
+        ERC5727EnumerableUpgradeableDS._beforeValueTransfer(
+            from,
+            to,
+            fromTokenId,
+            toTokenId,
+            slot,
+            value
+        );
         if (from == address(0)) {
             if (
                 LibERC5727SlotSettableStorage.s()._maxSupply[slot] != 0 &&
@@ -35,18 +60,7 @@ contract ERC5727SlotSettableUpgradeableDS is ERC5727EnumerableUpgradeableDS {
                 revert ExceedsMaxSupply(
                     LibERC5727SlotSettableStorage.s()._maxSupply[slot]
                 );
-            if (ownerBalanceInSlot(to, slot) > 0) {
-                revert Forbidden();
-            }
         }
-        ERC5727EnumerableUpgradeableDS._beforeValueTransfer(
-            from,
-            to,
-            fromTokenId,
-            toTokenId,
-            slot,
-            value
-        );
     }
 
     function _afterValueTransfer(

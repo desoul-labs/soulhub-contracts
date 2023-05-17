@@ -3,11 +3,11 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts-upgradeable/utils/cryptography/ECDSAUpgradeable.sol";
 
-import "./ERC5727EnumerableCore.sol";
+import "./ERC5727SlotSettableCore.sol";
 import "./interfaces/IERC5727RecoveryUpgradeable.sol";
 import "./ERC5727Storage.sol";
 
-contract ERC5727RecoveryUpgradeableDS is ERC5727EnumerableCore {
+contract ERC5727RecoveryUpgradeableDS is ERC5727SlotSettableCore {
     event Recovered(address indexed from, address indexed to);
     using ECDSAUpgradeable for bytes32;
 

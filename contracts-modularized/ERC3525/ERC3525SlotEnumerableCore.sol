@@ -10,11 +10,13 @@ import "./ERC3525Core.sol";
 contract ERC3525SlotEnumerableCore is ERC3525Core {
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.UintSet;
 
-    function slotCount() public view virtual returns (uint256) {
+    function slotCount() internal view virtual returns (uint256) {
         return LibERC3525SlotEnumerableStorage.s()._allSlots.length();
     }
 
-    function slotByIndex(uint256 index) public view virtual returns (uint256) {
+    function slotByIndex(
+        uint256 index
+    ) internal view virtual returns (uint256) {
         if (index >= LibERC3525SlotEnumerableStorage.s()._allSlots.length())
             revert IndexOutOfBounds(
                 index,
@@ -41,7 +43,7 @@ contract ERC3525SlotEnumerableCore is ERC3525Core {
     function tokenInSlotByIndex(
         uint256 slot,
         uint256 index
-    ) public view virtual returns (uint256) {
+    ) internal view virtual returns (uint256) {
         if (!_slotExists(slot)) revert NotFound(slot);
         if (
             index >=

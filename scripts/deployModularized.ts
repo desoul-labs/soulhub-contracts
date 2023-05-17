@@ -73,7 +73,7 @@ async function deployFacets(): Promise<FacetCuts[]> {
   return facetCuts;
 }
 async function main(): Promise<void> {
-  const [admin] = await ethers.getSigners();
+  const [admin, owner] = await ethers.getSigners();
   console.log('Deploying contracts with the account:', admin.address);
   console.log('Network:', (await ethers.provider.getNetwork()).name);
   const facetCuts = await deployFacets();
@@ -81,6 +81,7 @@ async function main(): Promise<void> {
     'DiamondMultiInit',
   );
   const diamondMultiInit = await diamondMultiInitFactory.deploy();
+  await diamondMultiInit.deployed();
   console.log('diamondInit deployed: ', diamondMultiInit.address);
   const facetAddress = facetCuts.map((facet) => facet.facetAddress);
   const action = facetCuts.map((facet) => facet.action);
@@ -95,8 +96,10 @@ async function main(): Promise<void> {
   const soulHubProxy = await deployTransparentProxy(soulHubImpl.address, admin.address, initData);
 
   console.log('SoulHubProxy deployed: ', soulHubProxy.address);
-  // const soulHubProxyContract = SoulHubUpgradeable__factory.connect(soulHubProxy.address, owner);
-  // await soulHubProxyContract.createOrganization('1q23');
+  const soulHubProxyContract = SoulHubUpgradeable__factory.connect(soulHubProxy.address, owner);
+  const tx = await soulHubProxyContract.createOrganization('1q23');
+  await tx.wait();
+  console.log(tx);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

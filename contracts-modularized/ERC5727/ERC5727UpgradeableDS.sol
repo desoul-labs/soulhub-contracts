@@ -58,7 +58,7 @@ contract ERC5727UpgradeableDS is
         address admin_,
         string memory baseUri_,
         string memory version_
-    ) external initializer {
+    ) external virtual initializer {
         __EIP712_init_unchained(name_, version_);
         __ERC721_init_unchained(name_, symbol_, baseUri_);
         __ERC3525_init_unchained(18);

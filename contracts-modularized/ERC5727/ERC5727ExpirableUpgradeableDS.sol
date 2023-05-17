@@ -1,14 +1,14 @@
 //SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.0;
 
-import "./ERC5727Core.sol";
+import "./ERC5727SlotSettableCore.sol";
 import "./interfaces/IERC5727ExpirableUpgradeable.sol";
 import "./ERC5727Storage.sol";
 import "./ERC5727ExpirableUpgradeableStorage.sol";
 
 contract ERC5727ExpirableUpgradeableDS is
     IERC5727ExpirableUpgradeable,
-    ERC5727Core
+    ERC5727SlotSettableCore
 {
     modifier onlyManager(uint256 tokenId) {
         if (
