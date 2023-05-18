@@ -37,14 +37,12 @@ async function deployFacets(): Promise<FacetCuts[]> {
   const FacetNames = [
     'DiamondCutFacet',
     'DiamondLoupeFacet',
-    'ERC5727UpgradeableDS',
+    'ERC5727SlotSettableUpgradeableDS',
     'ERC5727ClaimableUpgradeableDS',
     'ERC5727GovernanceUpgradeableDS',
     'ERC5727RecoveryUpgradeableDS',
     'ERC5727ExpirableUpgradeableDS',
-    'ERC5727EnumerableUpgradeableDS',
     'ERC5727DelegateUpgradeableDS',
-    'ERC5727SlotSettableUpgradeableDS',
   ];
   // The `facetCuts` variable is the FacetCut[] that contains the functions to add during diamond deployment
   let allSelectors: string[] = [];

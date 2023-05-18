@@ -89,4 +89,8 @@ export const networks: NetworksUserConfig = {
     url: 'https://rpc.tenderly.co/fork/fdc07e58-3d7e-4a61-b91f-0bf903e50439',
     accounts: [process.env.PRIVATE_KEY ?? ''],
   },
+  astar: {
+    url: 'https://evm.astar.network/',
+    accounts: [process.env.PRIVATE_KEY ?? ''],
+  },
 };

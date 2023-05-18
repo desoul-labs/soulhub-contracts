@@ -6,7 +6,7 @@ import "./interfaces/IERC5727EnumerableUpgradeable.sol";
 import "../ERC3525/ERC3525SlotEnumerableUpgradeableDS.sol";
 import "./ERC5727EnumerableStorage.sol";
 
-abstract contract ERC5727EnumerableUpgradeableDS is
+contract ERC5727EnumerableUpgradeableDS is
     IERC5727EnumerableUpgradeable,
     ERC5727UpgradeableDS,
     ERC3525SlotEnumerableUpgradeableDS
