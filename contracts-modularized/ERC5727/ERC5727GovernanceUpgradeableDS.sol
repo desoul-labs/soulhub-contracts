@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.0;
 
-import "./ERC5727Core.sol";
+import "./ERC5727SlotSettableCore.sol";
 import "./interfaces/IERC5727GovernanceUpgradeable.sol";
 import "./ERC5727GovernanceStorage.sol";
 
 contract ERC5727GovernanceUpgradeableDS is
     IERC5727GovernanceUpgradeable,
-    ERC5727Core
+    ERC5727SlotSettableCore
 {
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.AddressSet;
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.UintSet;

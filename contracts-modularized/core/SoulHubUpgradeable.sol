@@ -5,9 +5,10 @@ import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol"
 import "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableMapUpgradeable.sol";
 
 import "../../contracts-upgradeable/ERC721/ERC721EnumerableUpgradeable.sol";
+import "../diamond/interfaces/IDiamond.sol";
 import "../diamond/Diamond.sol";
 
-contract SoulHubModularized is ERC721EnumerableUpgradeable {
+contract SoulHubUpgradeable is ERC721EnumerableUpgradeable {
     using EnumerableMapUpgradeable for EnumerableMapUpgradeable.AddressToUintMap;
 
     event OrganizationCreated(
@@ -20,13 +21,43 @@ contract SoulHubModularized is ERC721EnumerableUpgradeable {
     mapping(uint256 => address) private _organizations;
     mapping(address => EnumerableMapUpgradeable.AddressToUintMap)
         private _members;
+    IDiamondCut.FacetCut[] private _initDiamondCut;
+    address private _initAddress;
 
-    function __SoulHub_init() public initializer {
+    function __SoulHub_init(
+        uint256 index,
+        address[] memory facetAddress,
+        IDiamond.FacetCutAction[] memory action,
+        bytes4[][] memory selectors,
+        address initAddress_
+    ) public initializer {
         __ERC721_init_unchained("SoulHub", "SOUL");
-        __SoulHub_init_unchained();
+        __SoulHub_init_unchained(
+            index,
+            facetAddress,
+            action,
+            selectors,
+            initAddress_
+        );
     }
 
-    function __SoulHub_init_unchained() internal onlyInitializing {}
+    function __SoulHub_init_unchained(
+        uint256 index,
+        address[] memory facetAddress,
+        IDiamond.FacetCutAction[] memory action,
+        bytes4[][] memory selectors,
+        address initAddress_
+    ) internal onlyInitializing {
+        for (uint i = 0; i < index; i++) {
+            IDiamond.FacetCut memory tmp = IDiamond.FacetCut(
+                facetAddress[i],
+                action[i],
+                selectors[i]
+            );
+            _initDiamondCut.push(tmp);
+        }
+        _initAddress = initAddress_;
+    }
 
     function _baseURI() internal view virtual override returns (string memory) {
         return "https://soulhub.dev/";
@@ -48,10 +79,37 @@ contract SoulHubModularized is ERC721EnumerableUpgradeable {
     }
 
     function createOrganization(
-        IDiamondCut.FacetCut[] memory _diamondCut,
-        DiamondArgs memory _args
+        string memory name
     ) external payable returns (address) {
-        Diamond diamond = new Diamond(_diamondCut, _args);
+        bytes memory coreInitData = abi.encodeWithSignature(
+            "init(string,string,address,string,string)",
+            name,
+            name,
+            _msgSender(),
+            _baseURI(),
+            "v1"
+        );
+        bytes memory governanceInitData = abi.encodeWithSignature(
+            "init(address)",
+            _msgSender()
+        );
+        address[] memory facetAddress = new address[](2);
+        bytes[] memory facetData = new bytes[](2);
+        facetAddress[0] = _initDiamondCut[2].facetAddress;
+        facetAddress[1] = _initDiamondCut[4].facetAddress;
+        facetData[0] = coreInitData;
+        facetData[1] = governanceInitData;
+        bytes memory multiInitData = abi.encodeWithSignature(
+            "multiInit(address[],bytes[])",
+            facetAddress,
+            facetData
+        );
+        DiamondArgs memory _args = DiamondArgs({
+            owner: _msgSender(),
+            init: _initAddress,
+            initCalldata: multiInitData
+        });
+        Diamond diamond = new Diamond(_initDiamondCut, _args);
         emit OrganizationCreated(_msgSender(), address(diamond));
 
         uint256 nextId = totalSupply() + 1;

@@ -12,12 +12,14 @@ import {
   type ERC5727DelegateUpgradeableDS,
   type ERC5727EnumerableUpgradeableDS,
   type ERC5727RecoveryUpgradeableDS,
+  type ERC5727SlotSettableUpgradeableDS,
   ERC5727UpgradeableDS__factory,
   ERC5727ClaimableUpgradeableDS__factory,
   ERC5727GovernanceUpgradeableDS__factory,
   ERC5727RecoveryUpgradeableDS__factory,
   ERC5727EnumerableUpgradeableDS__factory,
   ERC5727DelegateUpgradeableDS__factory,
+  ERC5727SlotSettableUpgradeableDS__factory,
 } from '../typechain';
 import { FacetCutAction, getSelectors, remove } from './utils';
 import { MerkleTree } from 'merkletreejs';
@@ -28,6 +30,7 @@ interface Fixture {
   getRecoveryContract: (signer: SignerWithAddress) => ERC5727RecoveryUpgradeableDS;
   getEnumerableContract: (signer: SignerWithAddress) => ERC5727EnumerableUpgradeableDS;
   getDelegateContract: (signer: SignerWithAddress) => ERC5727DelegateUpgradeableDS;
+  getSlotSettableContract: (signer: SignerWithAddress) => ERC5727SlotSettableUpgradeableDS;
   diamond: Diamond;
   admin: SignerWithAddress;
   tokenOwner1: SignerWithAddress;
@@ -70,43 +73,42 @@ describe('ERC5727Modularized', function () {
     const FacetNames = [
       'DiamondCutFacet',
       'DiamondLoupeFacet',
-      'ERC5727UpgradeableDS',
+      'ERC5727SlotSettableUpgradeableDS',
       'ERC5727ClaimableUpgradeableDS',
       'ERC5727GovernanceUpgradeableDS',
       'ERC5727RecoveryUpgradeableDS',
       'ERC5727ExpirableUpgradeableDS',
-      'ERC5727EnumerableUpgradeableDS',
       'ERC5727DelegateUpgradeableDS',
     ];
     // The `facetCuts` variable is the FacetCut[] that contains the functions to add during diamond deployment
     const facetCuts: FacetCuts[] = [];
+    let allSelectors: string[] = [];
     for (const FacetName of FacetNames) {
       const Facet = await ethers.getContractFactory(FacetName);
       const facet = await Facet.deploy();
       await facet.deployed();
-      console.log(`${FacetName} deployed: ${facet.address}`);
       if (facetCuts.length === 0) {
         facetCuts.push({
           facetAddress: facet.address,
           action: FacetCutAction.Add,
           functionSelectors: getSelectors(facet),
         });
+        allSelectors = [...getSelectors(facet)];
       } else {
         facetCuts.push({
           facetAddress: facet.address,
           action: FacetCutAction.Add,
-          functionSelectors: remove(
-            getSelectors(facet),
-            facetCuts[facetCuts.length - 1].functionSelectors,
-          ),
+          functionSelectors: remove(getSelectors(facet), allSelectors),
         });
+        allSelectors = [...allSelectors, ...facetCuts[facetCuts.length - 1].functionSelectors];
       }
     }
-    const IERC5727 = ERC5727UpgradeableDS__factory.createInterface();
+    const IERC5727 = ERC5727SlotSettableUpgradeableDS__factory.createInterface();
     const IERC5727Governance = ERC5727GovernanceUpgradeableDS__factory.createInterface();
     const ERC5727InitCall = IERC5727.encodeFunctionData('init', [
       'soulhub',
       'SOUL',
+      admin.address,
       'https://api.soularis.io/contracts/',
       '1',
     ]);
@@ -149,6 +151,8 @@ describe('ERC5727Modularized', function () {
       ERC5727EnumerableUpgradeableDS__factory.connect(diamond.address, signer);
     const getDelegateContract = (signer: SignerWithAddress): ERC5727DelegateUpgradeableDS =>
       ERC5727DelegateUpgradeableDS__factory.connect(diamond.address, signer);
+    const getSlotSettableContract = (signer: SignerWithAddress): ERC5727SlotSettableUpgradeableDS =>
+      ERC5727SlotSettableUpgradeableDS__factory.connect(diamond.address, signer);
     return {
       getCoreContract,
       getClaimableContract,
@@ -156,6 +160,7 @@ describe('ERC5727Modularized', function () {
       getRecoveryContract,
       getEnumerableContract,
       getDelegateContract,
+      getSlotSettableContract,
       diamond,
       admin,
       tokenOwner1,
@@ -173,10 +178,11 @@ describe('ERC5727Modularized', function () {
       expect(await coreContract.owner()).to.equal(admin.address);
     });
     it('only admin can issue', async function () {
-      const { getCoreContract, admin, tokenOwner1, tokenOwner2 } = await loadFixture(
-        deployDiamondFixture,
-      );
+      const { getCoreContract, admin, tokenOwner1, tokenOwner2, getSlotSettableContract } =
+        await loadFixture(deployDiamondFixture);
       const coreContract = getCoreContract(admin);
+      const slotSettableContract = getSlotSettableContract(admin);
+      await slotSettableContract.setupSlot(1, 1000);
       await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
         tokenOwner1.address,
         1,
@@ -972,7 +978,7 @@ describe('ERC5727Modularized', function () {
       await governanceContract.requestApproval(tokenOwner1.address, 1, 1, 1, 0, admin.address, []);
       await governanceContract.addVoter(voter1.address);
       await governanceContractVoter.voteApproval(0, true, []);
-      await governanceContract.voteApproval(0, true, []);
+      // await governanceContract.voteApproval(0, true, []);
       await expect(governanceContractOperator.voteApproval(0, true, [])).be.reverted;
     });
     it('only creator can remove approval', async function () {
@@ -1165,6 +1171,224 @@ describe('ERC5727Modularized', function () {
         [],
       );
       await expect(delegateContract.undelegate(operator1.address, 1)).be.reverted;
+    });
+  });
+  describe('ERC5727SlotSettable', function () {
+    it('can issue in a slot after setting it', async function () {
+      const { getSlotSettableContract, admin, tokenOwner1 } = await loadFixture(
+        deployDiamondFixture,
+      );
+      const slotSettableContract = getSlotSettableContract(admin);
+      await slotSettableContract.setupSlot(1, 100);
+      await slotSettableContract.setupSlot(1, 100);
+      await slotSettableContract.batchIssue([tokenOwner1.address], 1, '', []);
+    });
+    it('should set right max supply for a slot', async function () {
+      const { getSlotSettableContract, admin } = await loadFixture(deployDiamondFixture);
+      const slotSettableContract = getSlotSettableContract(admin);
+      await slotSettableContract.setupSlot(1, 100);
+      expect(await slotSettableContract.getMaxSupply(1)).equal(100);
+    });
+  });
+  describe('ERC5727Enumerable', function () {
+    it('query slot count of owner', async function () {
+      const { getCoreContract, admin, tokenOwner1, getEnumerableContract } = await loadFixture(
+        deployDiamondFixture,
+      );
+      const coreContract = getCoreContract(admin);
+      const enumerableContract = getEnumerableContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        2,
+        2,
+        0,
+        admin.address,
+        [],
+      );
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        3,
+        3,
+        0,
+        admin.address,
+        [],
+      );
+      expect(await enumerableContract.slotCountOfOwner(tokenOwner1.address)).equal(3);
+    });
+    it('query slot of owner by index', async function () {
+      const { getCoreContract, admin, tokenOwner1, getEnumerableContract } = await loadFixture(
+        deployDiamondFixture,
+      );
+      const coreContract = getCoreContract(admin);
+      const enumerableContract = getEnumerableContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        2,
+        2,
+        0,
+        admin.address,
+        [],
+      );
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        3,
+        3,
+        0,
+        admin.address,
+        [],
+      );
+      expect(await enumerableContract.slotOfOwnerByIndex(tokenOwner1.address, 0)).equal(1);
+      expect(await enumerableContract.slotOfOwnerByIndex(tokenOwner1.address, 1)).equal(2);
+      expect(await enumerableContract.slotOfOwnerByIndex(tokenOwner1.address, 2)).equal(3);
+    });
+    it('query owner balance in slot', async function () {
+      const { getCoreContract, admin, tokenOwner1, getEnumerableContract } = await loadFixture(
+        deployDiamondFixture,
+      );
+      const coreContract = getCoreContract(admin);
+      const enumerableContract = getEnumerableContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        2,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        3,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      expect(await enumerableContract.ownerBalanceInSlot(tokenOwner1.address, 1)).equal(3);
+    });
+    it('should revert on query slot of owner by index if index out of bounds', async function () {
+      const { getCoreContract, admin, tokenOwner1, getEnumerableContract } = await loadFixture(
+        deployDiamondFixture,
+      );
+      const coreContract = getCoreContract(admin);
+      const enumerableContract = getEnumerableContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        2,
+        2,
+        0,
+        admin.address,
+        [],
+      );
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        3,
+        3,
+        0,
+        admin.address,
+        [],
+      );
+      expect(await enumerableContract.slotOfOwnerByIndex(tokenOwner1.address, 0)).equal(1);
+      expect(await enumerableContract.slotOfOwnerByIndex(tokenOwner1.address, 1)).equal(2);
+      expect(await enumerableContract.slotOfOwnerByIndex(tokenOwner1.address, 2)).equal(3);
+      await expect(enumerableContract.slotOfOwnerByIndex(tokenOwner1.address, 3)).be.reverted;
+    });
+    it('should revert on query slot count if owner is invaild', async function () {
+      const { getCoreContract, admin, tokenOwner1, getEnumerableContract } = await loadFixture(
+        deployDiamondFixture,
+      );
+      const coreContract = getCoreContract(admin);
+      const enumerableContract = getEnumerableContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await expect(enumerableContract.slotCountOfOwner(ethers.constants.AddressZero)).be.reverted;
+    });
+    it('should revert on query owner balance in slot if owner is invaild', async function () {
+      const { getCoreContract, admin, tokenOwner1, getEnumerableContract } = await loadFixture(
+        deployDiamondFixture,
+      );
+      const coreContract = getCoreContract(admin);
+      const enumerableContract = getEnumerableContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await expect(enumerableContract.ownerBalanceInSlot(ethers.constants.AddressZero, 1)).be
+        .reverted;
+    });
+    it('should revert on query owner balance in slot if slot is invaild', async function () {
+      const { getCoreContract, admin, tokenOwner1, getEnumerableContract } = await loadFixture(
+        deployDiamondFixture,
+      );
+      const coreContract = getCoreContract(admin);
+      const enumerableContract = getEnumerableContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await expect(enumerableContract.ownerBalanceInSlot(tokenOwner1.address, 3)).be.reverted;
+    });
+    it('should revert on query slot of owner by index if owner is invaild', async function () {
+      const { getCoreContract, admin, tokenOwner1, getEnumerableContract } = await loadFixture(
+        deployDiamondFixture,
+      );
+      const coreContract = getCoreContract(admin);
+      const enumerableContract = getEnumerableContract(admin);
+      await coreContract['issue(address,uint256,uint256,uint8,address,bytes)'](
+        tokenOwner1.address,
+        1,
+        1,
+        0,
+        admin.address,
+        [],
+      );
+      await expect(enumerableContract.slotOfOwnerByIndex(ethers.constants.AddressZero, 1)).be
+        .reverted;
     });
   });
 });

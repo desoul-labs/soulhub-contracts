@@ -1,6 +1,6 @@
 {
-  "name": "@desoul-labs/soulhub-contracts-upgradeable",
-  "version": "0.2.1-alpha.1",
+  "name": "@desoul-labs/soulhub-contracts-modularized",
+  "version": "0.3.2-beta.2",
   "description": "SoulHub Contracts",
   "homepage": "https://github.com/desoul-labs/soulhub-contracts#readme",
   "bugs": {

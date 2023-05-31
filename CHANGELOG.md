@@ -2,6 +2,80 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.2-beta.2](https://github.com/desoul-labs/soulhub-contracts/compare/v0.3.2-beta.1...v0.3.2-beta.2) (2023-05-17)
+
+
+### Features
+
+* update core contract ([1c31f16](https://github.com/desoul-labs/soulhub-contracts/commit/1c31f16d3793ef1aa1d5876036124f68df140fbe))
+
+### [0.3.2-beta.1](https://github.com/desoul-labs/soulhub-contracts/compare/v0.3.2...v0.3.2-beta.1) (2023-05-15)
+
+### Features
+
+- add ERC5727SlotSettable ([fd1b945](https://github.com/desoul-labs/soulhub-contracts/commit/fd1b945e8619ede4a2ae37e4b4e508988926829e))
+
+### Bug Fixes
+
+- fix deploy script ([e2ac68d](https://github.com/desoul-labs/soulhub-contracts/commit/e2ac68d7032bf4ca8bcde186dc57532bd320b38e))
+
+### [0.3.2](https://github.com/desoul-labs/soulhub-contracts/compare/v0.3.1...v0.3.2) (2023-05-15)
+
+### Bug Fixes
+
+- fix init contract ([ee8694b](https://github.com/desoul-labs/soulhub-contracts/commit/ee8694b0b2ced6b2ddd837a9fe8229454e1eb5ab))
+
+### [0.3.1](https://github.com/desoul-labs/soulhub-contracts/compare/v0.3.0...v0.3.1) (2023-05-15)
+
+## [0.3.0](https://github.com/desoul-labs/soulhub-contracts/compare/v0.2.0-alpha.1...v0.3.0) (2023-05-15)
+
+### Features
+
+- add modularized contract ([#223](https://github.com/desoul-labs/soulhub-contracts/issues/223)) ([d5bc3d1](https://github.com/desoul-labs/soulhub-contracts/commit/d5bc3d160eef785ed771beb3ec1f1d4832f0187b))
+- add unit test & fix bugs ([#220](https://github.com/desoul-labs/soulhub-contracts/issues/220)) ([85ed7af](https://github.com/desoul-labs/soulhub-contracts/commit/85ed7af800df20d2d57b886cb8a72ee7b4aed7ff))
+- update soulhub contract ([dd42270](https://github.com/desoul-labs/soulhub-contracts/commit/dd422701f3c5b3803bbe56c9efa5487805d60ce1))
+
+### Bug Fixes
+
+- fix typechain package ([2e519e7](https://github.com/desoul-labs/soulhub-contracts/commit/2e519e79a49ff8844543f41b45ddb81e432954ab))
+- merge dev ([06aeebf](https://github.com/desoul-labs/soulhub-contracts/commit/06aeebfe2a1a709504f3d901a30b6b47f3aa9a5e))
+- package.json ([f74a398](https://github.com/desoul-labs/soulhub-contracts/commit/f74a39821a87fc65a3bb9163dd30884139086268))
+- remove files ([487ba64](https://github.com/desoul-labs/soulhub-contracts/commit/487ba64686bb1f3ec81acf1899545c08ed158686))
+
+## [0.3.0](https://github.com/desoul-labs/soulhub-contracts/compare/v0.2.0-alpha.1...v0.3.0) (2023-05-14)
+
+### Features
+
+- add modularized contract ([#223](https://github.com/desoul-labs/soulhub-contracts/issues/223)) ([d5bc3d1](https://github.com/desoul-labs/soulhub-contracts/commit/d5bc3d160eef785ed771beb3ec1f1d4832f0187b))
+- add unit test & fix bugs ([#220](https://github.com/desoul-labs/soulhub-contracts/issues/220)) ([85ed7af](https://github.com/desoul-labs/soulhub-contracts/commit/85ed7af800df20d2d57b886cb8a72ee7b4aed7ff))
+- update soulhub contract ([dd42270](https://github.com/desoul-labs/soulhub-contracts/commit/dd422701f3c5b3803bbe56c9efa5487805d60ce1))
+
+### Bug Fixes
+
+- merge dev ([06aeebf](https://github.com/desoul-labs/soulhub-contracts/commit/06aeebfe2a1a709504f3d901a30b6b47f3aa9a5e))
+- package.json ([f74a398](https://github.com/desoul-labs/soulhub-contracts/commit/f74a39821a87fc65a3bb9163dd30884139086268))
+- remove files ([487ba64](https://github.com/desoul-labs/soulhub-contracts/commit/487ba64686bb1f3ec81acf1899545c08ed158686))
+
+## [3.0.0](https://github.com/desoul-labs/soulhub-contracts/compare/v0.2.2...v3.0.0) (2023-05-14)
+
+## [3.0.0](https://github.com/desoul-labs/soulhub-contracts/compare/v0.2.2...v3.0.0) (2023-05-14)
+
+### [0.2.2](https://github.com/desoul-labs/soulhub-contracts/compare/v0.2.1...v0.2.2) (2023-05-14)
+
+### [0.2.1](https://github.com/desoul-labs/soulhub-contracts/compare/v0.2.0-alpha.1...v0.2.1) (2023-05-14)
+
+### Features
+
+- add modularized contract ([#223](https://github.com/desoul-labs/soulhub-contracts/issues/223)) ([d5bc3d1](https://github.com/desoul-labs/soulhub-contracts/commit/d5bc3d160eef785ed771beb3ec1f1d4832f0187b))
+- add unit test & fix bugs ([#220](https://github.com/desoul-labs/soulhub-contracts/issues/220)) ([85ed7af](https://github.com/desoul-labs/soulhub-contracts/commit/85ed7af800df20d2d57b886cb8a72ee7b4aed7ff))
+- update soulhub contract ([dd42270](https://github.com/desoul-labs/soulhub-contracts/commit/dd422701f3c5b3803bbe56c9efa5487805d60ce1))
+
+### Bug Fixes
+
+- merge dev ([06aeebf](https://github.com/desoul-labs/soulhub-contracts/commit/06aeebfe2a1a709504f3d901a30b6b47f3aa9a5e))
+- package.json ([f74a398](https://github.com/desoul-labs/soulhub-contracts/commit/f74a39821a87fc65a3bb9163dd30884139086268))
+- remove files ([487ba64](https://github.com/desoul-labs/soulhub-contracts/commit/487ba64686bb1f3ec81acf1899545c08ed158686))
+
 ### [0.2.1-alpha.1](https://github.com/desoul-labs/soulhub-contracts/compare/v0.2.0-alpha.1...v0.2.1-alpha.1) (2023-03-29)
 
 ### Features

@@ -2,12 +2,12 @@
 pragma solidity ^0.8.0;
 
 import "./interfaces/IERC5727DelegateUpgradeable.sol";
-import "./ERC5727Core.sol";
+import "./ERC5727SlotSettableCore.sol";
 import "./ERC5727Storage.sol";
 
 contract ERC5727DelegateUpgradeableDS is
     IERC5727DelegateUpgradeable,
-    ERC5727Core
+    ERC5727SlotSettableCore
 {
     function __ERC5727Delegate_init() internal onlyInitializing {
         __ERC5727Delegate_init_unchained();

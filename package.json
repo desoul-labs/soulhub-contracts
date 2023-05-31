@@ -1,6 +1,6 @@
 {
   "name": "soulhub-contracts",
-  "version": "0.2.1-alpha.1",
+  "version": "0.3.2-beta.2",
   "description": "SoulHub Contracts",
   "homepage": "https://github.com/desoul-labs/soulhub-contracts#readme",
   "bugs": {
@@ -19,8 +19,9 @@
     "deploy:goerli": "hardhat run scripts/deploy.ts --network goerli",
     "deploy:hardhat": "hardhat run scripts/deploy.ts --network hardhat",
     "deploy:mainnet": "hardhat run scripts/deploy.ts --network mainnet",
-    "deploy:mumbai": "hardhat run scripts/deploy.ts --network mumbai",
+    "deploy:mumbai": "hardhat run scripts/deployModularized.ts --network mumbai",
     "deploy:optimism-goerli": "hardhat run scripts/deploy.ts --network optimismGoerli",
+    "deploy:astar": "hardhat run scripts/deployModularized.ts --network astar",
     "deploy:polygon": "hardhat run scripts/deploy.ts --network polygon",
     "deploy:sepolia": "hardhat run scripts/deploy.ts --network sepolia",
     "doc": "NODE_ENV=development hardhat dodoc",

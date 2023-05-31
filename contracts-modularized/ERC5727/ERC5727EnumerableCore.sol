@@ -11,12 +11,6 @@ contract ERC5727EnumerableCore is ERC5727Core, ERC3525SlotEnumerableCore {
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.AddressSet;
     using EnumerableMapUpgradeable for EnumerableMapUpgradeable.AddressToUintMap;
 
-    function __ERC5727Enumerable_init() internal onlyInitializing {
-        __ERC5727Enumerable_init_unchained();
-    }
-
-    function __ERC5727Enumerable_init_unchained() internal onlyInitializing {}
-
     function slotCountOfOwner(address owner) internal view returns (uint256) {
         if (owner == address(0)) revert NullValue();
 
@@ -110,7 +104,16 @@ contract ERC5727EnumerableCore is ERC5727Core, ERC3525SlotEnumerableCore {
         uint256 slot,
         uint256 value
     ) internal virtual override(ERC3525SlotEnumerableCore, ERC5727Core) {
-        super._beforeValueTransfer(
+        ERC3525SlotEnumerableCore._beforeValueTransfer(
+            from,
+            to,
+            fromTokenId,
+            toTokenId,
+            slot,
+            value
+        );
+
+        ERC5727Core._beforeValueTransfer(
             from,
             to,
             fromTokenId,
@@ -136,7 +139,7 @@ contract ERC5727EnumerableCore is ERC5727Core, ERC3525SlotEnumerableCore {
         uint256 slot,
         uint256 value
     ) internal virtual override(ERC3525SlotEnumerableCore, ERC3525Core) {
-        super._afterValueTransfer(
+        ERC3525SlotEnumerableCore._afterValueTransfer(
             from,
             to,
             fromTokenId,
