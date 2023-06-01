@@ -14,7 +14,7 @@ export const networks: NetworksUserConfig = {
     accounts: [process.env.PRIVATE_KEY ?? ''],
   },
   polygon: {
-    url: 'https://rpc.ankr.com/polygon',
+    url: 'https://rpc-mainnet.maticvigil.com',
     accounts: [process.env.PRIVATE_KEY ?? ''],
   },
   mumbai: {

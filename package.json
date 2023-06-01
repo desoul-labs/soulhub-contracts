@@ -22,7 +22,7 @@
     "deploy:mumbai": "hardhat run scripts/deployModularized.ts --network mumbai",
     "deploy:optimism-goerli": "hardhat run scripts/deploy.ts --network optimismGoerli",
     "deploy:astar": "hardhat run scripts/deployModularized.ts --network astar",
-    "deploy:polygon": "hardhat run scripts/deploy.ts --network polygon",
+    "deploy:polygon": "hardhat run scripts/deployModularized.ts --network polygon",
     "deploy:sepolia": "hardhat run scripts/deploy.ts --network sepolia",
     "doc": "NODE_ENV=development hardhat dodoc",
     "lint-staged": "lint-staged --allow-empty",

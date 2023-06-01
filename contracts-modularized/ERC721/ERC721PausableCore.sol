@@ -3,9 +3,9 @@
 
 pragma solidity ^0.8.0;
 
-import "../utils/ContextUpgradeable.sol";
 import "../utils/Initializable.sol";
 import "./ERC721Storage.sol";
+import "../utils/ERC2771ContextUpgradeable.sol";
 
 /**
  * @dev Contract module which allows children to implement an emergency stop
@@ -16,7 +16,10 @@ import "./ERC721Storage.sol";
  * the functions of your contract. Note that they will not be pausable by
  * simply including this module, only once the modifiers are put in place.
  */
-abstract contract PausableUpgradeableCore is Initializable, ContextUpgradeable {
+abstract contract PausableUpgradeableCore is
+    Initializable,
+    ERC2771ContextUpgradeable
+{
     /**
      * @dev Emitted when the pause is triggered by `account`.
      */

@@ -8,7 +8,7 @@ import "../ERC721/ERC721EnumerableUpgradeable.sol";
 import "../proxy/BeaconProxy.sol";
 import "../proxy/UpgradeableBeacon.sol";
 
-contract SoulHubUpgradeable is ERC721EnumerableUpgradeable {
+contract SoulHubUpgradeableOld is ERC721EnumerableUpgradeable {
     using EnumerableMapUpgradeable for EnumerableMapUpgradeable.AddressToUintMap;
 
     event OrganizationCreated(
