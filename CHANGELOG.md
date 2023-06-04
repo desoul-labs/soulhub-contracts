@@ -4,10 +4,9 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [0.3.2-beta.2](https://github.com/desoul-labs/soulhub-contracts/compare/v0.3.2-beta.1...v0.3.2-beta.2) (2023-05-17)
 
-
 ### Features
 
-* update core contract ([1c31f16](https://github.com/desoul-labs/soulhub-contracts/commit/1c31f16d3793ef1aa1d5876036124f68df140fbe))
+- update core contract ([1c31f16](https://github.com/desoul-labs/soulhub-contracts/commit/1c31f16d3793ef1aa1d5876036124f68df140fbe))
 
 ### [0.3.2-beta.1](https://github.com/desoul-labs/soulhub-contracts/compare/v0.3.2...v0.3.2-beta.1) (2023-05-15)
 
