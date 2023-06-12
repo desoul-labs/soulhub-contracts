@@ -2,27 +2,7 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [0.3.5](https://github.com/desoul-labs/soulhub-contracts/compare/v0.3.2-beta.2...v0.3.5) (2023-06-12)
-
-
-### Features
-
-* add erc2771 context ([e6a8b0a](https://github.com/desoul-labs/soulhub-contracts/commit/e6a8b0a5da77589869728c9c7af1070dd436700d))
-* add forwarder ([b5eb62a](https://github.com/desoul-labs/soulhub-contracts/commit/b5eb62a86650a83cdfc0791a1029ee7c422cfe64))
-* update deploy script ([e96981f](https://github.com/desoul-labs/soulhub-contracts/commit/e96981ff4ea1c306c5ca74e6870e213b36083b33))
-* update erc721core contract ([ce406e1](https://github.com/desoul-labs/soulhub-contracts/commit/ce406e178a9d849e5a61225e4db5d11160fab2c1))
-* update soulhub contract ([6413a38](https://github.com/desoul-labs/soulhub-contracts/commit/6413a3845c60889d15d4ce2bc6470aef8f12c185))
-
-### [0.3.4](https://github.com/desoul-labs/soulhub-contracts/compare/v0.3.2-beta.2...v0.3.4) (2023-06-12)
-
-
-### Features
-
-* add erc2771 context ([e6a8b0a](https://github.com/desoul-labs/soulhub-contracts/commit/e6a8b0a5da77589869728c9c7af1070dd436700d))
-* add forwarder ([b5eb62a](https://github.com/desoul-labs/soulhub-contracts/commit/b5eb62a86650a83cdfc0791a1029ee7c422cfe64))
-* update deploy script ([e96981f](https://github.com/desoul-labs/soulhub-contracts/commit/e96981ff4ea1c306c5ca74e6870e213b36083b33))
-* update erc721core contract ([ce406e1](https://github.com/desoul-labs/soulhub-contracts/commit/ce406e178a9d849e5a61225e4db5d11160fab2c1))
-* update soulhub contract ([6413a38](https://github.com/desoul-labs/soulhub-contracts/commit/6413a3845c60889d15d4ce2bc6470aef8f12c185))
+### [0.3.3](https://github.com/desoul-labs/soulhub-contracts/compare/v0.3.5...v0.3.3) (2023-06-12)
 
 ### [0.3.2](https://github.com/desoul-labs/soulhub-contracts/compare/v0.3.2-beta.2...v0.3.2) (2023-06-12)
 
