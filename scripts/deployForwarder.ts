@@ -3,11 +3,8 @@ import { type MinimalForwarder } from '../typechain';
 
 async function deployForwarder(): Promise<MinimalForwarder> {
   const forwarderContractFactroy = await ethers.getContractFactory('MinimalForwarder');
-
   const forwarderContract = await forwarderContractFactroy.deploy();
   await forwarderContract.deployed();
-  console.log('Minimal Forwarder deployed to:', forwarderContract.address);
-
   await verifyContract(forwarderContract.address, []);
   return forwarderContract;
 }

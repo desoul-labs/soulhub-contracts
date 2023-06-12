@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableMapUpgradeable.sol";
 
-import "../../contracts-upgradeable/ERC721/ERC721EnumerableUpgradeable.sol";
+import "./ERC721/ERC721EnumerableUpgradeable.sol";
 import "../diamond/interfaces/IDiamond.sol";
 import "../diamond/Diamond.sol";
 
@@ -23,6 +23,8 @@ contract SoulHubUpgradeable is ERC721EnumerableUpgradeable {
         private _members;
     IDiamondCut.FacetCut[] private _initDiamondCut;
     address private _initAddress;
+
+    constructor(address trustedForwarder) ERC721Upgradeable(trustedForwarder) {}
 
     function __SoulHub_init(
         uint256 index,
