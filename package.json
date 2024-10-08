@@ -86,6 +86,6 @@
     "solidity-coverage": "0.8.2",
     "standard-version": "9.5.0",
     "ts-node": "10.9.1",
-    "typescript": "5.0.2"
+    "typescript": "5.6.3"
   }
 }
